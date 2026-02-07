@@ -1,6 +1,7 @@
 #include <iostream>
+#include "credential.hpp"
 
 int main()
 {
-  std::cout << "chadin.maxim" << "\n";
+  chadin::out_credentials(std::cout) << "\n";
 }
