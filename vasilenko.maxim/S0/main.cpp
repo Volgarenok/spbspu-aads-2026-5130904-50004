@@ -1,6 +1,7 @@
 #include <iostream>
+#include "credentials.hpp"
 
 int main()
 {
-  std::cout << "vasilenko.maxim" << "\n";
+  vasilenko::out_credentials(std::cout) << "\n";
 }
