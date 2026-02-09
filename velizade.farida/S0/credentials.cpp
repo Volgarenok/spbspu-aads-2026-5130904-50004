@@ -3,5 +3,5 @@
 
 std::ostream & velizade::out_credentials(std::ostream & out)
 {
-  return out << "velizade.faridaaa";
+  return out << "velizade.farida";
 }
