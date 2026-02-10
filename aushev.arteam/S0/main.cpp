@@ -1,6 +1,7 @@
 #include <iostream>
+#include "credentials.hpp"
 
 int main()
 {
-  std::cout << "aushev.arteam" << "\n";
+  aushev::out_credentials(std::cout) << "\n";
 }
