@@ -3,6 +3,6 @@
 
 std::ostream & khvaevskiy::out_credentials(std::ostream & out)
 {
-  return out << "khvaevskiy.kirgiz";
+  return out << "khvaevskiy.daniil";
 }
 
