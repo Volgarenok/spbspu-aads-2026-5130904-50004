@@ -1,8 +1,6 @@
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE S0
 #include <boost/test/unit_test.hpp>
-#include <sstream>
 #include "credentials.hpp"
+#include <sstream>
 
 BOOST_AUTO_TEST_CASE(credentials_test)
 {
