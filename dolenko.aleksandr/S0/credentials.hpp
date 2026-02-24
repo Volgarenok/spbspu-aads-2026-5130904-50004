@@ -5,4 +5,4 @@ namespace dolenko
 {
     std::ostream & out_credentials(std::ostream & out);
 }
-#endif  
+#endif
