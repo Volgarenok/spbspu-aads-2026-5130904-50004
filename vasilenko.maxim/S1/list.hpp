@@ -1,0 +1,4 @@
+#ifndef VASILENKO_MAXIM_LIST_HPP
+#define VASILENKO_MAXIM_LIST_HPP
+
+#endif
