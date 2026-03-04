@@ -68,16 +68,28 @@ void clear(List<T>* head) {
 
 template <class T>
 List<T>* copy(List<T>* thisHead) {
-  List<T>* newHead = thisHead;
+  List<T> newHead = *thisHead;
   try {
     List<T>* tmp = newHead;
     while (thisHead != nullptr) {
-      tmp->next = thisHead->next;
+      tmp->next = new List<T>(thisHead->next->data, nullptr);
       tmp = tmp->next;
       thisHead = thisHead->next;
     }
   } catch (...) {
     clear(newHead);
+    return nullptr;
+  }
+  return newHead;
+}
+
+template <class T>
+List<T>* move(List<T>* thisHead) {
+  List<T>* newHead = new List<T>(thisHead->data, thisHead->next);
+  try {
+    List<T>* tmp = deleteHead(thisHead);
+  } catch (...) {
+    delete newHead;
     return nullptr;
   }
   return newHead;
