@@ -137,19 +137,6 @@ List<T>* copy(List<T>* thisHead) {
   return newHead;
 }
 
-//TODO revamp move
-template <class T>
-List<T>* move(List<T>* thisHead) {
-  List<T>* newHead = new List<T>(thisHead->data, thisHead->next);
-  try {
-    List<T>* tmp = deleteHead(thisHead); //this garbage clearly doesnt work
-  } catch (...) { //still unsure of error thrown
-    delete newHead;
-    return nullptr;
-  }
-  return newHead;
-}
-
 template <class T>
 size_t sum(LCIter<T>* target) {
   size_t ans = target->getData();
