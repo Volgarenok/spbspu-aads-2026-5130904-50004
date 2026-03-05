@@ -1,85 +1,51 @@
+#define BOOST_TEST_MODULE ListTests
+#include <boost/test/included/unit_test.hpp>
 #include "list.hpp"
-#include <iostream>
-#include <utility>
+#include "test-list.hpp"
 
-namespace {
+using namespace vasilenko_maxim;
 
-void testPushBackAndFront()
+BOOST_AUTO_TEST_CASE(test_push_and_pop)
 {
-  vasilenko_maxim::List<int> lst;
-  lst.pushBack(20);
-  lst.pushFront(10);
+  List< int > list;
+  BOOST_CHECK(list.isEmpty());
 
-  if (lst.front() != 10) {
-    std::cerr << "testPushBackAndFront failed on front" << "\n";
-    std::exit(2);
-  }
-  if (lst.back() != 20) {
-    std::cerr << "testPushBackAndFront failed on back" << "\n";
-    std::exit(2);
-  }
+  list.pushBack(10);
+  list.pushFront(5);
+  BOOST_CHECK_EQUAL(list.front(), 5);
+  BOOST_CHECK_EQUAL(list.back(), 10);
+
+  list.popFront();
+  BOOST_CHECK_EQUAL(list.front(), 10);
+  list.popBack();
+  BOOST_CHECK(list.isEmpty());
 }
 
-void testPopFrontBack()
+BOOST_AUTO_TEST_CASE(test_rule_of_five)
 {
-  vasilenko_maxim::List<int> lst;
-  lst.pushBack(1);
-  lst.pushBack(2);
-  lst.pushBack(3);
-  lst.popFront();
+  List< int > l1;
+  l1.pushBack(1);
+  l1.pushBack(2);
 
-  if (lst.front() != 2) {
-    std::cerr << "testPopFront failed" << "\n";
-    std::exit(2);
-  }
+  List< int > l2(l1);
+  BOOST_CHECK_EQUAL(l2.front(), 1);
+  BOOST_CHECK_EQUAL(l2.back(), 2);
 
-  lst.popBack();
-  if (lst.back() != 2) {
-    std::cerr << "testPopBack failed" << "\n";
-    std::exit(2);
-  }
+  List< int > l3(std::move(l1));
+  BOOST_CHECK(l1.isEmpty());
+  BOOST_CHECK_EQUAL(l3.front(), 1);
 }
 
-void testCopyMove()
+BOOST_AUTO_TEST_CASE(test_iterators)
 {
-  vasilenko_maxim::List<int> lst1;
-  lst1.pushBack(1);
+  List< int > list;
+  list.pushBack(100);
+  list.pushBack(200);
 
-  vasilenko_maxim::List<int> lst2(lst1);
-  if (lst2.front() != 1) {
-    std::cerr << "testCopy failed" << "\n";
-    std::exit(2);
-  }
-
-  vasilenko_maxim::List<int> lst3(std::move(lst1));
-  if (lst3.front() != 1 || !lst1.isEmpty()) {
-    std::cerr << "testMove failed" << "\n";
-    std::exit(2);
-  }
-}
-
-void testClear()
-{
-  vasilenko_maxim::List<int> lst;
-  lst.pushBack(1);
-  lst.clear();
-
-  if (!lst.isEmpty()) {
-    std::cerr << "testClear failed" << "\n";
-    std::exit(2);
-  }
-}
-
-}
-
-int main()
-{
-  testPushBackAndFront();
-  testPopFrontBack();
-  testCopyMove();
-  testClear();
-
-  std::cout << "All tests passed" << "\n";
-
-  return 0;
+  LIter< int > it = list.begin();
+  BOOST_CHECK_EQUAL(*it, 100);
+  ++it;
+  BOOST_CHECK_EQUAL(*it, 200);
+  ++it;
+  BOOST_CHECK(it == list.end());
 }
