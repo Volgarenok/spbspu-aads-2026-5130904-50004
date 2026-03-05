@@ -3,129 +3,117 @@
 #include <limits>
 #include <stdexcept>
 
-template <class T> class List;
+template <class T> class LIter;
 template <class T> class LCIter;
 
 template <class T>
 class Iter {
 public:
-  friend class List<T>;
+  class List {
+    friend class Iter;
+    T data;
+    List<T>* next;
+
+    Iter<T>* getIter() {
+      return new Iter<T>(this);
+    }
+    void addFront(T newData) {
+      List<T>* tmp = new List<T>(newData, this);
+      this = tmp;
+    }
+    void addBack(T newData) {
+      next = new List<T>(newData, next);
+    }
+
+    void deleteSelf() {
+      List<T>* tmp = next;
+      delete this;
+      this = tmp;
+    }
+
+    void copy(List<T>* target) {
+      target->data = this->data;
+    }
+
+    Iter<T> getLast() {
+      List<T>* tmp = this;
+      while (tmp->next->next != nullptr) {
+        tmp = tmp->next;
+      }
+      return tmp->getThisIter();
+    }
+  };
+
   List<T>* that;
 
-private:
   bool hasNext() {
     return that->next != nullptr;
   }
-  void next() {
-    if (hasNext()) that = that->next;
-    else {
-      delete that;
-      throw std::logic_error("Cannot get next if there is no next :(");
-    }
+  void next() noexcept{
+    that = that->next;
+  }
+
+  LIter<T>* getReal() {
+    return new LIter<T>(this->that);
+  }
+  LCIter<T>* getConst() {
+    return new LCIter<T>(this->that);
   }
 };
 
 template <class T>
-class LIter : private Iter<T> {
+class LIter : public Iter<T> {
+public:
   using Iter<T>::that;
 
   void changeData(T newData) {
     that->data = newData;
   }
-  LCIter<T> throwConst() {
-    return new LCIter<T>(that);
-  }
 };
 
 template <class T>
-class LCIter : private Iter<T>{
+class LCIter : public Iter<T>{
+public:
   using Iter<T>::that;
 
   T getData() {
     return that->data;
   }
-  LIter<T> throwConst() {
-    return new LIter<T>(that);
-  }
 };
 
 template <class T>
-class List {
-  T data;
-  List<T>* next = nullptr;
-
-  LCIter<T> getThisCIter() {
-    return new LCIter<T>(this);
-  }
-  LIter<T> getThisIter() {
-    return new LIter<T>(this);
-  }
-
-  void addFront(T newData) {
-    List<T> tmp = new List<T>(newData, this);
-    this = tmp;
-  }
-  void addBack(T newData) {
-    next = new List<T>(newData, next);
-  }
-
-  void deleteSelf() {
-    List<T>* tmp = next;
-    delete this;
-    this = tmp;
-  }
-
-  void copy(List<T>* target) {
-    target->data = this->data;
-  }
-
-  LIter<T> getLast() {
-    List<T>* tmp = this;
-    while (tmp->next != nullptr) {
-      tmp = tmp->next;
-    }
-    return tmp->getThisIter();
-  }
-};
-
-template <class T>
-LCIter<T> getLast(List<T>* head) {
-  List<T>* tmp = copy(head);
-  clear(head);
-  while (tmp->next != nullptr) {
-    tmp = tmp->next;
-  }
-  return tmp->getThisCIter();
+Iter<T> getLast(Iter<T> head) {
+  while (head.that->next != nullptr) head.that = head.that->next;
+  return head;
 }
 
 template <class T>
-void addLast(List<T>* head, T data) {
-  LIter<T> tmp = getLast(head);
-  tmp.that->addBack(data);
+void addLast(Iter<T> head, T data) {
+  head = getLast(head);
+  head.that->next = new Iter<T>::List<T>(data, nullptr);
 }
 
 template <class T>
-void deleteLast(List<T>* head) {
-  delete getLast(head).that;
+void deleteLast(Iter<T> head) {
+  delete getLast(head)->that;
 }
 
 template <class T>
-void clear(List<T>* head) {
-  while (head->next != nullptr) {
-    head->deleteSelf();
+void clear(Iter<T> head) {
+  while (head.that->next != nullptr) {
+    head.that->deleteSelf();
   }
-  delete head;
 }
 
 template <class T>
-List<T>* copy(List<T>* thisHead) {
-  List<T> newHead = *thisHead;
+Iter<T> copy(Iter<T> thisHead) {
+  Iter<T> newHead = *thisHead;
   try {
-    List<T>* tmp = newHead; // i dont think thats correct
-    while (thisHead->next != nullptr) { //does this work?
-      tmp->next = new List<T>(thisHead->next->data, nullptr);
-      tmp = tmp->next;
-      thisHead = thisHead->next;
+    Iter<T> tmp = newHead; // i dont think thats correct
+    while (thisHead.that->next != nullptr) { //does this work?
+      tmp.that->next = new Iter<T>::List<T>(thisHead.that->next->data, nullptr);
+      tmp.that = tmp->next;
+      thisHead.that = thisHead->next;
     } //do I need to think about last elem?
   } catch (...) { //which error does this throw?
     clear(newHead); //newHead is an object, not sure whether that would be correct
@@ -135,14 +123,14 @@ List<T>* copy(List<T>* thisHead) {
 }
 
 template <class T>
-size_t sum(LCIter<T>* target) {
-  size_t ans = target->getData();
-  while (target->isNext()) {
-    target->next();
-    if (std::numeric_limits<size_t>::max() - ans < target->getData()) {
+size_t sum(LCIter<T> target) {
+  size_t ans = target.getData();
+  while (target.hasNext()) {
+    target.next();
+    if (std::numeric_limits<size_t>::max() - ans < target.getData()) {
       throw std::logic_error("Target exceeds numeric limits");
     }
-    ans += target->getData();
+    ans += target.getData();
   }
   return ans;
 }
