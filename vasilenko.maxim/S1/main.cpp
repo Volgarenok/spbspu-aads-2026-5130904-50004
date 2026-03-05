@@ -106,7 +106,3 @@ int main()
 
   return 0;
 }
-
-int init_unit_test_suite(int argc, char* argv[]) {
-  return 0;
-}
