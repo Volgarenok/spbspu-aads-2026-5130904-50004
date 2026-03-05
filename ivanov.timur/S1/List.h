@@ -67,6 +67,8 @@ class LIter : public Iter<T> {
 public:
   using Iter<T>::that;
 
+  explicit LIter(typename Iter<T>::List *p) :Iter<T>(p) {}
+
   void changeData(T newData) {
     that->data = newData;
   }
@@ -76,6 +78,8 @@ template <class T>
 class LCIter : public Iter<T>{
 public:
   using Iter<T>::that;
+
+  explicit LCIter(typename Iter<T>::List *p) :Iter<T>(p) {}
 
   T getData() {
     return that->data;
