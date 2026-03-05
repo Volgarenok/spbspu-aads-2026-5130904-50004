@@ -10,13 +10,12 @@ template <class T>
 class Iter {
 public:
   class List {
+  protected:
     friend class Iter<T>;
     T data;
     List* next;
 
     List(const T& d, List* n = nullptr) : data(d), next(n) {}
-
-  protected:
     Iter<T> getIter() {
       return Iter<T>(this);
     }
@@ -86,24 +85,24 @@ public:
 };
 
 template <class T>
-Iter<T> getLast(Iter<T> head) {
+Iter<T> getLast(Iter<T> head) noexcept{
   while (head.that->next != nullptr) head.that = head.that->next;
   return head;
 }
 
 template <class T>
-void addLast(Iter<T> head, T data) {
+void addLast(Iter<T> head, T data) noexcept{
   head = getLast(head);
-  head.that->next = new Iter<T>::List<T>(data, nullptr);
+  head.that->next = new Iter<T>::List(data, nullptr);
 }
 
 template <class T>
-void deleteLast(Iter<T> head) {
-  delete getLast(head)->that;
+void deleteLast(Iter<T> head) noexcept{
+  delete getLast(head).that;
 }
 
 template <class T>
-void clear(Iter<T> head) {
+void clear(Iter<T> head) noexcept{
   while (head.that->next != nullptr) {
     head.that->deleteSelf();
   }
@@ -111,17 +110,18 @@ void clear(Iter<T> head) {
 
 template <class T>
 Iter<T> copy(Iter<T> thisHead) {
-  Iter<T> newHead = *thisHead;
+  Iter<T> newHead = thisHead;
+  if (thisHead.that == nullptr) throw std::logic_error("cannot use nullptr state");
   try {
     Iter<T> tmp = newHead; // i dont think thats correct
     while (thisHead.that->next != nullptr) { //does this work?
-      tmp.that->next = new Iter<T>::List<T>(thisHead.that->next->data, nullptr);
-      tmp.that = tmp->next;
-      thisHead.that = thisHead->next;
+      tmp.that->next = new Iter<T>::List(thisHead.that->next->data, nullptr);
+      tmp.that = tmp.that->next;
+      thisHead.that = thisHead.that->next;
     } //do I need to think about last elem?
   } catch (...) { //which error does this throw?
     clear(newHead); //newHead is an object, not sure whether that would be correct
-    return nullptr;
+    throw std::logic_error("copy faliure fatal");
   }
   return newHead;
 }
