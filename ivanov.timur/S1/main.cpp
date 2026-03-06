@@ -1,4 +1,6 @@
 #include<iostream>
+#include <pstl/glue_execution_defs.h>
+
 #include "List.h"
 
 using namespace ivanov;
@@ -25,7 +27,10 @@ int main() {
             if (pos == token.length()) {
               nums.back().push_back(val);
             }
-          } catch (const std::exception&) {
+          } catch (const std::overflow_error&) {
+            std::cerr << "damn\n";
+            return 1;
+          } catch (std::exception&) {
           }
         }
         token.clear();
@@ -133,6 +138,8 @@ int main() {
     first_sum = false;
   }
   std::cout << "\n";
+
+  if (first_sum) std::cout << "0\n";
 
   return 0;
 }
