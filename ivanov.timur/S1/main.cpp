@@ -8,11 +8,9 @@ using namespace ivanov;
 int main() {
   List<std::string> names;
   List<List<unsigned long long>> nums;
-
   std::string token;
   char c;
   bool is_new_line = true;
-
   while (std::cin.get(c)) {
     if (std::isspace(static_cast<unsigned char>(c))) {
       if (!token.empty()) {
@@ -42,7 +40,6 @@ int main() {
       token += c;
     }
   }
-
   if (!token.empty()) {
     if (is_new_line) {
       names.push_back(token);
@@ -67,14 +64,6 @@ int main() {
     return 0;
   }
 
-  bool first_name = true;
-  for (auto it = names.cbegin(); it != names.cend(); ++it) {
-    if (!first_name) std::cout << " ";
-    std::cout << *it;
-    first_name = false;
-  }
-  std::cout << "\n";
-
   size_t max_size = 0;
   for (auto it = nums.cbegin(); it != nums.cend(); ++it) {
     if (it->size() > max_size) {
@@ -83,44 +72,46 @@ int main() {
   }
 
   if (max_size == 0) {
-    std::cout << "0\n";
+    bool first_name = true;
+    for (auto it = names.cbegin(); it != names.cend(); ++it) {
+      if (!first_name) std::cout << " ";
+      std::cout << *it;
+      first_name = false;
+    }
+    std::cout << "\n0\n";
     return 0;
   }
-
   List<unsigned long long> sums;
-  List<CIter<unsigned long long>> iters;
+  List<CIter<unsigned long long>> calc_iters;
   for (auto it = nums.cbegin(); it != nums.cend(); ++it) {
-    iters.push_back(it->cbegin());
+    calc_iters.push_back(it->cbegin());
   }
 
   try {
     for (size_t col = 0; col < max_size; ++col) {
       unsigned long long current_sum = 0;
-      bool first_in_row = true;
+      bool has_data_in_col = false;
 
-      if (!iters.empty()) {
-        auto iters_it = iters.begin();
+      if (!calc_iters.empty()) {
+        auto iters_it = calc_iters.begin();
         auto nums_it = nums.cbegin();
 
-        for (size_t i = 0; i < iters.size(); ++i) {
+        for (size_t i = 0; i < calc_iters.size(); ++i) {
           if (*iters_it != nums_it->cend()) {
-            if (!first_in_row) std::cout << " ";
-            std::cout << **iters_it;
-            ivanov::sum(current_sum, **iters_it);
+            sum(current_sum, **iters_it);
 
-            first_in_row = false;
+            has_data_in_col = true;
             ++(*iters_it);
           }
 
-          if (i < iters.size() - 1) {
+          if (i < calc_iters.size() - 1) {
             ++iters_it;
             ++nums_it;
           }
         }
       }
 
-      if (!first_in_row) {
-        std::cout << "\n";
+      if (has_data_in_col) {
         sums.push_back(current_sum);
       } else {
         break;
@@ -140,6 +131,48 @@ int main() {
     return 1;
   }
 
+  bool first_name = true;
+  for (auto it = names.cbegin(); it != names.cend(); ++it) {
+    if (!first_name) std::cout << " ";
+    std::cout << *it;
+    first_name = false;
+  }
+  std::cout << "\n";
+
+  List<CIter<unsigned long long>> print_iters;
+  for (auto it = nums.cbegin(); it != nums.cend(); ++it) {
+    print_iters.push_back(it->cbegin());
+  }
+
+  for (size_t col = 0; col < max_size; ++col) {
+    bool first_in_row = true;
+
+    if (!print_iters.empty()) {
+      auto iters_it = print_iters.begin();
+      auto nums_it = nums.cbegin();
+
+      for (size_t i = 0; i < print_iters.size(); ++i) {
+        if (*iters_it != nums_it->cend()) {
+          if (!first_in_row) std::cout << " ";
+          std::cout << **iters_it;
+
+          first_in_row = false;
+          ++(*iters_it);
+        }
+
+        if (i < print_iters.size() - 1) {
+          ++iters_it;
+          ++nums_it;
+        }
+      }
+    }
+
+    if (!first_in_row) {
+      std::cout << "\n";
+    } else {
+      break;
+    }
+  }
   bool first_sum = true;
   for (auto it = sums.cbegin(); it != sums.cend(); ++it) {
     if (!first_sum) std::cout << " ";
