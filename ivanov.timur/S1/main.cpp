@@ -126,6 +126,9 @@ int main() {
         break;
       }
     }
+  } catch (const std::overflow_error&) {
+    std::cerr << "Overflow\n";
+    return 1;
   } catch (const std::bad_alloc&) {
     std::cerr << "Bad allocation failure\n";
     return 1;
