@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <utility>
+#include <limits>
 namespace ivanov {
     template <class T> class List;
 
@@ -280,5 +281,12 @@ namespace ivanov {
             while (head != nullptr) pop_front();
         };
     };
+    template <class T>
+    void sum(size_t& a, size_t b) {
+        if (std::numeric_limits<size_t>::max() - b < a) {
+            throw std::logic_error("Target exceeds numeric limits");
+        }
+        a += b;
+    }
 }
 #endif
