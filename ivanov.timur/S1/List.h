@@ -28,6 +28,7 @@ namespace ivanov {
     }
 
     Iter& operator++() noexcept {
+      if (ptr == nullptr || ptr->next_ == nullptr) throw std::bad_alloc();
       ptr = ptr->next_;
       return *this;
     }
