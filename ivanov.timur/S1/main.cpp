@@ -28,6 +28,7 @@ int main() {
               nums.back().push_back(val);
             }
           } catch (const std::out_of_range&) {
+            std::cout << "\n";
             std::cerr << "Overflow\n";
             return 1;
           } catch (const std::exception&) {
@@ -55,6 +56,7 @@ int main() {
           nums.back().push_back(val);
         }
       } catch (const std::out_of_range&) {
+        std::cout << "\n";
         std::cerr << "Overflow\n";
         return 1;
       } catch (const std::exception&) {
@@ -127,15 +129,19 @@ int main() {
       }
     }
   } catch (const std::overflow_error&) {
-    std::cerr << "\nOverflow\n";
+    std::cout << "\n";
+    std::cerr << "Overflow\n";
     return 1;
   } catch (const std::bad_alloc&) {
+    std::cout << "\n";
     std::cerr << "Bad allocation failure\n";
     return 1;
   } catch (const std::exception&) {
+    std::cout << "\n";
     std::cerr << "Error during sum processing\n";
     return 1;
   } catch (...) {
+    std::cout << "\n";
     std::cerr << "Something went wrong\n";
     return 1;
   }
