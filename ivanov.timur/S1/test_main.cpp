@@ -1,6 +1,7 @@
 #if defined(__GNUC__) || defined(__clang__)
-__attribute__((weak))
+__attribute__((weak)) int main(int argc, char* argv[]);
 #endif
+
 #define BOOST_TEST_MODULE ListTests
 #include <boost/test/included/unit_test.hpp>
 #include "List.h"
@@ -16,7 +17,6 @@ BOOST_AUTO_TEST_CASE(push)
   list.push_front(5);
   BOOST_CHECK_EQUAL(list.front(), 5);
   BOOST_CHECK_EQUAL(list.back(), 10);
-
 }
 
 BOOST_AUTO_TEST_CASE(pop)
