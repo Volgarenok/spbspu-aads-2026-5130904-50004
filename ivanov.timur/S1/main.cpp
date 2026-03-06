@@ -1,3 +1,4 @@
+#ifndef RUNNING_TESTS
 #include<iostream>
 #include "List.h"
 
@@ -136,3 +137,4 @@ int main() {
 
   return 0;
 }
+#endif
