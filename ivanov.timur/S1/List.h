@@ -16,11 +16,19 @@ class Iter {
   }
 
   Iter getIterByPos(size_t pos) {
-
+    Iter tmp = Iter(new List(data_->data_, data_->next_));
+    if (tmp.data_ == nullptr) throw std::logic_error("empty list");
+    for (size_t i = 0; i < pos; ++i) {
+      if (!tmp.hasNext()) throw std::logic_error("no such element in list");
+      tmp.next();
+    }
+    return tmp;
   }
 
   Iter getLast() {
-    while (hasNext)
+    Iter tmp = Iter(new List(data_->data_, data_->next_));
+    while (tmp.hasNext()) tmp.next();
+    return tmp;
   }
 
   void push(T data) {
@@ -28,6 +36,9 @@ class Iter {
   }
   bool hasNext() {
     return data_->next_ != nullptr;
+  }
+  void next() {
+    data_ = data_->next_;
   }
 
 
