@@ -138,10 +138,12 @@ public:
     void push_front(const T& value) {
         Elem* nw = new Elem(value, head);
         head = nw;
+        sz++;
     };
     void push_front(T&& value) {
         Elem* nw = new Elem(value, head);
         head = nw;
+        sz++;
     };
     void pop_front() {
         if (head == tail) {
@@ -153,15 +155,18 @@ public:
             delete head;
             head = tmp;
         }
+        sz--;
     };
 
     void push_back(const T& value) {
         tail->next = new Elem(value);
         tail = tail->next;
+        sz++;
     };
     void push_back(T&& value) {
         tail->next = new Elem(value);
         tail = tail->next;
+        sz++;
     };
     void pop_back() {
         if (head == tail) {
@@ -175,12 +180,48 @@ public:
             delete tail;
             tail = tmp;
         }
+        sz--;
     };
 
-    Iter<T> insert_after(Iter<T> pos, const T& value);
-    Iter<T> insert_after(Iter<T> pos, T&& value);
-    Iter<T> erase_after(Iter<T> pos);
-    void clear();
+    Iter<T> insert_after(Iter<T> pos, const T& value) {
+        Elem* curr = pos.ptr;
+        if (curr == nullptr)
+            throw std::out_of_range("cannot insert in nullptr");
+        Elem* nw = new Elem(value, curr->next);
+        curr->next = nw;
+        if (curr == tail) {
+            tail = nw;
+        }
+        sz++;
+        return Iter<T>(nw);
+    };
+    Iter<T> insert_after(Iter<T> pos, T&& value) {
+        Elem* curr = pos.ptr;
+        if (curr == nullptr)
+            throw std::out_of_range("cannot insert in nullptr");
+        Elem* nw = new Elem(value, curr->next);
+        curr->next = nw;
+        if (curr == tail) {
+            tail = nw;
+        }
+        sz++;
+        return Iter<T>(nw);
+    };
+
+    Iter<T> erase_after(Iter<T> pos) {
+        Elem* curr = pos.ptr;
+        if (curr == nullptr || curr->next == nullptr)
+            throw std::out_of_range("cannot erase from nullptr");
+        Elem* tmp = curr->next->next;
+        delete curr->next;
+        curr->next = tmp;
+        sz--;
+        return Iter<T>(curr->next);
+    };
+
+    void clear() {
+        while (head != nullptr) pop_front();
+    };
 };
 
 #endif
