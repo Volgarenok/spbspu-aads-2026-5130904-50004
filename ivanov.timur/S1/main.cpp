@@ -83,36 +83,50 @@ int main() {
     return 0;
   }
   List<unsigned long long> sums;
-  List<CIter<unsigned long long>> calc_iters;
+  List<CIter<unsigned long long>> col_iters;
   for (auto it = nums.cbegin(); it != nums.cend(); ++it) {
-    calc_iters.push_back(it->cbegin());
+    col_iters.push_back(it->cbegin());
   }
 
   try {
     for (size_t col = 0; col < max_size; ++col) {
       unsigned long long current_sum = 0;
-      bool has_data_in_col = false;
+      bool has_data = false;
 
-      if (!calc_iters.empty()) {
-        auto iters_it = calc_iters.begin();
+      if (!col_iters.empty()) {
+        auto iters_it = col_iters.begin();
         auto nums_it = nums.cbegin();
 
-        for (size_t i = 0; i < calc_iters.size(); ++i) {
+        for (size_t i = 0; i < col_iters.size(); ++i) {
           if (*iters_it != nums_it->cend()) {
             sum(current_sum, **iters_it);
-
-            has_data_in_col = true;
-            ++(*iters_it);
+            has_data = true;
           }
-
-          if (i < calc_iters.size() - 1) {
+          if (i < col_iters.size() - 1) {
             ++iters_it;
             ++nums_it;
           }
         }
       }
+      if (has_data) {
+        bool first_in_row = true;
+        auto iters_it = col_iters.begin();
+        auto nums_it = nums.cbegin();
 
-      if (has_data_in_col) {
+        for (size_t i = 0; i < col_iters.size(); ++i) {
+          if (*iters_it != nums_it->cend()) {
+            if (!first_in_row) std::cout << " ";
+            std::cout << **iters_it;
+            first_in_row = false;
+
+            ++(*iters_it);
+          }
+          if (i < col_iters.size() - 1) {
+            ++iters_it;
+            ++nums_it;
+          }
+        }
+        std::cout << "\n";
         sums.push_back(current_sum);
       } else {
         break;
@@ -132,40 +146,6 @@ int main() {
     return 1;
   }
 
-  List<CIter<unsigned long long>> print_iters;
-  for (auto it = nums.cbegin(); it != nums.cend(); ++it) {
-    print_iters.push_back(it->cbegin());
-  }
-
-  for (size_t col = 0; col < max_size; ++col) {
-    bool first_in_row = true;
-
-    if (!print_iters.empty()) {
-      auto iters_it = print_iters.begin();
-      auto nums_it = nums.cbegin();
-
-      for (size_t i = 0; i < print_iters.size(); ++i) {
-        if (*iters_it != nums_it->cend()) {
-          if (!first_in_row) std::cout << " ";
-          std::cout << **iters_it;
-
-          first_in_row = false;
-          ++(*iters_it);
-        }
-
-        if (i < print_iters.size() - 1) {
-          ++iters_it;
-          ++nums_it;
-        }
-      }
-    }
-
-    if (!first_in_row) {
-      std::cout << "\n";
-    } else {
-      break;
-    }
-  }
   bool first_sum = true;
   for (auto it = sums.cbegin(); it != sums.cend(); ++it) {
     if (!first_sum) std::cout << " ";
