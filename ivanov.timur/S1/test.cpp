@@ -13,14 +13,13 @@ BOOST_AUTO_TEST_CASE(test_given_example) {
 
   BOOST_CHECK_EQUAL(result, 0);
   
-  std::string expected_out = 
+  std::string expected_out =
     "first second third fourth\n"
     "1 2 4\n"
     "1 2 4\n"
     "1 2\n"
     "2\n"
     "7 7 3 2\n";
-    
   BOOST_CHECK_EQUAL(out.str(), expected_out);
   BOOST_CHECK_EQUAL(err.str(), "");
 }
