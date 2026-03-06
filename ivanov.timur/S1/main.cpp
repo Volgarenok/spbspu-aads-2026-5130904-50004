@@ -70,15 +70,16 @@ int main() {
       max_size = it->size();
     }
   }
+  bool first_name = true;
+  for (auto it = names.cbegin(); it != names.cend(); ++it) {
+    if (!first_name) std::cout << " ";
+    std::cout << *it;
+    first_name = false;
+  }
+  std::cout << "\n";
 
   if (max_size == 0) {
-    bool first_name = true;
-    for (auto it = names.cbegin(); it != names.cend(); ++it) {
-      if (!first_name) std::cout << " ";
-      std::cout << *it;
-      first_name = false;
-    }
-    std::cout << "\n0\n";
+    std::cout << "0\n";
     return 0;
   }
   List<unsigned long long> sums;
@@ -130,14 +131,6 @@ int main() {
     std::cerr << "Something went wrong\n";
     return 1;
   }
-
-  bool first_name = true;
-  for (auto it = names.cbegin(); it != names.cend(); ++it) {
-    if (!first_name) std::cout << " ";
-    std::cout << *it;
-    first_name = false;
-  }
-  std::cout << "\n";
 
   List<CIter<unsigned long long>> print_iters;
   for (auto it = nums.cbegin(); it != nums.cend(); ++it) {
