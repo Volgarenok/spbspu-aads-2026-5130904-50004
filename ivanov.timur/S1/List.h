@@ -2,6 +2,7 @@
 #define LIST_H
 
 #include <stdexcept>
+#include <utility>
 
 template <class T> class List;
 
@@ -112,7 +113,7 @@ public:
         return Iter<T>(head);
     };
     Iter<T> end() noexcept {
-        return Iter<T>(tail);
+        return Iter<T>(nullptr);
     };
 
     bool empty() const noexcept {
@@ -137,11 +138,13 @@ public:
 
     void push_front(const T& value) {
         Elem* nw = new Elem(value, head);
+        if (empty()) tail = nw;
         head = nw;
         sz++;
     };
     void push_front(T&& value) {
-        Elem* nw = new Elem(value, head);
+        Elem* nw = new Elem(std::move(value), head);
+        if (empty()) tail = nw;
         head = nw;
         sz++;
     };
@@ -159,13 +162,23 @@ public:
     };
 
     void push_back(const T& value) {
-        tail->next = new Elem(value);
-        tail = tail->next;
+        if (empty()) {
+            head = new Elem(value);
+            tail = head;
+        } else {
+            tail->next = new Elem(value);
+            tail = tail->next;
+        }
         sz++;
     };
     void push_back(T&& value) {
-        tail->next = new Elem(value);
-        tail = tail->next;
+        if (empty()) {
+            head = new Elem(std::move(value));
+            tail = head;
+        } else {
+            tail->next = new Elem(std::move(value));
+            tail = tail->next;
+        }
         sz++;
     };
     void pop_back() {
@@ -213,6 +226,7 @@ public:
         if (curr == nullptr || curr->next == nullptr)
             throw std::out_of_range("cannot erase from nullptr");
         Elem* tmp = curr->next->next;
+        if (curr->next == tail) tail = curr;
         delete curr->next;
         curr->next = tmp;
         sz--;
