@@ -8,47 +8,6 @@ struct List {
 };
 
 template< class T >
-struct LIter {
-  friend class List< T >;
-  List< T > * node;
-
-  LIter():
-    node(nullptr)
-  {
-  }
-
-  LIter< T > & operator++();
-  LIter< T > operator++(int);
-
-  T & operator*();
-  T & operator->();
-
-  bool operator==(const LIter< T > & other) const;
-  bool operator!=(const LIter< T > & other) const;
-};
-
-template< class T >
-struct LCIter {
-  friend class List< T >;
-
-  List< T > * node;
-
-  LIter():
-    node(nullptr)
-  {
-  }
-
-  LIter< T > & operator++();
-  LIter< T > operator++(int);
-
-  T & operator*();
-  T & operator->();
-
-  bool operator==(const LIter< T > & other) const;
-  bool operator!=(const LIter< T > & other) const;
-};
-
-template< class T >
 List< T > * fake(List< T > * head)
 {
   List< T > * fake_node = static_cast< List< T > * >(::operator new(sizeof(List< T > *)));
@@ -74,7 +33,7 @@ List< T > * rmfake(List< T > * fake_node)
 }
 
 template< class T >
-List< T > add(List< T > * element, const T & value)
+List< T > insert_after(List< T > * element, const T & value)
 {
   List< T > * new_node = new List< T >();
   new_node->data = value;
@@ -84,9 +43,11 @@ List< T > add(List< T > * element, const T & value)
 }
 
 template< class T >
-List< T > insert(List< T > * element, const T & value)
+List< T > * erase_after(List< T > * element)
 {
-  element->next->data = value;
+  List< T > * tmp = element->next->next;
+  delete element->next;
+  element->next = tmp;
   return element->next;
 }
 
