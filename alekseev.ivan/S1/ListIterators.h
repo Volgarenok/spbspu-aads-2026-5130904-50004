@@ -60,4 +60,67 @@ bool ListIteratorBase< T >::operator!=(const ListIteratorBase< T > & other) cons
   return !(*this == other);
 }
 
+template< class T >
+struct LIter: ListIteratorBase< T > {
+  using ListIteratorBase< T >::ListIteratorBase;
+
+  LIter(const ListIteratorBase< T > & base);
+
+  T & operator*() const;
+  T * operator->() const;
+};
+
+template< class T >
+LIter< T >::LIter(const ListIteratorBase< T > & base):
+  ListIteratorBase< T >(base)
+{
+}
+
+template< class T >
+T & LIter< T >::operator*() const
+{
+  return this->node->data;
+}
+
+template< class T >
+T * LIter< T >::operator->() const
+{
+  return &(this->node->data);
+}
+
+template< class T >
+struct LCIter: ListIteratorBase< T > {
+  using ListIteratorBase< T >::ListIteratorBase;
+
+  LCIter(const LIter< T > & rhs);
+  LCIter(const ListIteratorBase< T > & base);
+
+  const T & operator*() const;
+  const T * operator->() const;
+};
+
+template< class T >
+LCIter< T >::LCIter(const LIter< T > & rhs):
+  ListIteratorBase< T >(rhs)
+{
+}
+
+template< class T >
+LCIter< T >::LCIter(const ListIteratorBase< T > & base):
+  ListIteratorBase< T >(base)
+{
+}
+
+template< class T >
+const T & LCIter< T >::operator*() const
+{
+  return this->node->data;
+}
+
+template< class T >
+const T * LCIter< T >::operator->() const
+{
+  return &(this->node->data);
+}
+
 #endif
