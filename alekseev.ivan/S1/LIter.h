@@ -75,4 +75,32 @@ bool LIter< T >::operator!=(const LIter< T > & other) const
   return !(*this == other);
 }
 
+template< class T >
+LIter< T > begin(List< T > * node)
+{
+  return LIter< T >(node->next);
+}
+
+template< class T >
+LIter< T > before_begin(List< T > * node)
+{
+  return LIter< T >(node);
+}
+
+template< class T >
+LIter< T > end(List< T > * node)
+{
+  List< T > * tail = node;
+  while (tail->next != node) {
+    tail = tail->next;
+  }
+  return LIter< T >(tail);
+}
+
+template< class T >
+LIter< T > next(LIter< T > it)
+{
+  return ++it;
+}
+
 #endif
