@@ -29,6 +29,7 @@ LIter< T >::LIter():
   node_(nullptr)
 {
 }
+
 template< class T >
 LIter< T >::LIter(List< T > * node):
   node_(node)
@@ -51,15 +52,27 @@ LIter< T > LIter< T >::operator++(int)
 }
 
 template< class T >
-T & LIter<T>::operator*()
+T & LIter< T >::operator*()
 {
   return node_->data;
 }
 
 template< class T >
-T * LIter<T>::operator->()
+T * LIter< T >::operator->()
 {
   return &(node_->data);
+}
+
+template< class T >
+bool LIter< T >::operator==(const LIter< T > & other) const
+{
+  return node_ == other.node_;
+}
+
+template< class T >
+bool LIter< T >::operator!=(const LIter< T > & other) const
+{
+  return !(*this == other);
 }
 
 #endif
