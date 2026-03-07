@@ -73,4 +73,21 @@ List< T > * rmfake(List< T > * fake_node)
   return head;
 }
 
+template< class T >
+List< T > add(List< T > * element, const T & value)
+{
+  List< T > * new_node = new List< T >();
+  new_node->data = value;
+  new_node->next = element->next;
+  element->next = new_node;
+  return new_node;
+}
+
+template< class T >
+List< T > insert(List< T > * element, const T & value)
+{
+  element->next->data = value;
+  return element->next;
+}
+
 #endif
