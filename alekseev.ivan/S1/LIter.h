@@ -15,7 +15,7 @@ struct LIter {
   LIter< T > operator++(int);
 
   T & operator*();
-  T & operator->();
+  T * operator->();
 
   bool operator==(const LIter< T > & other) const;
   bool operator!=(const LIter< T > & other) const;
@@ -48,6 +48,18 @@ LIter< T > LIter< T >::operator++(int)
   LIter< T > tmp = *this;
   ++(*this);
   return tmp;
+}
+
+template< class T >
+T & LIter<T>::operator*()
+{
+  return node_->data;
+}
+
+template< class T >
+T * LIter<T>::operator->()
+{
+  return &(node_->data);
 }
 
 #endif
