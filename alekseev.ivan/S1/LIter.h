@@ -35,6 +35,19 @@ LIter< T >::LIter(List< T > * node):
 {
 }
 
+template< class T >
+LIter< T > & LIter< T >::operator++()
+{
+  node_ = node_->next;
+  return *this;
+}
 
+template< class T >
+LIter< T > LIter< T >::operator++(int)
+{
+  LIter< T > tmp = *this;
+  ++(*this);
+  return tmp;
+}
 
 #endif
