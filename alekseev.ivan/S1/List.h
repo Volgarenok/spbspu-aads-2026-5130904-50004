@@ -51,4 +51,15 @@ List< T > * erase_after(List< T > * element)
   return element->next;
 }
 
+template< class T >
+List< T > * clear(List< T > * start, List< T > * end)
+{
+  while (start != end) {
+    List< T > * tmp = start->next;
+    delete start;
+    start = tmp;
+  }
+  return start;
+}
+
 #endif
