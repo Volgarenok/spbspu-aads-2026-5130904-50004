@@ -17,7 +17,7 @@ struct ListIteratorBase {
   bool operator==(const ListIteratorBase< T > & other) const;
   bool operator!=(const ListIteratorBase< T > & other) const;
 
-  private:
+  protected:
     List< T > * node_;
 };
 

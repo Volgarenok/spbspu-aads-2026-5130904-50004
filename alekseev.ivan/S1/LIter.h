@@ -10,7 +10,7 @@ struct LIter: ListIteratorBase< T > {
   LIter(const ListIteratorBase< T > & base);
 
   T & operator*() const;
-  T & operator->() const;
+  T * operator->() const;
 };
 
 template< class T >
@@ -26,7 +26,7 @@ T & LIter< T >::operator*() const
 }
 
 template< class T >
-T & LIter< T >::operator->() const
+T * LIter< T >::operator->() const
 {
   return &(this->node->data);
 }
