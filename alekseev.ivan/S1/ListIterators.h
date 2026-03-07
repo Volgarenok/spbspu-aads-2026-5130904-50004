@@ -123,4 +123,54 @@ const T * LCIter< T >::operator->() const
   return &(this->node->data);
 }
 
+template< class T >
+LIter< T > * begin(List< T > * fake_node)
+{
+  return new LIter< T >(fake_node->next);
+}
+
+template< class T >
+LIter< T > * before_begin(List< T > * fake_node)
+{
+  return new LIter< T >(fake_node);
+}
+
+template< class T >
+LIter< T > * end(List< T > * fake_node)
+{
+  List< T > * current = fake_node;
+  while (current->next != fake_node) {
+    current = current->next;
+  }
+  return new LIter< T >(current);
+}
+
+template< class T >
+LCIter< T > * begin(const List< T > * fake_node)
+{
+  return new LCIter< T >(fake_node->next);
+}
+
+template< class T >
+LCIter< T > * before_begin(const List< T > * fake_node)
+{
+  return new LCIter< T >(fake_node);
+}
+
+template< class T >
+LCIter< T > * end(const List< T > * fake_node)
+{
+  List< T > * current = fake_node;
+  while (current->next != fake_node) {
+    current = current->next;
+  }
+  return new LCIter< T >(current);
+}
+
+template< class Iter >
+Iter next(Iter it)
+{
+  return ++it;
+}
+
 #endif
