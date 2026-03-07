@@ -124,47 +124,47 @@ const T * LCIter< T >::operator->() const
 }
 
 template< class T >
-LIter< T > * begin(List< T > * fake_node)
+LIter< T > begin(List< T > * fake_node)
 {
-  return new LIter< T >(fake_node->next);
+  return LIter< T >(fake_node->next);
 }
 
 template< class T >
-LIter< T > * before_begin(List< T > * fake_node)
+LIter< T > before_begin(List< T > * fake_node)
 {
-  return new LIter< T >(fake_node);
+  return LIter< T >(fake_node);
 }
 
 template< class T >
-LIter< T > * end(List< T > * fake_node)
+LIter< T > end(List< T > * fake_node)
 {
   List< T > * current = fake_node;
   while (current->next != fake_node) {
     current = current->next;
   }
-  return new LIter< T >(current);
+  return LIter< T >(current);
 }
 
 template< class T >
-LCIter< T > * begin(const List< T > * fake_node)
+LCIter< T > begin(const List< T > * fake_node)
 {
-  return new LCIter< T >(fake_node->next);
+  return LCIter< T >(fake_node->next);
 }
 
 template< class T >
-LCIter< T > * before_begin(const List< T > * fake_node)
+LCIter< T > before_begin(const List< T > * fake_node)
 {
-  return new LCIter< T >(fake_node);
+  return LCIter< T >(fake_node);
 }
 
 template< class T >
-LCIter< T > * end(const List< T > * fake_node)
+LCIter< T > end(const List< T > * fake_node)
 {
   List< T > * current = fake_node;
   while (current->next != fake_node) {
     current = current->next;
   }
-  return new LCIter< T >(current);
+  return LCIter< T >(current);
 }
 
 template< class Iter >
