@@ -1,9 +1,3 @@
-#if defined(__GNUC__) || defined(__clang__)
-    __attribute__((weak)) int main(int argc, char* argv[]) {
-        return 0;
-    }
-#endif
-
 #define BOOST_TEST_MODULE ListTests
 #include <boost/test/unit_test.hpp>
 #include "list.hpp"
