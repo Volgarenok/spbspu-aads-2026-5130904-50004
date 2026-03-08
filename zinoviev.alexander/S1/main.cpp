@@ -11,26 +11,34 @@ int main()
   std::string name{};
   unsigned long long x = 0;
 
-  while (std::cin >> name)
+   while (std::cin >> name)
   {
     BiList<unsigned long long> inner;
 
-    while (std::cin >> x)
+    while (std::cin.peek() != '\n' && std::cin.peek() != EOF)
     {
-      if (x > static_cast<unsigned long long>(std::numeric_limits<unsigned long long>::max()))
+      if (std::cin >> x)
       {
-        std::cerr << "Error: number out of range\n";
+        inner.push_back(x);
+      }
+      else
+      {
+        std::cerr << "Error: invalid number\n";
         return 1;
       }
-      inner.push_back(static_cast<unsigned long long>(x));
+
+      while (std::cin.peek() == ' ')
+      {
+        std::cin.get();
+      }
+    }
+
+    if (std::cin.peek() == '\n')
+    {
+      std::cin.get();
     }
 
     outer.push_back(std::make_pair(name, std::move(inner)));
-
-    if (!std::cin.eof())
-    {
-      std::cin.clear();
-    }
   }
 
   if (outer.size() == 0)
