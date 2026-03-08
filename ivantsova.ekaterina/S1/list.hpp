@@ -16,7 +16,7 @@ namespace ivantsova
     friend class List< T >;
 
   public:
-    LIter() noexcept : ptr(nullptr) {}
+    LIter() noexcept : ptr(nullptr), head(nullptr) {}
     LIter(const LIter&) noexcept = default;
     LIter(LIter&&) noexcept = default;
     ~LIter() = default;
@@ -61,7 +61,8 @@ namespace ivantsova
 
   private:
     typename List<T>::Node* ptr;
-    explicit LIter(typename List<T>::Node* p) noexcept : ptr(p) {}
+    typename List<T>::Node* head;
+    explicit LIter(typename List<T>::Node* p, typename List<T>::Node* h) noexcept : ptr(p), head(h) {}
   };
 
   template< class T > class LCIter
@@ -69,7 +70,7 @@ namespace ivantsova
     friend class ivantsova::List< T >;
 
   public:
-    LCIter() noexcept : ptr(nullptr) {}
+    LCIter() noexcept : ptr(nullptr), head(nullptr) {}
     LCIter(const LCIter&) noexcept = default;
     LCIter(LCIter&&) noexcept = default;
     ~LCIter() = default;
@@ -114,7 +115,8 @@ namespace ivantsova
 
   private:
     const typename List<T>::Node* ptr;
-    explicit LCIter(const typename List<T>::Node* p) noexcept : ptr(p) {}
+    const typename List<T>::Node* head;
+    explicit LCIter(const typename List<T>::Node* p, const typename List<T>::Node* h) noexcept : ptr(p), head(h) {}
   };
 
   template< class T > class List
