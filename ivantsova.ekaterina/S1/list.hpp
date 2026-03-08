@@ -363,19 +363,91 @@ namespace ivantsova
       }
     }
 
-    LIter<T> begin() const noexcept {}
+    LIter<T> begin() const noexcept
+    {
+      return LIter<T>(head);
+    }
 
-    LIter<T> end() const noexcept {}
+    LIter<T> end() const noexcept
+    {
+       return LIter<T>(nullptr);
+    }
 
-    LCIter<T> cbegin() const noexcept {}
+    LCIter<T> cbegin() const noexcept
+    {
+      return LCIter<T>(head);
+    }
 
-    LCIter<T> cend() const noexcept {}
+    LCIter<T> cend() const noexcept
+    {
+      return LCIter<T>(nullptr);
+    }
 
-    LIter<T> insert(LIter<T> pos, const T& value) {}
+    LIter<T> insert(LIter<T> pos, const T& value)
+    {
+      if (empty())
+      {
+        push_back(value);
+        return LIter<T>(head);
+      }
+      Node* curr = pos.ptr;
+      if (curr == nullptr)
+      {
+        push_back(value);
+        return LIter<T>(head->prev);
+      }
+      Node* new_node = new Node(value, curr->prev, curr);
+      curr->prev->next = new_node;
+      curr->prev = new_node;
+      size_++;
+      return LIter<T>(new_node);
+    }
 
-    LIter<T> insert(LIter<T> pos, T&& value) {}
+    LIter<T> insert(LIter<T> pos, T&& value)
+    {
+      if (empty())
+      {
+        push_back(std::move(value));
+        return LIter<T>(head);
+      }
+      Node* curr = pos.ptr;
+      if (curr == nullptr)
+      {
+        push_back(std::move(value));
+        return LIter<T>(head->prev);
+      }
+      Node* new_node = new Node(std::move(value), curr->prev, curr);
+      curr->prev->next = new_node;
+      curr->prev = new_node;
+      size_++;
+      return LIter<T>(new_node);
+    }
 
-    LIter<T> erase(LIter<T> pos) {}
+    LIter<T> erase(LIter<T> pos)
+    {
+      if (empty() || pos.ptr == nullptr)
+      {
+        return LIter<T>(nullptr);
+      }
+      Node* toDelete = pos.ptr;
+      Node* next = toDelete->next;
+      if (size_ == 1)
+      {
+        delete toDelete;
+        head = nullptr;
+        size_ = 0;
+        return LIter<T>(nullptr);
+      }
+      toDelete->prev->next = toDelete->next;
+      toDelete->next->prev = toDelete->prev;
+      if (toDelete == head)
+      {
+        head = head->next;
+      }
+      delete toDelete;
+      size_--;
+      return LIter<T>(next == head ? nullptr : next);
+    }
   };
 }
 
