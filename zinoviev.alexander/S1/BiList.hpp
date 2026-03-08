@@ -71,16 +71,15 @@ namespace zinoviev
   };
 
   template<class T>
-  BiList<T>::BiList(const BiList<T>& other)
+  BiList<T>::BiList(const BiList<T>& other) :
+    head(nullptr),
+    tail(nullptr),
+    size_(0)
   {
-    BiList tmp;
-    Node* cur = other.head;
-    while (cur)
+    for (Node* cur = other.head; cur != nullptr; cur = cur->next)
     {
-      tmp.push_back(cur->val);
-      cur = cur->next;
+      push_back(cur->data);
     }
-    this->swap(tmp);
   }
 
   template<class T>
