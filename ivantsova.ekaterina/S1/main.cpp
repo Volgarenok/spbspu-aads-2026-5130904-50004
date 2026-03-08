@@ -102,6 +102,27 @@ List<int> calculateSums(const List<List<int>>& transposed)
   return sums;
 }
 
+void printList(const List<int>& list)
+{
+  if (list.empty())
+  {
+    std::cout << "\n";
+    return;
+  }
+    
+  bool first = true;
+  for (auto it = list.cbegin(); it != list.cend(); ++it)
+  {
+    if (!first)
+    {
+      std::cout << ' ';
+    }
+    std::cout << *it;
+    first = false;
+  }
+  std::cout << "\n";
+}
+
 int main()
 {
 }
