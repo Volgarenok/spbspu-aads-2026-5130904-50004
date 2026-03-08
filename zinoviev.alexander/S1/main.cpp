@@ -106,4 +106,17 @@ int main()
 
     list_sum.push_back(sum);
   }
+
+  CBIter<int> iter_sum = list_sum.cbegin();
+
+  std::cout << *iter_sum;
+  ++iter_sum;
+
+  while (iter_sum != list_sum.cend())
+  {
+    std::cout << " " << *iter_sum;
+    ++iter_sum;
+  }
+
+  std::cout << "\n";
 }
