@@ -1,14 +1,16 @@
 #include "BiList.hpp"
 #include <iostream>
 #include <string>
-#include <utility>
+#include <limits>
+#include <climits>
 
 using namespace zinoviev;
+
 int main()
 {
   BiList<std::pair<std::string, BiList<int>>> outer;
-  std::string name{};
-  int x = 0;
+  std::string name;
+  long long x;
 
   while (std::cin >> name)
   {
@@ -16,7 +18,12 @@ int main()
 
     while (std::cin >> x)
     {
-      inner.push_back(x);
+      if (x < 1 || x > INT_MAX)
+      {
+        std::cerr << "Error: number out of range\n";
+        return 1;
+      }
+      inner.push_back(static_cast<int>(x));
     }
 
     outer.push_back(std::make_pair(name, std::move(inner)));
@@ -27,7 +34,7 @@ int main()
     }
   }
 
-  if (!outer.size())
+  if (outer.size() == 0)
   {
     std::cout << "0\n";
     return 0;
@@ -50,7 +57,7 @@ int main()
   BiList<std::pair<BIter<int>, BIter<int>>> list_iter_inner;
   while (iter_outer != outer.end())
   {
-    if ((iter_outer->second).size())
+    if (iter_outer->second.size() > 0)
     {
       list_iter_inner.push_back(std::make_pair(iter_outer->second.begin(), iter_outer->second.end()));
     }
@@ -65,8 +72,8 @@ int main()
 
   BIter<std::pair<BIter<int>, BIter<int>>> iter_l_i_inner = list_iter_inner.begin();
 
-  BiList<int> list_sum;
-  int sum = 0;
+  BiList<long long> list_sum;
+  long long sum = 0;
 
   while (list_iter_inner.size())
   {
@@ -81,6 +88,11 @@ int main()
     {
       std::cout << " " << *(i->first);
 
+      if (sum > std::numeric_limits<long long>::max() - *(i->first))
+      {
+        std::cerr << "Error: overflow\n";
+        return 1;
+      }
       sum += *(i->first);
 
       ++(i->first);
@@ -107,7 +119,7 @@ int main()
     list_sum.push_back(sum);
   }
 
-  CBIter<int> iter_sum = list_sum.cbegin();
+  CBIter<long long> iter_sum = list_sum.cbegin();
 
   std::cout << *iter_sum;
   ++iter_sum;

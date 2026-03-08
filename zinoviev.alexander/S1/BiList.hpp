@@ -1,8 +1,8 @@
-#ifndef BILIST_HPP
-#define BILIST_HPP
+#ifndef BILIST_H
+#define BILIST_H
 
 #include <cstddef>
-#include <algorithm>
+#include <algorithm>   // для std::swap
 
 namespace zinoviev
 {
@@ -80,7 +80,7 @@ namespace zinoviev
       tmp.push_back(cur->val);
       cur = cur->next;
     }
-    swap(tmp);
+    this->swap(tmp);
   }
 
   template<class T>
@@ -99,7 +99,7 @@ namespace zinoviev
     if (this != &other)
     {
       BiList tmp(other);
-      swap(tmp);
+      this->swap(tmp);
     }
     return *this;
   }
@@ -109,9 +109,9 @@ namespace zinoviev
   {
     if (this != &other)
     {
-      std::swap(head, other.head);
-      std::swap(tail, other.tail);
-      std::swap(size_, other.size_);
+      std::swap(this->head, other.head);
+      std::swap(this->tail, other.tail);
+      std::swap(this->size_, other.size_);
     }
     return *this;
   }
@@ -120,17 +120,17 @@ namespace zinoviev
   void BiList<T>::push_front(const T& d)
   {
     Node* newNode = new Node(d);
-    ++size_;
+    ++this->size_;
 
-    if (!head)
+    if (!this->head)
     {
-      tail = head = newNode;
+      this->tail = this->head = newNode;
     }
     else
     {
-      newNode->next = head;
-      head->prev = newNode;
-      head = newNode;
+      newNode->next = this->head;
+      this->head->prev = newNode;
+      this->head = newNode;
     }
   }
 
@@ -138,79 +138,79 @@ namespace zinoviev
   void BiList<T>::push_back(const T& d)
   {
     Node* newNode = new Node(d);
-    ++size_;
+    ++this->size_;
 
-    if (!tail)
+    if (!this->tail)
     {
-      tail = head = newNode;
+      this->tail = this->head = newNode;
     }
     else
     {
-      newNode->prev = tail;
-      tail->next = newNode;
-      tail = newNode;
+      newNode->prev = this->tail;
+      this->tail->next = newNode;
+      this->tail = newNode;
     }
   }
 
   template<class T>
   void BiList<T>::clear() noexcept
   {
-    Node* temp = head;
+    Node* temp = this->head;
 
-    while (head)
+    while (this->head)
     {
-      head = head->next;
+      this->head = this->head->next;
       delete temp;
-      temp = head;
+      temp = this->head;
     }
 
-    size_ = 0;
-    tail = head;
+    this->size_ = 0;
+    this->tail = this->head;
   }
 
   template<class T>
   void BiList<T>::pop_front() noexcept
   {
-    if (!head)
+    if (!this->head)
       return;
 
-    Node* temp = head;
-    head = head->next;
+    Node* temp = this->head;
+    this->head = this->head->next;
 
     delete temp;
 
-    --size_;
+    --this->size_;
 
-    if (head)
+    if (this->head)
     {
-      head->prev = nullptr;
+      this->head->prev = nullptr;
     }
     else
     {
-      tail = nullptr;
+      this->tail = nullptr;
     }
   }
 
   template<class T>
   void BiList<T>::pop_back() noexcept
   {
-    if (!tail)
+    if (!this->tail)
       return;
 
-    Node* temp = tail;
-    tail = tail->prev;
+    Node* temp = this->tail;
+    this->tail = this->tail->prev;
 
     delete temp;
 
-    --size_;
+    --this->size_;
 
-    if (tail)
+    if (this->tail)
     {
-      tail->next = nullptr;
+      this->tail->next = nullptr;
     }
     else
     {
-      head = nullptr;
+      this->head = nullptr;
     }
   }
 
@@ -223,15 +223,15 @@ namespace zinoviev
   template<class T>
   void BiList<T>::swap(BiList& other) noexcept
   {
-    std::swap(head, other.head);
-    std::swap(tail, other.tail);
-    std::swap(size_, other.size_);
+    std::swap(this->head, other.head);
+    std::swap(this->tail, other.tail);
+    std::swap(this->size_, other.size_);
   }
 
   template<class T>
   BIter<T> BiList<T>::erase(BIter<T> x) noexcept
   {
-    if (x == end())
+    if (x == this->end())
     {
       return x;
     }
@@ -240,11 +240,11 @@ namespace zinoviev
     Node* pr_node = node->prev;
     Node* nx_node = node->next;
 
-    if (node == head)
+    if (node == this->head)
     {
       this->pop_front();
     }
-    else if (node == tail)
+    else if (node == this->tail)
     {
       this->pop_back();
     }
@@ -254,7 +254,7 @@ namespace zinoviev
       nx_node->prev = pr_node;
 
       delete node;
-      --size_;
+      --this->size_;
     }
     return BIter<T>(nx_node);
   }
@@ -262,8 +262,7 @@ namespace zinoviev
   template <class T>
   BIter<T> BiList<T>::begin()
   {
-    BIter<T> temp(head);
-    return temp;
+    return BIter<T>(this->head);
   }
 
   template <class T>
@@ -275,7 +274,7 @@ namespace zinoviev
   template <class T>
   CBIter<T> BiList<T>::cbegin() const
   {
-    return CBIter<T>(head);
+    return CBIter<T>(this->head);
   }
 
   template <class T>
@@ -461,4 +460,4 @@ namespace zinoviev
 
 }
 
-#endif
+#endif // BILIST_H
