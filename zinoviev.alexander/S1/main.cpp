@@ -76,48 +76,65 @@ int main()
     return 0;
   }
 
-  BIter<std::pair<BIter<unsigned long long>, BIter<unsigned long long>>> iter_l_i_inner = list_iter_inner.begin();
   BiList<unsigned long long> list_sum;
-  unsigned long long sum = 0;
 
   while (list_iter_inner.size())
   {
-    std::cout << *(iter_l_i_inner->first);
-    sum = *(iter_l_i_inner->first);
-    ++(iter_l_i_inner->first);
+    BiList<unsigned long long> current_row;
+    BIter<std::pair<BIter<unsigned long long>, BIter<unsigned long long>>> iter = list_iter_inner.begin();
 
-    for (auto i = ++(list_iter_inner.begin()); i != list_iter_inner.end(); )
+    while (iter != list_iter_inner.end())
     {
-      if (sum > std::numeric_limits<unsigned long long>::max() - *(i->first))
+      current_row.push_back(*(iter->first));
+      ++iter;
+    }
+
+    unsigned long long test_sum = 0;
+    bool overflow = false;
+
+    for (CBIter<unsigned long long> it = current_row.cbegin(); it != current_row.cend(); ++it)
+    {
+      if (test_sum > std::numeric_limits<unsigned long long>::max() - *it)
       {
-        std::cerr << "Overflow\n";
-        return 1;
+        overflow = true;
+        break;
       }
+      test_sum += *it;
+    }
 
-      std::cout << " " << *(i->first);
-      sum += *(i->first);
-      ++(i->first);
+    if (overflow)
+    {
+      std::cerr << "Overflow\n";
+      return 1;
+    }
 
-      if (i->first == i->second)
+    bool first_in_row = true;
+    iter = list_iter_inner.begin();
+    while (iter != list_iter_inner.end())
+    {
+      if (!first_in_row) std::cout << " ";
+      std::cout << *(iter->first);
+      first_in_row = false;
+
+      ++(iter->first);
+      ++iter;
+    }
+    std::cout << "\n";
+
+    list_sum.push_back(test_sum);
+
+    iter = list_iter_inner.begin();
+    while (iter != list_iter_inner.end())
+    {
+      if (iter->first == iter->second)
       {
-        i = list_iter_inner.erase(i);
+        iter = list_iter_inner.erase(iter);
       }
       else
       {
-        ++i;
+        ++iter;
       }
     }
-
-    std::cout << "\n";
-
-    if (iter_l_i_inner->first == iter_l_i_inner->second)
-    {
-      auto tmp = iter_l_i_inner;
-      ++iter_l_i_inner;
-      list_iter_inner.erase(tmp);
-    }
-
-    list_sum.push_back(sum);
   }
 
   CBIter<unsigned long long> iter_sum = list_sum.cbegin();
@@ -129,6 +146,7 @@ int main()
     std::cout << " " << *iter_sum;
     ++iter_sum;
   }
-
   std::cout << "\n";
+
+  return 0;
 }
