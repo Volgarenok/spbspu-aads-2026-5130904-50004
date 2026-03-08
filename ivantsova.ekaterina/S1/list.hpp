@@ -449,6 +449,14 @@ namespace ivantsova
       return LIter<T>(next == head ? nullptr : next);
     }
   };
+  template < class T >
+  void sum(T& total, const T& add)
+  {
+    if (std::numeric_limits<T>::max() - add < total) {
+        throw std::overflow_error("Overflow error");
+    }
+    total += add;
+  }
 }
 
 #endif
