@@ -123,6 +123,20 @@ namespace ivantsova
     void pop_back() {}
 
     void clear(){}
+
+    LIter<T> begin() const noexcept {}
+
+    LIter<T> end() const noexcept {}
+
+    LCIter<T> cbegin() const noexcept {}
+
+    LCIter<T> cend() const noexcept {}
+
+    LIter<T> insert(LIter<T> pos, const T& value) {}
+
+    LIter<T> insert(LIter<T> pos, T&& value) {}
+
+    LIter<T> erase(LIter<T> pos) {}
   };
 }
 
