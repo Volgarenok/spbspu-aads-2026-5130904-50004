@@ -62,4 +62,48 @@ int main()
     std::cerr << "Error: no numbers to sum\n";
     return 1;
   }
+
+  BIter<std::pair<BIter<int>, BIter<int>>> iter_l_i_inner = list_iter_inner.begin();
+
+  BiList<int> list_sum;
+  int sum = 0;
+
+  while (list_iter_inner.size())
+  {
+    std::cout << *(iter_l_i_inner->first);
+
+    sum = 0;
+    sum += *(iter_l_i_inner->first);
+
+    ++(iter_l_i_inner->first);
+
+    for (BIter<std::pair<BIter<int>, BIter<int>>> i = ++(list_iter_inner.begin()); i != list_iter_inner.end(); )
+    {
+      std::cout << " " << *(i->first);
+
+      sum += *(i->first);
+
+      ++(i->first);
+
+      if (i->first == i->second)
+      {
+        i = list_iter_inner.erase(i);
+      }
+      else
+      {
+        ++i;
+      }
+    }
+
+    std::cout << "\n";
+
+    if (iter_l_i_inner->first == iter_l_i_inner->second)
+    {
+      BIter<std::pair<BIter<int>, BIter<int>>> tmp = iter_l_i_inner;
+      ++iter_l_i_inner;
+      list_iter_inner.erase(tmp);
+    }
+
+    list_sum.push_back(sum);
+  }
 }
