@@ -125,4 +125,29 @@ void printList(const List<int>& list)
 
 int main()
 {
+  try
+  {
+    auto sequences = readSequences();
+    if (sequences.empty())
+    {
+      std::cout << "0" << "\n";
+      return 0;
+    }
+    printNames(sequences);
+        
+    auto transposed = transposeSequences(sequences);
+    for (auto it = transposed.cbegin(); it != transposed.cend(); ++it)
+    {
+      printList(*it);
+    }
+        
+    auto sums = calculateSums(transposed);
+    printList(sums);
+    return 0;
+  }
+  catch (const std::exception& e)
+  {
+    std::cerr << "Error: " << e.what() << "\n";
+    return 1;
+  }
 }
