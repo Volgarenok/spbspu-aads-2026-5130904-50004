@@ -1,6 +1,8 @@
 #ifndef BILIST_HPP
 #define BILIST_HPP
 
+#include <cstddef>
+
 namespace zinoviev
 {
   template <class T> class BIter;
