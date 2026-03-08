@@ -10,7 +10,7 @@ int main()
 {
   try
   {
-    List<std::pair<std::string, List<int>>> sequences;
+    List<std::pair<std::string, List< unsigned long long >>> sequences;
     std::string line;
 
     while (std::getline(std::cin, line))
@@ -22,16 +22,11 @@ int main()
       std::istringstream iss(line);
       std::string name;
       iss >> name;
-      List<int> numbers;
+      List< unsigned long long > numbers;
       unsigned long long num;
       while (iss >> num)
       {
-        if (num > static_cast< unsigned long long >(std::numeric_limits<int>::max()))
-        {
-          std::cerr << "Number out of range" << "\n";
-          return 1;
-        }
-        numbers.push_back(static_cast< int >(num));
+        numbers.push_back(num);
       }
       sequences.push_back({name, std::move(numbers)});
     }
@@ -107,7 +102,7 @@ int main()
     List<int> sums;
     for (auto it = transposed.cbegin(); it != transposed.cend(); ++it)
     {
-      int total = 0;
+      unsigned long long total = 0;
       for (auto elemIt = it->cbegin(); elemIt != it->cend(); ++elemIt)
       {
         total += *elemIt;
