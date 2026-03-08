@@ -360,3 +360,28 @@ BIter<T> BIter<T>::next()
   if (!has_next()) return BIter<T>();
   return BIter<T>(node->next);
 }
+
+// ---------- CBIter ----------
+template <class T>
+class CBIter
+{
+  typename BiList<T>::Node const* node;
+  friend class BiList<T>;
+
+public:
+  CBIter() : node(nullptr) {}
+  CBIter(typename BiList<T>::Node const* n) : node(n) {}
+  CBIter(BIter<T> const& it) : node(it.node) {}
+
+  CBIter<T>& operator++();
+  CBIter<T> operator++(int);
+  CBIter<T>& operator--();
+  CBIter<T> operator--(int);
+  const T& operator*() const;
+  const T* operator->() const;
+  bool operator==(CBIter<T> const& other) const;
+  bool operator!=(CBIter<T> const& other) const;
+
+  bool has_next() const;
+  CBIter<T> next() const;
+};
