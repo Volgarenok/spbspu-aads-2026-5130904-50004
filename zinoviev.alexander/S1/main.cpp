@@ -59,8 +59,8 @@ int main()
 
   if (list_iter_inner.size() == 0)
   {
-    std::cerr << "Error: no numbers to sum\n";
-    return 1;
+    std::cout << "0\n";
+    return 0;
   }
 
   BIter<std::pair<BIter<unsigned long long>, BIter<unsigned long long>>> iter_l_i_inner = list_iter_inner.begin();
