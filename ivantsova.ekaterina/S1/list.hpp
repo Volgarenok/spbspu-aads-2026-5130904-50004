@@ -234,19 +234,134 @@ namespace ivantsova
       return head->prev->data;
     }
 
-    void push_front(const T& value) {}
+    void push_front(const T& value)
+    {
+      Node* new_node = new Node(value);
+      if (empty())
+      {
+        head = new_node;
+        head->prev = head;
+        head->next = head;
+      }
+      else
+      {
+        new_node->prev = head->prev;
+        new_node->next = head;
+        head->prev->next = new_node;
+        head->prev = new_node;
+        head = new_node;
+      }
+      size_++;
+    }
 
-    void push_front(T&& value) {}
+    void push_front(T&& value)
+    {
+      Node* new_node = new Node(std::move(value));
+      if (empty())
+      {
+        head = new_node;
+        head->prev = head;
+        head->next = head;
+      }
+      else
+      {
+        new_node->prev = head->prev;
+        new_node->next = head;
+        head->prev->next = new_node;
+        head->prev = new_node;
+        head = new_node;
+      }
+      size_++;
+    }
 
-    void push_back(const T& value) {}
+    void push_back(const T& value)
+    {
+      Node* new_node = new Node(value);
+      if (empty())
+      {
+        head = new_node;
+        head->prev = head;
+        head->next = head;
+      }
+      else
+      {
+        new_node->prev = head->prev;
+        new_node->next = head;
+        head->prev->next = new_node;
+        head->prev = new_node;
+      }
+      size_++;
+    }
 
-    void push_back(T&& value) {}
+    void push_back(T&& value)
+    {
+      Node* new_node = new Node(std::move(value));
+      if (empty())
+      {
+        head = new_node;
+        head->prev = head;
+        head->next = head;
+      }
+      else
+      {
+        new_node->prev = head->prev;
+        new_node->next = head;
+        head->prev->next = new_node;
+        head->prev = new_node;
+      }
+      size_++;
+    }
 
-    void pop_front() {}
+    void pop_front()
+    {
+      if (empty())
+      {
+        throw std::runtime_error("List is empty");
+      }
+      if (size_ == 1)
+      {
+        delete head;
+        head = nullptr;
+      }
+      else
+      {
+        Node* toDelete = head;
+        head->prev->next = head->next;
+        head->next->prev = head->prev;
+        head = head->next;
+        delete toDelete;
+      }
+      size_--;
+    }
 
-    void pop_back() {}
+    void pop_back()
+    {
+      if (empty())
+      {
+        throw std::runtime_error("List is empty");
+      }
+      if (size_ == 1)
+      {
+        delete head;
+        head = nullptr;
+      }
+      else
+      {
+        Node* toDelete = head->prev;
+        toDelete->prev->next = head;
+        head->prev = toDelete->prev;
+        delete toDelete;
+      }
+      size_--;
+    }
 
-    void clear(){}
+    void clear()
+    {
+      while (!empty())
+      {
+        pop_front();
+      }
+    }
 
     LIter<T> begin() const noexcept {}
 
