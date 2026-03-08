@@ -1,6 +1,7 @@
 #include "proc.hpp"
 #include <iostream>
 #include <limits>
+#include <string>
 
 void kuchukbaeva::prInput(std::istream& in, OutList& seque)
 {
@@ -21,13 +22,12 @@ void kuchukbaeva::prInput(std::istream& in, OutList& seque)
       }
       in.unget();
 
-      int val = 0;
-      if (in >> val) {
-        tail = seq.insertAfter(tail, val);
-      } else {
-        in.clear();
-        break;
+      unsigned long long val = 0;
+      in >> vall;
+      if (in.fail() || val > static_cast< unsigned long long >(std::numeric_limits< int >::max())) {
+          throw std::out_of_range("Overflow");
       }
+      tail = seq.insertAfter(tail, static_cast< int >(val));
     }
     seqTail = seque.insertAfter(seqTail, std::make_pair(name, std::move(seq)));
     if (in.eof()) {
@@ -110,15 +110,17 @@ int kuchukbaeva::execLogic(const OutList& seque, std::ostream& out, std::ostream
     }
   }
 
-  isFirst = true;
-  for (LCIter< int > it = sums.cbegin(); it != sums.cend(); ++it) {
-    if (!isFirst) {
-      out << " ";
+  if (sums.isEmpty()) {
+    out << "0\n";
+  } else {
+    isFirst = true;
+    for (LCIter< int > it = sums.cbegin(); it != sums.cend(); ++it) {
+      if (!isFirst) {
+        out << " ";
+      }
+      out << *it;
+      isFirst = false;
     }
-    out << *it;
-    isFirst = false;
-  }
-  if (!sums.isEmpty()) {
     out << "\n";
   }
 
