@@ -55,10 +55,10 @@ int main()
         maxLen = it->second.size();
       }
     }
-    List<List<int>> transposed;
+    List<List< unsigned long long >> transposed;
     for (size_t i = 0; i < maxLen; ++i)
     {
-      List<int> newList;
+      List< unsigned long long > newList;
       for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
       {
         if (i < it->second.size())
@@ -105,7 +105,7 @@ int main()
       unsigned long long total = 0;
       for (auto elemIt = it->cbegin(); elemIt != it->cend(); ++elemIt)
       {
-        total += *elemIt;
+        sum(total, *elemIt);
       }
       sums.push_back(total);
     }
