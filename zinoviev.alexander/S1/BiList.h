@@ -253,3 +253,27 @@ BIter<T> BiList<T>::erase(BIter<T> x) noexcept
   return BIter<T>(nx_node);
 }
 
+template <class T>
+BIter<T> BiList<T>::begin()
+{
+  BIter<T> temp(head);
+  return temp;
+}
+
+template <class T>
+BIter<T> BiList<T>::end()
+{
+  return BIter<T>(nullptr);
+}
+
+template <class T>
+CBIter<T> BiList<T>::cbegin() const
+{
+  return CBIter<T>(head);
+}
+
+template <class T>
+CBIter<T> BiList<T>::cend() const
+{
+  return CBIter<T>(nullptr);
+}
