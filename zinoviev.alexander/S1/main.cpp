@@ -9,7 +9,7 @@ int main()
 
   BiList<std::pair<std::string, BiList<unsigned long long>>> outer;
   std::string name{};
-  unsigned long long x = 0;
+  std::string token{};
 
   while (std::cin >> name)
   {
@@ -17,9 +17,22 @@ int main()
 
     while (std::cin.peek() != '\n' && std::cin.peek() != std::char_traits<char>::eof())
     {
-      if (std::cin >> x)
+      if (std::cin >> token)
       {
-        inner.push_back(x);
+        try
+        {
+          size_t pos;
+          unsigned long long val = std::stoull(token, &pos);
+          if (pos == token.length())
+          {
+            inner.push_back(val);
+          }
+        }
+        catch (const std::out_of_range&)
+        {
+          std::cerr << "Overflow\n";
+          return 1;
+        }
       }
       else
       {
@@ -45,35 +58,6 @@ int main()
   {
     std::cout << "0\n";
     return 0;
-  }
-
-  size_t max_size = 0;
-  for (auto it = outer.cbegin(); it != outer.cend(); ++it)
-  {
-    if (it->second.size() > max_size)
-    {
-      max_size = it->second.size();
-    }
-  }
-
-  for (size_t col = 0; col < max_size; ++col)
-  {
-    unsigned long long test_sum = 0;
-    for (auto it = outer.cbegin(); it != outer.cend(); ++it)
-    {
-      if (col < it->second.size())
-      {
-        auto num_it = it->second.cbegin();
-        for (size_t i = 0; i < col; ++i) ++num_it;
-
-        if (test_sum > std::numeric_limits<unsigned long long>::max() - *num_it)
-        {
-          std::cerr << "Overflow\n";
-          return 1;
-        }
-        test_sum += *num_it;
-      }
-    }
   }
 
   CBIter<std::pair<std::string, BiList<unsigned long long>>> c_iter_outer = outer.cbegin();
@@ -115,7 +99,7 @@ int main()
     sum = *(iter_l_i_inner->first);
     ++(iter_l_i_inner->first);
 
-    for (auto i = ++(list_iter_inner.begin()); i != list_iter_inner.end(); )
+    for (BIter<std::pair<BIter<unsigned long long>, BIter<unsigned long long>>> i = ++(list_iter_inner.begin()); i != list_iter_inner.end(); )
     {
       if (sum > std::numeric_limits<unsigned long long>::max() - *(i->first))
       {
@@ -141,7 +125,7 @@ int main()
 
     if (iter_l_i_inner->first == iter_l_i_inner->second)
     {
-      auto tmp = iter_l_i_inner;
+      BIter<std::pair<BIter<unsigned long long>, BIter<unsigned long long>>> tmp = iter_l_i_inner;
       ++iter_l_i_inner;
       list_iter_inner.erase(tmp);
     }
