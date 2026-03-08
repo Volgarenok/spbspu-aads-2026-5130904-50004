@@ -51,6 +51,42 @@ void printNames(const List<std::pair<std::string, List<int>>>& sequences)
   std::cout << "\n";
 }
 
+List<List<int>> transposeSequences(const List<std::pair<std::string, List<int>>>& sequences)
+{
+  List<List<int>> result;
+  if (sequences.empty())
+  {
+    return result;
+  }
+  size_t maxLen = 0;
+  for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
+  {
+    if (it->second.size() > maxLen)
+    {
+      maxLen = it->second.size();
+    }
+  }
+    
+  for (size_t i = 0; i < maxLen; ++i)
+  {
+    List<int> newList;
+    for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
+    {
+      if (i < it->second.size())
+      {
+        auto elemIt = it->second.cbegin();
+        for (size_t j = 0; j < i; ++j)
+        {
+          ++elemIt;
+        }
+        newList.push_back(*elemIt);
+      }
+    }
+    result.push_back(std::move(newList));
+  }
+  return result;
+}
+
 int main()
 {
 }
