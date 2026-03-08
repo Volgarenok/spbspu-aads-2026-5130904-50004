@@ -2,6 +2,7 @@
 #define BILIST_HPP
 
 #include <cstddef>
+#include <algorithm>
 
 namespace zinoviev
 {
