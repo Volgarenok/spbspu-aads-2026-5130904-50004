@@ -17,17 +17,37 @@ namespace ivantsova
     LIter& operator=(const LIter&) noexcept = default;
     LIter& operator=(LIter&&) noexcept = default;
 
-    T& operator*() const noexcept {}
+    T& operator*() const noexcept
+    {
+      return ptr->data;
+    }
 
-    T* operator->() const noexcept {}
+    T* operator->() const noexcept
+    {
+      return &(ptr->data);
+    }
 
-    LIter& operator++() noexcept {}
+    LIter& operator++() noexcept
+    {
+      ptr = ptr->next;
+      return *this;
+    }
 
-    LIter& operator--() noexcept {}
+    LIter& operator--() noexcept
+    {
+      ptr = ptr->prev;
+      return *this;
+    }
 
-    bool operator==(const LIter& other) const noexcept {}
+    bool operator==(const LIter& other) const noexcept
+    {
+      return ptr == other.ptr;
+    }
 
-    bool operator!=(const LIter& other) const noexcept {}
+    bool operator!=(const LIter& other) const noexcept
+    {
+      return ptr != other.ptr;
+    }
 
   private:
     typename List<T>::Node* ptr;
@@ -46,17 +66,37 @@ namespace ivantsova
     LCIter& operator=(const LCIter&) noexcept = default;
     LCIter& operator=(LCIter&&) noexcept = default;
 
-    const T& operator*() const noexcept {}
+    const T& operator*() const noexcept
+    {
+      return ptr->data;
+    }
 
-    const T* operator->() const noexcept {}
+    const T* operator->() const noexcept
+    {
+      return &(ptr->data);
+    }
 
-    LCIter& operator++() noexcept {}
+    LCIter& operator++() noexcept
+    {
+      ptr = ptr->next;
+      return *this;
+    }
 
-    LCIter& operator--() noexcept {}
+    LCIter& operator--() noexcept
+    {
+      ptr = ptr->prev;
+      return *this;
+    }
 
-    bool operator==(const LCIter& other) const noexcept {}
+    bool operator==(const LCIter& other) const noexcept
+    {
+      return ptr == other.ptr;
+    }
 
-    bool operator!=(const LCIter& other) const noexcept {}
+    bool operator!=(const LCIter& other) const noexcept
+    {
+      return ptr != other.ptr;
+    }
 
   private:
     const typename List<T>::Node* ptr;
@@ -87,14 +127,56 @@ namespace ivantsova
 
   public:
     List() noexcept : head(nullptr), size_(0) {}
-    ~List() {}
-    List(const List& other) : head(nullptr), size_(0) {}
+    ~List()
+    {
+      clear();
+    }
+    List(const List& other) : head(nullptr), size_(0)
+    {
+      if (other.head)
+      {
+        Node* curr = other.head;
+        Node* first = other.head;
+        while (true)
+        {
+          push_back(curr->data);
+          curr = curr->next;
+          if (curr == first)
+          {
+            break;
+          }
+        }
+      }
+    }
 
-    List(List&& other) noexcept : head(other.head), size_(other.size_) {}
+    List(List&& other) noexcept : head(other.head), size_(other.size_)
+    {
+      other.head = nullptr;
+      other.size_ = 0;
+    }
 
-    List& operator=(const List& other) {}
+    List& operator=(const List& other)
+    {
+      if (this != &other)
+      {
+        List tmp(other);
+        swap(tmp);
+      }
+      return *this;
+    }
 
-    List& operator=(List&& other) noexcept {}
+    List& operator=(List&& other) noexcept
+    {
+      if (this != &other)
+      {
+        clear();
+        head = other.head;
+        size_ = other.size_;
+        other.head = nullptr;
+        other.size_ = 0;
+      }
+      return *this;
+    }
 
     void swap(List& other) noexcept {}
 
