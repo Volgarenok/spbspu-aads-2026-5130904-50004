@@ -1,6 +1,12 @@
 #ifndef LIST_HPP
 #define LIST_HPP
 
+#include "list.hpp"
+#include <cstddef>
+#include <stdexcept>
+#include <utility>
+#include <limits>
+
 namespace ivantsova
 {
   template< class T > class List;
