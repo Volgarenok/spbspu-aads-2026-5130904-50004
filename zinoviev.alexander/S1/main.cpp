@@ -44,4 +44,22 @@ int main()
     ++c_iter_outer;
   }
   std::cout << "\n";
+
+  BIter<std::pair<std::string, BiList<int>>> iter_outer = outer.begin();
+
+  BiList<std::pair<BIter<int>, BIter<int>>> list_iter_inner;
+  while (iter_outer != outer.end())
+  {
+    if ((iter_outer->second).size())
+    {
+      list_iter_inner.push_back(std::make_pair(iter_outer->second.begin(), iter_outer->second.end()));
+    }
+    ++iter_outer;
+  }
+
+  if (list_iter_inner.size() == 0)
+  {
+    std::cerr << "Error: no numbers to sum\n";
+    return 1;
+  }
 }
