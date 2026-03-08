@@ -87,6 +87,21 @@ List<List<int>> transposeSequences(const List<std::pair<std::string, List<int>>>
   return result;
 }
 
+List<int> calculateSums(const List<List<int>>& transposed)
+{
+  List<int> sums;
+  for (auto it = transposed.cbegin(); it != transposed.cend(); ++it)
+  {
+    int total = 0;
+    for (auto elemIt = it->cbegin(); elemIt != it->cend(); ++elemIt)
+    {
+      sum(total, *elemIt);
+    }
+    sums.push_back(total);
+  }
+  return sums;
+}
+
 int main()
 {
 }
