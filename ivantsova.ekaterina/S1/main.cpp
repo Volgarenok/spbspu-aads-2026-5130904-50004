@@ -23,10 +23,15 @@ int main()
       std::string name;
       iss >> name;
       List<int> numbers;
-      int num;
+      unsigned long long num;
       while (iss >> num)
       {
-        numbers.push_back(num);
+        if (num > static_cast< unsigned long long >(std::numeric_limits<int>::max()))
+        {
+          std::cerr << "Number out of range" << "\n";
+          return 1;
+        }
+        numbers.push_back(static_cast< int >(num));
       }
       sequences.push_back({name, std::move(numbers)});
     }
@@ -93,6 +98,11 @@ int main()
         firstInRow = false;
       }
       std::cout << "\n";
+    }
+    if (maxLen == 0)
+    {
+      std::cout << "0\n";
+      return 0;
     }
     List<int> sums;
     for (auto it = transposed.cbegin(); it != transposed.cend(); ++it)
