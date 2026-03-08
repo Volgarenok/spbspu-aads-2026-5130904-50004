@@ -24,12 +24,10 @@ void kuchukbaeva::prInput(std::istream& in, OutList& seque)
       in.unget();
 
       unsigned long long val = 0;
-      if (in >> val) {
-        tail = seq.insertAfter(tail, val);
-      } else {
-        in.clear();
-        break;
+      if (!(in >> val)) {
+        throw std::overflow_error("Overflow");
       }
+      tail = seq.insertAfter(tail, val);
     }
     seqTail = seque.insertAfter(seqTail, std::make_pair(name, std::move(seq)));
   }
@@ -41,6 +39,15 @@ int kuchukbaeva::execLogic(const OutList& seque, std::ostream& out, std::ostream
     out << "0\n";
     return 0;
   }
+  bool isFirst = true;
+  for (LCIter< std::pair< std::string, InList > > it = seque.cbegin(); it != seque.cend(); ++it) {
+    if (!isFirst) {
+      out << " ";
+    }
+    out << it->first;
+    isFirst = false;
+  }
+  out << "\n";
 
   List< LCIter< unsigned long long > > iters;
   LIter< LCIter< unsigned long long > > itersTail = iters.beforeBegin();
@@ -50,7 +57,7 @@ int kuchukbaeva::execLogic(const OutList& seque, std::ostream& out, std::ostream
 
   bool hasMore = true;
   List< unsigned long long > sums;
-  List< unsigned long long > sumsTail = sums.beforeBegin();
+  LIter< unsigned long long > sumsTail = sums.beforeBegin();
 
   while (hasMore) {
     hasMore = false;
