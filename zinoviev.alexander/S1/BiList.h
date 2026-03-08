@@ -300,3 +300,49 @@ public:
   bool has_next();
   BIter<T> next();
 };
+
+template <class T>
+BIter<T>& BIter<T>::operator++()
+{
+  node = node->next;
+  return *this;
+}
+
+template <class T>
+BIter<T> BIter<T>::operator++(int)
+{
+  BIter<T> temp = *this;
+  node = node->next;
+  return temp;
+}
+
+template <class T>
+BIter<T>& BIter<T>::operator--()
+{
+  node = node->prev;
+  return *this;
+}
+
+template <class T>
+T& BIter<T>::operator*() const
+{
+  return node->val;
+}
+
+template <class T>
+T* BIter<T>::operator->() const
+{
+  return &(node->val);
+}
+
+template <class T>
+bool BIter<T>::operator==(const BIter<T>& x) const
+{
+  return node == x.node;
+}
+
+template <class T>
+bool BIter<T>::operator!=(const BIter<T>& x) const
+{
+  return !(*this == x);
+}
