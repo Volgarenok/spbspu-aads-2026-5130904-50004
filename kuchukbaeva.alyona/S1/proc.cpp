@@ -23,7 +23,7 @@ void kuchukbaeva::prInput(std::istream& in, OutList& seque)
       in.unget();
 
       unsigned long long val = 0;
-      in >> vall;
+      in >> val;
       if (in.fail() || val > static_cast< unsigned long long >(std::numeric_limits< int >::max())) {
           throw std::out_of_range("Overflow");
       }
