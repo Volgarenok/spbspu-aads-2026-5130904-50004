@@ -36,12 +36,16 @@ namespace ivantsova
     LIter& operator++() noexcept
     {
       ptr = ptr->next;
+      if (ptr == head)
+      {
+        ptr = nullptr;
+      }
       return *this;
     }
 
     LIter& operator--() noexcept
     {
-      ptr = ptr->prev;
+      ptr = ptr->head;
       return *this;
     }
 
@@ -85,6 +89,10 @@ namespace ivantsova
     LCIter& operator++() noexcept
     {
       ptr = ptr->next;
+      if (ptr == head)
+      {
+        ptr = nullptr;
+      }
       return *this;
     }
 
