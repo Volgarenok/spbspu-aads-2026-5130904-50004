@@ -109,7 +109,7 @@ namespace ivantsova
     friend class LCIter< T >;
 
   private:
-    struct Node 
+    struct Node
     {
       T data;
       Node* prev;
@@ -452,8 +452,9 @@ namespace ivantsova
   template < class T >
   void sum(T& total, const T& add)
   {
-    if (std::numeric_limits<T>::max() - add < total) {
-        throw std::overflow_error("Overflow error");
+    if (std::numeric_limits<T>::max() - add < total)
+    {
+      throw std::overflow_error("Overflow error");
     }
     total += add;
   }

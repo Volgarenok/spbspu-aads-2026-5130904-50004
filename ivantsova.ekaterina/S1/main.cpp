@@ -10,7 +10,7 @@ List<std::pair<std::string, List<int>>> readSequences()
 {
   List<std::pair<std::string, List<int>>> sequences;
   std::string line;
-    
+
   while (std::getline(std::cin, line))
   {
     if (line.empty())
@@ -20,7 +20,7 @@ List<std::pair<std::string, List<int>>> readSequences()
     std::istringstream iss(line);
     std::string name;
     iss >> name;
-        
+
     List<int> numbers;
     int num;
     while (iss >> num)
@@ -66,7 +66,7 @@ List<List<int>> transposeSequences(const List<std::pair<std::string, List<int>>>
       maxLen = it->second.size();
     }
   }
-    
+
   for (size_t i = 0; i < maxLen; ++i)
   {
     List<int> newList;
@@ -109,7 +109,7 @@ void printList(const List<int>& list)
     std::cout << "\n";
     return;
   }
-    
+
   bool first = true;
   for (auto it = list.cbegin(); it != list.cend(); ++it)
   {
@@ -134,13 +134,13 @@ int main()
       return 0;
     }
     printNames(sequences);
-        
+
     auto transposed = transposeSequences(sequences);
     for (auto it = transposed.cbegin(); it != transposed.cend(); ++it)
     {
       printList(*it);
     }
-        
+
     auto sums = calculateSums(transposed);
     printList(sums);
     return 0;
