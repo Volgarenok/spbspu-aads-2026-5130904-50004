@@ -381,22 +381,22 @@ namespace ivantsova
 
     LIter<T> begin() const noexcept
     {
-      return LIter<T>(head);
+      return LIter<T>(head, head);
     }
 
     LIter<T> end() const noexcept
     {
-       return LIter<T>(nullptr);
+       return LIter<T>(nullptr, head);
     }
 
     LCIter<T> cbegin() const noexcept
     {
-      return LCIter<T>(head);
+      return LCIter<T>(head, head);
     }
 
     LCIter<T> cend() const noexcept
     {
-      return LCIter<T>(nullptr);
+      return LCIter<T>(nullptr, head);
     }
 
     LIter<T> insert(LIter<T> pos, const T& value)
