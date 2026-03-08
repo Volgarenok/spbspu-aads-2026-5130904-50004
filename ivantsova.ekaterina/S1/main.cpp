@@ -27,7 +27,7 @@ int main()
       while (iss >> num)
       {
         numbers.push_back(num);
-      } 
+      }
       sequences.push_back({name, std::move(numbers)});
     }
 
@@ -81,7 +81,7 @@ int main()
         std::cout << "\n";
         continue;
       }
-            
+
       bool firstInRow = true;
       for (auto elemIt = it->cbegin(); elemIt != it->cend(); ++elemIt)
       {
