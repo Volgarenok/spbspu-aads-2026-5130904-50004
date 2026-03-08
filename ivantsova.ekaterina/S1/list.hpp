@@ -178,19 +178,61 @@ namespace ivantsova
       return *this;
     }
 
-    void swap(List& other) noexcept {}
+    void swap(List& other) noexcept
+    {
+      Node* tmp_head = head;
+      size_t tmp_size = size_;
+      head = other.head;
+      size_ = other.size_;
+      other.head = tmp_head;
+      other.size_ = tmp_size;
+    }
 
-    bool empty() const noexcept {}
+    bool empty() const noexcept
+    {
+      return size_ == 0;
+    }
 
-    size_t size() const noexcept {}
+    size_t size() const noexcept
+    {
+      return size_;
+    }
 
-    T& front() {}
+    T& front()
+    {
+      if (empty())
+      {
+        throw std::runtime_error("List is empty");
+      }
+      return head->data;
+    }
 
-    const T& front() const {}
+    const T& front() const
+    {
+      if (empty())
+      {
+        throw std::runtime_error("List is empty");
+      }
+      return head->data;
+    }
 
-    T& back() {}
+    T& back()
+    {
+      if (empty())
+      {
+        throw std::runtime_error("List is empty");
+      }
+      return head->prev->data;
+    }
 
-    const T& back() const {}
+    const T& back() const
+    {
+      if (empty())
+      {
+        throw std::runtime_error("List is empty");
+      }
+      return head->prev->data;
+    }
 
     void push_front(const T& value) {}
 
