@@ -7,7 +7,7 @@
 
 namespace kuchukbaeva {
 
-  using InList = List< int >;
+  using InList = List< unsigned long long >;
   using OutList = List< std::pair< std::string, InList > >;
 
   void prInput(std::istream& in, OutList& sequences);

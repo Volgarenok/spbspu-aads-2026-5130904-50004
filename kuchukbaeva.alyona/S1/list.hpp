@@ -30,6 +30,12 @@ namespace kuchukbaeva {
       {
       }
 
+      Node(T&& d, Node* n):
+        data_(std::move(d)),
+        next_(n)
+      {
+      }
+
       T data_;
       Node* next_;
     };
@@ -261,7 +267,7 @@ namespace kuchukbaeva {
 
     LIter< T > insertAfter(LIter< T > pos, const T& value)
     {
-      detail::Node< T >* newNode = new detail::Node< T >(value, pos.node_->next_);
+      detail::Node< T >* newNode = new detail::Node< T >(std::move(value), pos.node_->next_);
       pos.node_->next_ = newNode;
       return LIter< T >(newNode);
     }

@@ -11,6 +11,7 @@ void kuchukbaeva::prInput(std::istream& in, OutList& seque)
 
   while (in >> name) {
     InList seq;
+    LIter< unsigned long long > tail = seq.beforeBegin();
 
     while (true) {
       int c = in.get();
@@ -23,16 +24,14 @@ void kuchukbaeva::prInput(std::istream& in, OutList& seque)
       in.unget();
 
       unsigned long long val = 0;
-      in >> val;
-      if (in.fail() || val > static_cast< unsigned long long >(std::numeric_limits< int >::max())) {
-          throw std::overflow_error("Overflow");
+      if (in >> val) {
+        tail = seq.insertAfter(tail, val);
+      } else {
+        in.clear();
+        break;
       }
-      seq.push_back(static_cast< int >(val));
     }
     seqTail = seque.insertAfter(seqTail, std::make_pair(name, std::move(seq)));
-    if (in.eof()) {
-      break;
-    }
   }
 }
 
@@ -43,29 +42,34 @@ int kuchukbaeva::execLogic(const OutList& seque, std::ostream& out, std::ostream
     return 0;
   }
 
-  List< LCIter< int > > iters;
+  List< LCIter< unsigned long long > > iters;
+  LIter< LCIter< unsigned long long > > itersTail = iters.beforeBegin();
   for (LCIter< std::pair< std::string, InList > > it = seque.cbegin(); it != seque.cend(); ++it) {
-    iters.push_back((*it).second.cbegin());
+    itersTail = iters.insertAfter(itersTail, (*it).second.cbegin());
   }
 
   bool hasMore = true;
-  List< int > sums;
+  List< unsigned long long > sums;
+  List< unsigned long long > sumsTail = sums.beforeBegin();
 
   while (hasMore) {
     hasMore = false;
-    List< int > row;
-    LIter< LCIter< int > > iterNode = iters.begin();
+    List< unsigned long long > row;
+    LIter< unsigned long long > rowTail = row.beforeBegin();
+    LIter< unsigned long long > iterNode = iters.begin();
     LCIter< std::pair< std::string, InList > > seqIt = seque.cbegin();
 
-    int currentSum = 0;
+    unsigned long long currentSum = 0;
     bool isSum = true;
+    bool rowHasElements = false;
 
     while (iterNode != iters.end()) {
       if (*iterNode != (*seqIt).second.cend()) {
-        const int val = **iterNode;
-        row.push_back(val);
+        const unsigned long long val = **iterNode;
+        rowTail = row.insertAfter(rowTail, val);
+        rowHasElements = true;
 
-        if (val > 0 && std::numeric_limits< int >::max() - currentSum < val) {
+        if (std::numeric_limits< unsigned long long >::max() - currentSum < val) {
           isSum = false;
         } else {
           currentSum += val;
@@ -78,31 +82,34 @@ int kuchukbaeva::execLogic(const OutList& seque, std::ostream& out, std::ostream
       ++seqIt;
     }
 
-    if (hasMore) {
-      if (!isSum) {
-        err << "Error: Sum overflow\n";
-        return 1;
-      }
-      sums.push_back(currentSum);
-
+    if (rowHasElements) {
       bool isFirst = true;
-      for (LCIter< int > it = row.cbegin(); it != row.cend(); ++it) {
+      for (LCIter< unsigned long long > it = row.cbegin(); it != row.cend(); ++it) {
         if (!isFirst) out << " ";
         out << *it;
         isFirst = false;
       }
       out << "\n";
+      if (!isSum) {
+        err << "Error: Overflow\n";
+        return 1;
+      }
+      sumsTail = sums.insertAfter(sumsTail, currentSum);
     }
   }
 
-  bool isFirst = true;
-  for (LCIter< int > it = sums.cbegin(); it != sums.cend(); ++it) {
-    if (!isFirst) {
-      out << " ";
+  if (sums.isEmpty()) {
+    out << "0\n";
+  } else {
+    isFirst = true;
+    for (LCIter< unsigned long long > it = sums.cbegin(); it != sums.cend(); ++it) {
+      if (!isFirst) {
+        out << " ";
+      }
+      out << *it;
+      isFirst = false;
     }
-    out << *it;
-    isFirst = false;
+    out << "\n";
   }
-  out << "\n";
   return 0;
 }
