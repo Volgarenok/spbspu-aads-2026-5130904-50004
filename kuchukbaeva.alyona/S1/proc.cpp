@@ -2,6 +2,7 @@
 #include <iostream>
 #include <limits>
 #include <string>
+#include <stdexcept>
 
 void kuchukbaeva::prInput(std::istream& in, OutList& seque)
 {
