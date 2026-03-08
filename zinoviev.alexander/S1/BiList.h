@@ -346,3 +346,17 @@ bool BIter<T>::operator!=(const BIter<T>& x) const
 {
   return !(*this == x);
 }
+
+template <class T>
+bool BIter<T>::has_next()
+{
+  if (!node) return false;
+  return node->next;
+}
+
+template <class T>
+BIter<T> BIter<T>::next()
+{
+  if (!has_next()) return BIter<T>();
+  return BIter<T>(node->next);
+}
