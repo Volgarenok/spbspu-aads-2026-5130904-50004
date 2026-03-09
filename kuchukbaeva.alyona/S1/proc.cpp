@@ -63,7 +63,7 @@ int kuchukbaeva::execLogic(const OutList& seque, std::ostream& out, std::ostream
     hasMore = false;
     List< unsigned long long > row;
     LIter< unsigned long long > rowTail = row.beforeBegin();
-    LIter< < LCIter< unsigned long long > > iterNode = iters.begin();
+    LIter< LCIter< unsigned long long > > iterNode = iters.begin();
     LCIter< std::pair< std::string, InList > > seqIt = seque.cbegin();
 
     unsigned long long currentSum = 0;
