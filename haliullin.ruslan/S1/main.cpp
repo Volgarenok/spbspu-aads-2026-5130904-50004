@@ -3,6 +3,7 @@
 #include <string>
 #include <utility>
 #include <limits>
+#include <cctype>
 
 using namespace haliullin;
 
@@ -17,11 +18,10 @@ int main()
     {
       BiList<unsigned long long> numbers;
       unsigned long long num;
-      char peek;
       while (true)
       {
-        peek = std::cin.peek();
-        if (peek == '\n' || peek == EOF || peek == '\r')
+        int peek = std::cin.peek();
+        if (peek == EOF || peek == '\n' || peek == '\r' || std::isalpha(static_cast<unsigned char>(peek)))
         {
           break;
         }
@@ -31,6 +31,7 @@ int main()
         }
         else
         {
+          std::cin.clear();
           break;
         }
       }
@@ -53,7 +54,7 @@ int main()
       std::cout << it->first;
       first = false;
     }
-    std::cout << "\n";
+    std::cout << '\n';
 
     size_t maxLen = 0;
     for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
@@ -80,16 +81,15 @@ int main()
           newList.push_back(*elemIt);
         }
       }
-      transposed.push_back(std::move(newList));
+      if (!newList.is_empty())
+      {
+        transposed.push_back(std::move(newList));
+      }
     }
+
 
     for (auto it = transposed.cbegin(); it != transposed.cend(); ++it)
     {
-      if (it->is_empty())
-      {
-        continue;
-      }
-
       bool firstInRow = true;
       for (auto elemIt = it->cbegin(); elemIt != it->cend(); ++elemIt)
       {
@@ -100,7 +100,7 @@ int main()
         std::cout << *elemIt;
         firstInRow = false;
       }
-      std::cout << "\n";
+      std::cout << '\n';
     }
 
     BiList<unsigned long long> sums;
@@ -118,23 +118,30 @@ int main()
       sums.push_back(total);
     }
 
-    first = true;
-    for (auto it = sums.cbegin(); it != sums.cend(); ++it)
+    if (sums.is_empty())
     {
-      if (!first)
-      {
-        std::cout << ' ';
-      }
-      std::cout << *it;
-      first = false;
+      std::cout << "0\n";
     }
-    std::cout << "\n";
+    else
+    {
+      first = true;
+      for (auto it = sums.cbegin(); it != sums.cend(); ++it)
+      {
+        if (!first)
+        {
+          std::cout << ' ';
+        }
+        std::cout << *it;
+        first = false;
+      }
+      std::cout << '\n';
+    }
 
     return 0;
   }
   catch (const std::exception &e)
   {
-    std::cerr << "Error: " << e.what() << "\n";
+    std::cerr << "Error: " << e.what() << '\n';
     return 1;
   }
 }
