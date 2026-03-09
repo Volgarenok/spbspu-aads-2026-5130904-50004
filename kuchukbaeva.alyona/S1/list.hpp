@@ -103,7 +103,7 @@ namespace kuchukbaeva {
     {
       return node_->data_;
     }
-    T* operator->() {
+    const T* operator->() const {
       return &node_->data_;
     }
 
