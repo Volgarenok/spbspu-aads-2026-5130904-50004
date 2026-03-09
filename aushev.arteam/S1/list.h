@@ -46,6 +46,9 @@ public:
   size_t size() const;
   void clear();
 
+  void push_front(const T& value);
+  void push_back(const T& value);
+
 private:
   struct Node {
     T data;
@@ -141,6 +144,35 @@ void List< T >::clear()
   }
   tail_ = nullptr;
   size_ = 0;
+}
+
+template< class T >
+void List< T >::push_front(const T& value)
+{
+  Node* newNode = new Node;
+  newNode->data = value;
+  newNode->next = head_;
+  head_ = newNode;
+  if (tail_ == nullptr) {
+    tail_ = newNode;
+  }
+  ++size_;
+}
+
+template< class T >
+void List< T >::push_back(const T& value)
+{
+  Node* newNode = new Node;
+  newNode->data = value;
+  newNode->next = nullptr;
+  if (tail_ == nullptr) {
+    head_ = newNode;
+    tail_ = newNode;
+  } else {
+    tail_->next = newNode;
+    tail_ = newNode;
+  }
+  ++size_;
 }
 
 }
