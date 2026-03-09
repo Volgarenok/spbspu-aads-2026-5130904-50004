@@ -9,7 +9,7 @@ int main()
 {
    try
   {
-    BiList<std::pair<std::string, BiList<unsigned long long>>> stor;
+    BiList<std::pair<std::string, BiList<unsigned long long>>> seq;
     std::string token;
     unsigned long long value = 0;
 
@@ -22,13 +22,30 @@ int main()
         numbers.push_back(value);
       }
 
-      stor.push_back(std::make_pair(token, std::move(numbers)));
+      seq.push_back(std::make_pair(token, std::move(numbers)));
 
       if (!std::cin.eof())
       {
         std::cin.clear();
       }
     }
+
+    if (seq.is_empty())
+    {
+      std::cout << "0\n";
+      return 0;
+    }
+
+    auto nameIter = seq.cbegin();
+    std::cout << " " << nameIter->first;
+    ++nameIter;
+
+    while (nameIter != seq.cend())
+    {
+      std::cout << " " << nameIter->first;
+      ++nameIter;
+    }
+    std::cout << "\n";
   }
   catch(const std::exception &e)
   {
