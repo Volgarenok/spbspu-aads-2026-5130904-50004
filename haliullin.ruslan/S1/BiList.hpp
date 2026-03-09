@@ -51,8 +51,37 @@ namespace haliullin
     LIter operator++(int) noexcept;
     LIter & operator--() noexcept;
     LIter operator--(int) noexcept;
+  };
 
-    operator LCIter<T>() const noexcept;
+  template< class T >
+  class LCIter
+  {
+    friend class BiList< T >;
+    const Node< T > * cur;
+    explicit LCIter(const Node<T> * node) noexcept;
+
+  public:
+    LCIter() noexcept;
+    LCIter(const LIter<T> & other) noexcept;
+    LCIter(const LCIter & other) noexcept;
+    LCIter(LCIter && other) noexcept;
+    ~LCIter();
+
+    LCIter & operator=(const LCIter & other) noexcept;
+    LCIter & operator=(LCIter && other) noexcept;
+
+    bool operator==(const LCIter & other) const noexcept;
+    bool operator!=(const LCIter & other) const noexcept;
+    bool operator==(const LIter<T> & other) const noexcept;
+    bool operator!=(const LIter<T> & other) const noexcept;
+
+    const T & operator*() const noexcept;
+    const T * operator->() const noexcept;
+
+    LCIter & operator++() noexcept;
+    LCIter operator++(int) noexcept;
+    LCIter & operator--() noexcept;
+    LCIter operator--(int) noexcept;
   };
 }
 
