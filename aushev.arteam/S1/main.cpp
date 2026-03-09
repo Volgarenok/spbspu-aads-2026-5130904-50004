@@ -1,5 +1,17 @@
 #include <iostream>
+#include <string>
+#include "list.h"
 
-int main(){
-    return 0;
+namespace aushev {
+
+struct Sequence {
+  std::string name;
+  List< int > numbers;
+};
+
+}
+
+int main()
+{
+  return 0;
 }
