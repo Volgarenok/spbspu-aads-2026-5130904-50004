@@ -25,6 +25,7 @@ private:
   struct Node {
     T data;
     Node* next;
+    Node* prev;
   };
   Node* node_;
 };
@@ -46,6 +47,7 @@ private:
   struct Node {
     T data;
     Node* next;
+    Node* prev;
   };
   const Node* node_;
 };
@@ -86,6 +88,7 @@ private:
   struct Node {
     T data;
     Node* next;
+    Node* prev;
   };
   Node* head_;
   Node* tail_;
@@ -323,6 +326,10 @@ void List< T >::push_front(const T& value)
   Node* newNode = new Node;
   newNode->data = value;
   newNode->next = head_;
+  newNode->prev = nullptr;
+  if (head_) {
+    head_->prev = newNode;
+  }
   head_ = newNode;
   if (tail_ == nullptr) {
     tail_ = newNode;
@@ -336,12 +343,13 @@ void List< T >::push_back(const T& value)
   Node* newNode = new Node;
   newNode->data = value;
   newNode->next = nullptr;
-  if (tail_ == nullptr) {
-    head_ = newNode;
-    tail_ = newNode;
-  } else {
+  newNode->prev = tail_;
+  if (tail_) {
     tail_->next = newNode;
-    tail_ = newNode;
+  }
+  tail_ = newNode;
+  if (head_ == nullptr) {
+    head_ = newNode;
   }
   ++size_;
 }
@@ -354,7 +362,9 @@ void List< T >::pop_front()
   }
   Node* tmp = head_;
   head_ = head_->next;
-  if (head_ == nullptr) {
+  if (head_) {
+    head_->prev = nullptr;
+  } else {
     tail_ = nullptr;
   }
   delete tmp;
@@ -374,12 +384,8 @@ void List< T >::pop_back()
     --size_;
     return;
   }
-  Node* current = head_;
-  while (current->next != tail_) {
-    current = current->next;
-  }
-  delete tail_;
-  tail_ = current;
+  tail_ = tail_->prev;
+  delete tail_->next;
   tail_->next = nullptr;
   --size_;
 }
