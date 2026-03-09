@@ -83,6 +83,61 @@ namespace haliullin
     LCIter & operator--() noexcept;
     LCIter operator--(int) noexcept;
   };
+
+
+  template< class T >
+  class BiList
+  {
+  private:
+    Node< T > *head;
+    size_t size;
+
+  public:
+    BiList() noexcept;
+    BiList(const BiList &other);
+    BiList(BiList &&other) noexcept;
+    ~BiList();
+
+    BiList& operator=(const BiList& other);
+    BiList& operator=(BiList&& other) noexcept;
+
+    void clear() noexcept;
+
+    bool is_empty() const noexcept;
+
+    size_t getsize() const noexcept;
+
+    T & front() noexcept;
+    const T & front() const noexcept;
+
+    T & back() noexcept;
+    const T & back() const noexcept;
+
+    LIter<T> begin() noexcept;
+    LCIter<T> begin() const noexcept;
+    LCIter<T> cbegin() const noexcept;
+
+    LIter<T> end() noexcept;
+    LCIter<T> end() const noexcept;
+    LCIter<T> cend() const noexcept;
+
+    void push_front(const T & value);
+    void push_front(T && value);
+    void push_back(const T & value);
+    void push_back(T && value);
+
+    LIter<T> insert_before(LIter<T> pos, const T & value);
+    LIter<T> insert_before(LIter<T> pos, T && value);
+    LIter<T> insert_after(LIter<T> pos, const T & value);
+    LIter<T> insert_after(LIter<T> pos, T && value);
+
+    void pop_front() noexcept;
+    void pop_back() noexcept;
+
+    LIter<T> erase(LIter<T> pos) noexcept;
+
+    void swap(BiList & other) noexcept;
+  };
 }
 
 
