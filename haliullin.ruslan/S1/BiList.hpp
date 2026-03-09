@@ -46,16 +46,51 @@ namespace haliullin
     LIter & operator=(const LIter & other) noexcept = default;
     LIter & operator=(LIter && other) noexcept = default;
 
-    bool operator==(const LIter & other) const noexcept;
-    bool operator!=(const LIter & other) const noexcept;
+    bool operator==(const LIter & other) const noexcept
+    {
+      return cur == other.cur;
+    }
 
-    T & operator*() const noexcept;
-    T * operator->() const noexcept;
+    bool operator!=(const LIter & other) const noexcept;
+    {
+      return !(*this == other);
+    }
+
+    T & operator*() const noexcept
+    {
+      return cur->val;
+    }
+
+    T * operator->() const noexcept
+    {
+      return &(cur->val);
+    }
 
     LIter & operator++() noexcept;
-    LIter operator++(int) noexcept;
+    {
+      cur = cur->next;
+      return *this;
+    }
+
+    LIter operator++(int) noexcept
+    {
+      LIter tmp(*this);
+      cur = cur->next;
+      return tmp;
+    }
+
     LIter & operator--() noexcept;
-    LIter operator--(int) noexcept;
+    {
+      cur = cur->prev;
+      return *this;
+    }
+
+    LIter operator--(int) noexcept
+    {
+      LIter tmp(*this);
+      cur = cur->prev;
+      return tmp;
+    }
   };
 
 //----------LCIter----------
@@ -84,8 +119,6 @@ namespace haliullin
 
     bool operator==(const LCIter & other) const noexcept;
     bool operator!=(const LCIter & other) const noexcept;
-    bool operator==(const LIter<T> & other) const noexcept;
-    bool operator!=(const LIter<T> & other) const noexcept;
 
     const T & operator*() const noexcept;
     const T * operator->() const noexcept;
@@ -189,13 +222,11 @@ namespace haliullin
     T & back() noexcept;
     const T & back() const noexcept;
 
-    LIter<T> begin() noexcept;
-    LCIter<T> begin() const noexcept;
-    LCIter<T> cbegin() const noexcept;
+    LIter<T> begin();
+    LCIter<T> cbegin() const;
 
-    LIter<T> end() noexcept;
-    LCIter<T> end() const noexcept;
-    LCIter<T> cend() const noexcept;
+    LIter<T> end();
+    LCIter<T> cend() const;
 
     void push_front(const T & value);
     void push_front(T && value);
@@ -215,17 +246,5 @@ namespace haliullin
     void swap(BiList & other) noexcept;
   };
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif
