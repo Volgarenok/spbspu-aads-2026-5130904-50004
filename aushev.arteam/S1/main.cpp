@@ -80,6 +80,24 @@ int processSequences()
     std::cout << "\n";
   }
 
+  for (auto it = transposed.begin(); it != transposed.end(); ++it) {
+    long long sum = 0;
+    bool canSum = true;
+    for (auto numIt = (*it).begin(); numIt != (*it).end(); ++numIt) {
+      sum += *numIt;
+    }
+    if (canSum) {
+      if (it != transposed.begin()) {
+        std::cout << " ";
+      }
+      std::cout << sum;
+    } else {
+      std::cerr << "Error: cannot calculate sum\n";
+      return 1;
+    }
+  }
+  std::cout << "\n";
+
   return 0;
 }
 
