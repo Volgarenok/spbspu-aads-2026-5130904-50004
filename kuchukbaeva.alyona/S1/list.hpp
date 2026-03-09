@@ -216,41 +216,17 @@ namespace kuchukbaeva {
       return fake_->next_->data_;
     }
 
-    T& back()
-    {
-      detail::Node< T >* curr = fake_;
-      while (curr->next_ != fake_) {
-        curr = curr->next_;
-      }
-      return curr->data_;
-    }
     void push_front(const T& value)
     {
       insertAfter(beforeBegin(), value);
     }
 
-    void push_back(const T& value)
-    {
-      detail::Node< T >* curr = fake_;
-      while (curr->next_ != fake_) {
-        curr = curr->next_;
-      }
-      insertAfter(LIter< T >(curr), value);
-    }
-
     void pop_front()
     {
-      eraseAfter(beforeBegin());
-    }
-
-    void pop_back()
-    {
-      detail::Node< T >* curr = fake_;
-      if (isEmpty()) return;
-      while (curr->next_->next_ != fake_) {
-        curr = curr->next_;
+      if (isEmpty()) {
+        throw std::out_of_range("List is empty");
       }
-      eraseAfter(LIter< T >(curr));
+      eraseAfter(beforeBegin());
     }
 
     void clear()

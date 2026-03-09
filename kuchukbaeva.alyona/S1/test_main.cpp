@@ -43,28 +43,30 @@ BOOST_AUTO_TEST_CASE(testEraseAfter)
   BOOST_CHECK(iter == list.end());
 }
 
-BOOST_AUTO_TEST_CASE(testFrontBack)
+BOOST_AUTO_TEST_CASE(testFront)
 {
   kuchukbaeva::List< int > list;
   list.push_front(10);
-  list.push_back(20);
+  auto it = list.begin()
+  list.insertAfter(it, 20);
   BOOST_CHECK_EQUAL(list.front(), 10);
-  BOOST_CHECK_EQUAL(list.back(), 20);
+  ++it;
+  BOOST_CHECK_EQUAL(*it, 20);
 }
 
 BOOST_AUTO_TEST_CASE(testPushPop)
 {
   kuchukbaeva::List< int > list;
-  list.push_front(1);
-  list.push_back(2);
+  auto it = list.beforeBegin();
+  it = list.insertAfter(it, 1);
+  list.insertAfter(it, 2);
   list.push_front(0);
   BOOST_CHECK_EQUAL(list.front(), 0);
-  BOOST_CHECK_EQUAL(list.back(), 2);
   list.pop_front();
   BOOST_CHECK_EQUAL(list.front(), 1);
-  list.pop_back();
-  BOOST_CHECK_EQUAL(list.back(), 1);
+  list.eraseAfter(list.begin());
   BOOST_CHECK_EQUAL(list.front(), 1);
+  BOOST_CHECK(++list.begin() == list.end());
 }
 
 BOOST_AUTO_TEST_CASE(testClear)
