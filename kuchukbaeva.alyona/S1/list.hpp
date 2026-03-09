@@ -2,6 +2,7 @@
 #define LIST_HPP
 
 #include <utility>
+#include <stdexcept>
 
 namespace kuchukbaeva {
 
