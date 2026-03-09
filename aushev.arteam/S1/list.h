@@ -49,6 +49,9 @@ public:
   void push_front(const T& value);
   void push_back(const T& value);
 
+  void pop_front();
+  void pop_back();
+
 private:
   struct Node {
     T data;
@@ -173,6 +176,44 @@ void List< T >::push_back(const T& value)
     tail_ = newNode;
   }
   ++size_;
+}
+
+template< class T >
+void List< T >::pop_front()
+{
+  if (head_ == nullptr) {
+    return;
+  }
+  Node* tmp = head_;
+  head_ = head_->next;
+  if (head_ == nullptr) {
+    tail_ = nullptr;
+  }
+  delete tmp;
+  --size_;
+}
+
+template< class T >
+void List< T >::pop_back()
+{
+  if (tail_ == nullptr) {
+    return;
+  }
+  if (head_ == tail_) {
+    delete tail_;
+    head_ = nullptr;
+    tail_ = nullptr;
+    --size_;
+    return;
+  }
+  Node* current = head_;
+  while (current->next != tail_) {
+    current = current->next;
+  }
+  delete tail_;
+  tail_ = current;
+  tail_->next = nullptr;
+  --size_;
 }
 
 }
