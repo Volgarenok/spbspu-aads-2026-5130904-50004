@@ -48,6 +48,38 @@ int processSequences()
   }
   std::cout << "\n";
 
+  size_t maxSize = 0;
+  for (auto it = sequences.begin(); it != sequences.end(); ++it) {
+    if ((*it).numbers.size() > maxSize) {
+      maxSize = (*it).numbers.size();
+    }
+  }
+
+  List< List< int > > transposed;
+  for (size_t i = 0; i < maxSize; ++i) {
+    List< int > row;
+    for (auto it = sequences.begin(); it != sequences.end(); ++it) {
+      if (i < (*it).numbers.size()) {
+        auto numIt = (*it).numbers.begin();
+        for (size_t j = 0; j < i; ++j) {
+          ++numIt;
+        }
+        row.push_back(*numIt);
+      }
+    }
+    transposed.push_back(row);
+  }
+
+  for (auto it = transposed.begin(); it != transposed.end(); ++it) {
+    for (auto numIt = (*it).begin(); numIt != (*it).end(); ++numIt) {
+      if (numIt != (*it).begin()) {
+        std::cout << " ";
+      }
+      std::cout << *numIt;
+    }
+    std::cout << "\n";
+  }
+
   return 0;
 }
 
