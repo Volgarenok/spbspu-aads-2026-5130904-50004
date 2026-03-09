@@ -16,6 +16,8 @@ public:
   LIter();
   LIter& operator++();
   LIter operator++(int);
+  LIter& operator--();
+  LIter operator--(int);
   T& operator*() const;
   T* operator->() const;
   bool operator==(const LIter& other) const;
@@ -38,6 +40,8 @@ public:
   LCIter();
   LCIter& operator++();
   LCIter operator++(int);
+  LCIter& operator--();
+  LCIter operator--(int);
   const T& operator*() const;
   const T* operator->() const;
   bool operator==(const LCIter& other) const;
@@ -119,6 +123,23 @@ LIter< T > LIter< T >::operator++(int)
 }
 
 template< class T >
+LIter< T >& LIter< T >::operator--()
+{
+  if (node_) {
+    node_ = node_->prev;
+  }
+  return *this;
+}
+
+template< class T >
+LIter< T > LIter< T >::operator--(int)
+{
+  LIter tmp = *this;
+  --(*this);
+  return tmp;
+}
+
+template< class T >
 T& LIter< T >::operator*() const
 {
   return node_->data;
@@ -162,6 +183,23 @@ LCIter< T > LCIter< T >::operator++(int)
 {
   LCIter tmp = *this;
   ++(*this);
+  return tmp;
+}
+
+template< class T >
+LCIter< T >& LCIter< T >::operator--()
+{
+  if (node_) {
+    node_ = node_->prev;
+  }
+  return *this;
+}
+
+template< class T >
+LCIter< T > LCIter< T >::operator--(int)
+{
+  LCIter tmp = *this;
+  --(*this);
   return tmp;
 }
 
