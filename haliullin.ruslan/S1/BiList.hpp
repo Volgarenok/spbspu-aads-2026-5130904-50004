@@ -2,7 +2,6 @@
 #define BILIST_HPP
 #include <iostream>
 #include <utility>
-
 namespace haliullin
 {
   template< class T > class BiList;
@@ -13,25 +12,21 @@ namespace haliullin
     T val;
     Node *prev;
     Node *next;
-
     explicit Node(const T & value) :
       val(value),
       prev(nullptr),
       next(nullptr)
     {}
-
     explicit Node(T && value) :
       val(std::move(value)),
       prev(nullptr),
       next(nullptr)
     {}
-
     Node(const T & value, Node * p, Node * n) :
       val(value),
       prev(p),
       next(n)
     {}
-
     Node(T && value, Node * p, Node * n) :
       val(std::move(value)),
       prev(p),
@@ -39,26 +34,30 @@ namespace haliullin
     {}
   };
 
-
-//----------LIter----------
   template< class T >
   class LIter
   {
     friend class BiList<T>;
     Node<T> * cur;
-    explicit LIter(Node<T> * node) noexcept :
-      cur(node)
+    Node<T> * head;
+    explicit LIter(Node<T> * node, Node<T> * listHead) noexcept :
+      cur(node),
+      head(listHead)
     {}
-
   public:
     LIter() noexcept :
-      cur(nullptr)
+      cur(nullptr),
+      head(nullptr)
     {}
+
     LIter(const LIter & other) noexcept = default;
+
     LIter(LIter && other) noexcept = default;
+
     ~LIter() = default;
 
     LIter & operator=(const LIter & other) noexcept = default;
+
     LIter & operator=(LIter && other) noexcept = default;
 
     bool operator==(const LIter & other) const noexcept
@@ -83,56 +82,74 @@ namespace haliullin
 
     LIter & operator++() noexcept
     {
-      cur = cur->next;
+      if (cur)
+      {
+        cur = cur->next;
+        if (cur == head)
+        {
+          cur = nullptr;
+        }
+      }
       return *this;
     }
 
     LIter operator++(int) noexcept
     {
       LIter tmp(*this);
-      cur = cur->next;
+      ++(*this);
       return tmp;
     }
 
     LIter & operator--() noexcept
     {
-      cur = cur->prev;
+      if (cur == head)
+      {
+        cur = nullptr;
+      }
+      else if (cur)
+      {
+        cur = cur->prev;
+      }
       return *this;
     }
 
     LIter operator--(int) noexcept
     {
       LIter tmp(*this);
-      cur = cur->prev;
+      --(*this);
       return tmp;
     }
   };
 
-
-//----------LCIter----------
   template< class T >
   class LCIter
   {
     friend class BiList< T >;
     const Node< T > * cur;
-    explicit LCIter(const Node<T> * node) noexcept :
-      cur(node)
+    const Node< T > * head;
+    explicit LCIter(const Node<T> * node, const Node<T> * listHead) noexcept :
+      cur(node),
+      head(listHead)
     {}
-
   public:
     LCIter() noexcept :
-      cur(nullptr)
+      cur(nullptr),
+      head(nullptr)
     {}
 
     LCIter(const LIter<T> & other) noexcept :
-      cur(other.cur)
+      cur(other.cur),
+      head(other.head)
     {}
 
     LCIter(const LCIter & other) noexcept = default;
+
     LCIter(LCIter && other) noexcept = default;
+
     ~LCIter() = default;
 
     LCIter & operator=(const LCIter & other) noexcept = default;
+
     LCIter & operator=(LCIter && other) noexcept = default;
 
     bool operator==(const LCIter & other) const noexcept
@@ -157,40 +174,51 @@ namespace haliullin
 
     LCIter & operator++() noexcept
     {
-      cur = cur->next;
+      if (cur)
+      {
+        cur = cur->next;
+        if (cur == head)
+        {
+          cur = nullptr;
+        }
+      }
       return *this;
     }
 
     LCIter operator++(int) noexcept
     {
       LCIter tmp(*this);
-      cur = cur->next;
+      ++(*this);
       return tmp;
     }
 
     LCIter & operator--() noexcept
     {
-      cur = cur->prev;
+      if (cur == head)
+      {
+        cur = nullptr;
+      }
+      else if (cur)
+      {
+        cur = cur->prev;
+      }
       return *this;
     }
 
     LCIter operator--(int) noexcept
     {
       LCIter tmp(*this);
-      cur = cur->prev;
+      --(*this);
       return tmp;
     }
   };
 
-
-//----------BiList----------
   template< class T >
   class BiList
   {
   private:
     Node< T > *head;
     size_t size;
-
   public:
     BiList() noexcept :
       head(nullptr),
@@ -205,15 +233,12 @@ namespace haliullin
       {
         return;
       }
-
       Node<T> * current = other.head;
       Node<T> * first = new Node<T>(current->val);
       head = first;
       size = 1;
-
       current = current->next;
       Node<T> * prev = first;
-
       while (current != other.head)
       {
         Node<T> * newNode = new Node<T>(current->val);
@@ -223,7 +248,6 @@ namespace haliullin
         current = current->next;
         ++size;
       }
-
       prev->next = head;
       head->prev = prev;
     }
@@ -312,32 +336,32 @@ namespace haliullin
 
     LIter<T> begin() noexcept
     {
-      return LIter<T>(head);
+      return LIter<T>(head, head);
     }
 
     LCIter<T> begin() const noexcept
     {
-      return LCIter<T>(head);
+      return LCIter<T>(head, head);
     }
 
     LCIter<T> cbegin() const noexcept
     {
-      return LCIter<T>(head);
+      return LCIter<T>(head, head);
     }
 
     LIter<T> end() noexcept
     {
-      return LIter<T>(nullptr);
+      return LIter<T>(nullptr, head);
     }
 
     LCIter<T> end() const noexcept
     {
-      return LCIter<T>(nullptr);
+      return LCIter<T>(nullptr, head);
     }
 
     LCIter<T> cend() const noexcept
     {
-      return LCIter<T>(nullptr);
+      return LCIter<T>(nullptr, head);
     }
 
     void push_front(const T & value)
@@ -390,13 +414,10 @@ namespace haliullin
       {
         Node<T> * newNode = new Node<T>(value);
         Node<T> * last = head->prev;
-
         newNode->next = head;
         newNode->prev = last;
-
         last->next = newNode;
         head->prev = newNode;
-
         ++size;
       }
     }
@@ -411,13 +432,10 @@ namespace haliullin
       {
         Node<T> * newNode = new Node<T>(std::move(value));
         Node<T> * last = head->prev;
-
         newNode->next = head;
         newNode->prev = last;
-
         last->next = newNode;
         head->prev = newNode;
-
         ++size;
       }
     }
@@ -429,25 +447,20 @@ namespace haliullin
         push_front(value);
         return begin();
       }
-
       if (pos.cur == nullptr)
       {
         push_front(value);
         return begin();
       }
-
       Node<T> * newNode = new Node<T>(value, pos.cur, pos.cur->next);
       pos.cur->next->prev = newNode;
       pos.cur->next = newNode;
-
       if (pos.cur == head->prev)
       {
         head->prev = newNode;
       }
-
       ++size;
-
-      return LIter<T>(newNode);
+      return LIter<T>(newNode, head);
     }
 
     LIter<T> insert_after(LIter<T> pos, T && value)
@@ -457,25 +470,20 @@ namespace haliullin
         push_front(std::move(value));
         return begin();
       }
-
       if (pos.cur == nullptr)
       {
         push_front(std::move(value));
         return begin();
       }
-
       Node<T> * newNode = new Node<T>(std::move(value), pos.cur, pos.cur->next);
       pos.cur->next->prev = newNode;
       pos.cur->next = newNode;
-
       if (pos.cur == head->prev)
       {
         head->prev = newNode;
       }
-
       ++size;
-
-      return LIter<T>(newNode);
+      return LIter<T>(newNode, head);
     }
 
     LIter<T> insert_before(LIter<T> pos, const T & value)
@@ -483,10 +491,9 @@ namespace haliullin
       if (pos.cur == nullptr)
       {
         push_back(value);
-        return LIter<T>(head->prev);
+        return LIter<T>(head->prev, head);
       }
-
-      LIter<T> prev(pos.cur->prev);
+      LIter<T> prev(pos.cur->prev, head);
       return insert_after(prev, value);
     }
 
@@ -495,10 +502,9 @@ namespace haliullin
       if (pos.cur == nullptr)
       {
         push_back(std::move(value));
-        return LIter<T>(head->prev);
+        return LIter<T>(head->prev, head);
       }
-
-      LIter<T> prev(pos.cur->prev);
+      LIter<T> prev(pos.cur->prev, head);
       return insert_after(prev, std::move(value));
     }
 
@@ -553,12 +559,10 @@ namespace haliullin
       {
         throw std::runtime_error("Empty list");
       }
-
       if (pos.cur == nullptr)
       {
         throw std::runtime_error("Cannot erase end iterator");
       }
-
       if (getsize() == 1)
       {
         delete pos.cur;
@@ -566,10 +570,8 @@ namespace haliullin
         size = 0;
         return end();
       }
-
       Node<T> * toDelete = pos.cur;
       Node<T> * nextNode = toDelete->next;
-
       if (toDelete == head)
       {
         pop_front();
@@ -586,7 +588,7 @@ namespace haliullin
         toDelete->next->prev = toDelete->prev;
         delete toDelete;
         --size;
-        return LIter<T>(nextNode);
+        return LIter<T>(nextNode, head);
       }
     }
 
@@ -602,14 +604,11 @@ namespace haliullin
     {
       Node<T> * tmp_head = head;
       size_t tmp_size = size;
-
       head = other.head;
       size = other.size;
-
       other.head = tmp_head;
       other.size = tmp_size;
     }
   };
 }
-
 #endif
