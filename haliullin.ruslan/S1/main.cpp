@@ -3,7 +3,6 @@
 #include <string>
 #include <utility>
 #include <limits>
-#include <cctype>
 
 using namespace haliullin;
 
@@ -18,29 +17,17 @@ int main()
     {
       BiList<unsigned long long> numbers;
       unsigned long long num;
-      while (true)
+      while (std::cin >> num)
       {
-        int peek = std::cin.peek();
-        if (peek == EOF || peek == '\n' || peek == '\r' || std::isalpha(static_cast<unsigned char>(peek)))
-        {
-          break;
-        }
-        if (std::cin >> num)
-        {
-          numbers.push_back(num);
-        }
-        else
-        {
-          std::cin.clear();
-          break;
-        }
+        numbers.push_back(num);
       }
+      std::cin.clear();
       sequences.push_back(std::make_pair(name, std::move(numbers)));
     }
 
     if (sequences.is_empty())
     {
-      std::cout << "0\n";
+      std::cout << "0" << "\n";
       return 0;
     }
 
@@ -49,12 +36,12 @@ int main()
     {
       if (!first)
       {
-        std::cout << ' ';
+        std::cout << " ";
       }
       std::cout << it->first;
       first = false;
     }
-    std::cout << '\n';
+    std::cout << "\n";
 
     size_t maxLen = 0;
     for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
@@ -65,7 +52,7 @@ int main()
       }
     }
 
-    BiList<BiList<unsigned long long>> transposed;
+    BiList<BiList<unsigned long long>> transp;
     for (size_t i = 0; i < maxLen; ++i)
     {
       BiList<unsigned long long> newList;
@@ -83,28 +70,27 @@ int main()
       }
       if (!newList.is_empty())
       {
-        transposed.push_back(std::move(newList));
+        transp.push_back(std::move(newList));
       }
     }
 
-
-    for (auto it = transposed.cbegin(); it != transposed.cend(); ++it)
+    for (auto it = transp.cbegin(); it != transp.cend(); ++it)
     {
       bool firstInRow = true;
       for (auto elemIt = it->cbegin(); elemIt != it->cend(); ++elemIt)
       {
         if (!firstInRow)
         {
-          std::cout << ' ';
+          std::cout << " ";
         }
         std::cout << *elemIt;
         firstInRow = false;
       }
-      std::cout << '\n';
+      std::cout << "\n";
     }
 
     BiList<unsigned long long> sums;
-    for (auto it = transposed.cbegin(); it != transposed.cend(); ++it)
+    for (auto it = transp.cbegin(); it != transp.cend(); ++it)
     {
       unsigned long long total = 0;
       for (auto elemIt = it->cbegin(); elemIt != it->cend(); ++elemIt)
@@ -120,7 +106,7 @@ int main()
 
     if (sums.is_empty())
     {
-      std::cout << "0\n";
+      std::cout << "0" << "\n";
     }
     else
     {
@@ -129,19 +115,19 @@ int main()
       {
         if (!first)
         {
-          std::cout << ' ';
+          std::cout << " ";
         }
         std::cout << *it;
         first = false;
       }
-      std::cout << '\n';
+      std::cout << "\n";
     }
 
     return 0;
   }
   catch (const std::exception &e)
   {
-    std::cerr << "Error: " << e.what() << '\n';
+    std::cerr << e.what() << "\n";
     return 1;
   }
 }
