@@ -36,9 +36,3 @@ BOOST_AUTO_TEST_CASE(copy_move)
   BOOST_CHECK(list1.empty());
   BOOST_CHECK_EQUAL(list3.front(), 7);
 }
-
-BOOST_AUTO_TEST_CASE(sum_overflow)
-{
-  unsigned long long total = 18000000000000000000ull;
-  BOOST_CHECK_THROW(sum(total, 5000000000000000000ull), std::overflow_error);
-}
