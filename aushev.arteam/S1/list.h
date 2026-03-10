@@ -6,6 +6,13 @@
 namespace aushev {
 
 template< class T >
+struct Node {
+  T data;
+  Node* next;
+  Node* prev;
+};
+
+template< class T >
 class List;
 
 template< class T >
@@ -24,12 +31,8 @@ public:
   bool operator!=(const LIter& other) const;
 
 private:
-  struct Node {
-    T data;
-    Node* next;
-    Node* prev;
-  };
-  Node* node_;
+  Node< T >* node_;
+  List< T >* list_;
 };
 
 template< class T >
@@ -48,16 +51,15 @@ public:
   bool operator!=(const LCIter& other) const;
 
 private:
-  struct Node {
-    T data;
-    Node* next;
-    Node* prev;
-  };
-  const Node* node_;
+  const Node< T >* node_;
+  const List< T >* list_;
 };
 
 template< class T >
 class List {
+  friend class LIter< T >;
+  friend class LCIter< T >;
+
 public:
   List();
   ~List();
@@ -89,19 +91,16 @@ public:
   const T& back() const;
 
 private:
-  struct Node {
-    T data;
-    Node* next;
-    Node* prev;
-  };
-  Node* head_;
-  Node* tail_;
+  using NodeT = Node< T >;
+  NodeT* head_;
+  NodeT* tail_;
   size_t size_;
 };
 
 template< class T >
 LIter< T >::LIter()
   : node_(nullptr)
+  , list_(nullptr)
 {
 }
 
@@ -127,6 +126,8 @@ LIter< T >& LIter< T >::operator--()
 {
   if (node_) {
     node_ = node_->prev;
+  } else if (list_) {
+    node_ = list_->tail_;
   }
   return *this;
 }
@@ -166,6 +167,7 @@ bool LIter< T >::operator!=(const LIter& other) const
 template< class T >
 LCIter< T >::LCIter()
   : node_(nullptr)
+  , list_(nullptr)
 {
 }
 
@@ -191,6 +193,8 @@ LCIter< T >& LCIter< T >::operator--()
 {
   if (node_) {
     node_ = node_->prev;
+  } else if (list_) {
+    node_ = list_->tail_;
   }
   return *this;
 }
@@ -295,6 +299,7 @@ LIter< T > List< T >::begin()
 {
   LIter< T > it;
   it.node_ = head_;
+  it.list_ = this;
   return it;
 }
 
@@ -303,6 +308,7 @@ LIter< T > List< T >::end()
 {
   LIter< T > it;
   it.node_ = nullptr;
+  it.list_ = this;
   return it;
 }
 
@@ -311,6 +317,7 @@ LCIter< T > List< T >::begin() const
 {
   LCIter< T > it;
   it.node_ = head_;
+  it.list_ = this;
   return it;
 }
 
@@ -319,6 +326,7 @@ LCIter< T > List< T >::end() const
 {
   LCIter< T > it;
   it.node_ = nullptr;
+  it.list_ = this;
   return it;
 }
 
@@ -350,7 +358,7 @@ template< class T >
 void List< T >::clear()
 {
   while (head_ != nullptr) {
-    Node* tmp = head_;
+    NodeT* tmp = head_;
     head_ = head_->next;
     delete tmp;
   }
@@ -361,7 +369,7 @@ void List< T >::clear()
 template< class T >
 void List< T >::push_front(const T& value)
 {
-  Node* newNode = new Node;
+  NodeT* newNode = new NodeT;
   newNode->data = value;
   newNode->next = head_;
   newNode->prev = nullptr;
@@ -378,7 +386,7 @@ void List< T >::push_front(const T& value)
 template< class T >
 void List< T >::push_back(const T& value)
 {
-  Node* newNode = new Node;
+  NodeT* newNode = new NodeT;
   newNode->data = value;
   newNode->next = nullptr;
   newNode->prev = tail_;
@@ -398,7 +406,7 @@ void List< T >::pop_front()
   if (head_ == nullptr) {
     return;
   }
-  Node* tmp = head_;
+  NodeT* tmp = head_;
   head_ = head_->next;
   if (head_) {
     head_->prev = nullptr;
