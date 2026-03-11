@@ -1,35 +1,258 @@
-#ifndef AYDOGAN_LIST_HPP
-#define AYDOGAN_LIST_HPP
+#ifndef LIST_HPP
+#define LIST_HPP
+
+#include <stdexcept>
 
 namespace aydogan
 {
+  template< class T >
+  class List;
 
-template <class T>
-class List
-{
-private:
-  struct Node
+  template< class T >
+  class Iterator;
+
+  template< class T >
+  class ConstIterator;
+
+  namespace detail
   {
-    T data;
-    Node* next;
+    template< class T >
+    struct Node
+    {
+      T data;
+      Node* next;
+
+      Node():
+        data(),
+        next(nullptr)
+      {}
+
+      Node(const T& value, Node* nextNode):
+        data(value),
+        next(nextNode)
+      {}
+    };
+  }
+
+  template< class T >
+  class Iterator
+  {
+    friend class List< T >;
+    friend class ConstIterator< T >;
+
+  public:
+    Iterator():
+      node_(nullptr)
+    {}
+
+    T& operator*() const
+    {
+      return node_->data;
+    }
+
+    T* operator->() const
+    {
+      return &(node_->data);
+    }
+
+    Iterator& operator++()
+    {
+      node_ = node_->next;
+      return *this;
+    }
+
+    bool operator==(const Iterator& other) const
+    {
+      return node_ == other.node_;
+    }
+
+    bool operator!=(const Iterator& other) const
+    {
+      return node_ != other.node_;
+    }
+
+  private:
+    explicit Iterator(detail::Node< T >* node):
+      node_(node)
+    {}
+
+    detail::Node< T >* node_;
   };
 
-  Node* fake_;
+  template< class T >
+  class ConstIterator
+  {
+    friend class List< T >;
 
-public:
-  List();
-  ~List();
+  public:
+    ConstIterator():
+      node_(nullptr)
+    {}
 
-  List(const List&);
-  List(List&&) noexcept;
+    ConstIterator(const Iterator< T >& other):
+      node_(other.node_)
+    {}
 
-  List& operator=(const List&);
-  List& operator=(List&&) noexcept;
+    const T& operator*() const
+    {
+      return node_->data;
+    }
 
-  bool empty() const noexcept;
+    const T* operator->() const
+    {
+      return &(node_->data);
+    }
 
-};
+    ConstIterator& operator++()
+    {
+      node_ = node_->next;
+      return *this;
+    }
 
+    bool operator==(const ConstIterator& other) const
+    {
+      return node_ == other.node_;
+    }
+
+    bool operator!=(const ConstIterator& other) const
+    {
+      return node_ != other.node_;
+    }
+
+  private:
+    explicit ConstIterator(const detail::Node< T >* node):
+      node_(node)
+    {}
+
+    const detail::Node< T >* node_;
+  };
+
+  template< class T >
+  class List
+  {
+  public:
+    List():
+      fake_(new detail::Node< T >())
+    {}
+
+    ~List()
+    {
+      clear();
+      delete fake_;
+    }
+
+    bool empty() const noexcept
+    {
+      return fake_->next == nullptr;
+    }
+
+    Iterator< T > beforeBegin() noexcept
+    {
+      return Iterator< T >(fake_);
+    }
+
+    Iterator< T > begin() noexcept
+    {
+      return Iterator< T >(fake_->next);
+    }
+
+    ConstIterator< T > begin() const noexcept
+    {
+      return ConstIterator< T >(fake_->next);
+    }
+
+    ConstIterator< T > cbegin() const noexcept
+    {
+      return ConstIterator< T >(fake_->next);
+    }
+
+    Iterator< T > end() noexcept
+    {
+      return Iterator< T >(nullptr);
+    }
+
+    ConstIterator< T > end() const noexcept
+    {
+      return ConstIterator< T >(nullptr);
+    }
+
+    ConstIterator< T > cend() const noexcept
+    {
+      return ConstIterator< T >(nullptr);
+    }
+
+    T& front()
+    {
+      if (empty())
+      {
+        throw std::out_of_range("List is empty");
+      }
+      return fake_->next->data;
+    }
+
+    const T& front() const
+    {
+      if (empty())
+      {
+        throw std::out_of_range("List is empty");
+      }
+      return fake_->next->data;
+    }
+
+    void push_front(const T& value)
+    {
+      insertAfter(beforeBegin(), value);
+    }
+
+    void pop_front()
+    {
+      if (empty())
+      {
+        throw std::out_of_range("List is empty");
+      }
+      eraseAfter(beforeBegin());
+    }
+
+    Iterator< T > insertAfter(Iterator< T > pos, const T& value)
+    {
+      if (pos.node_ == nullptr)
+      {
+        throw std::out_of_range("Invalid iterator");
+      }
+
+      detail::Node< T >* newNode =
+        new detail::Node< T >(value, pos.node_->next);
+
+      pos.node_->next = newNode;
+      return Iterator< T >(newNode);
+    }
+
+    Iterator< T > eraseAfter(Iterator< T > pos)
+    {
+      if (pos.node_ == nullptr || pos.node_->next == nullptr)
+      {
+        throw std::out_of_range("Nothing to erase");
+      }
+
+      detail::Node< T >* toDelete = pos.node_->next;
+      pos.node_->next = toDelete->next;
+      delete toDelete;
+return Iterator< T >(pos.node_->next);
+    }
+
+    void clear() noexcept
+    {
+      while (!empty())
+      {
+        detail::Node< T >* tmp = fake_->next;
+        fake_->next = tmp->next;
+        delete tmp;
+      }
+    }
+
+  private:
+    detail::Node< T >* fake_;
+  };
 }
 
 #endif
