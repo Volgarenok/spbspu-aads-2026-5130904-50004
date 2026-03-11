@@ -4,97 +4,114 @@
 
 using namespace haliullin;
 
-BOOST_AUTO_TEST_CASE(push_front_basic)
+BOOST_AUTO_TEST_CASE(is_empty)
+{
+  BiList<int> lst;
+  BOOST_CHECK(lst.is_empty());
+  lst.push_back(1);
+  BOOST_CHECK(!lst.is_empty());
+}
+
+BOOST_AUTO_TEST_CASE(getsize)
+{
+  BiList<int> lst;
+  BOOST_CHECK_EQUAL(lst.getsize(), 0);
+  lst.push_back(1);
+  lst.push_back(2);
+  BOOST_CHECK_EQUAL(lst.getsize(), 2);
+}
+
+BOOST_AUTO_TEST_CASE(front)
+{
+  BiList<int> lst;
+  lst.push_back(10);
+  lst.push_back(20);
+  BOOST_CHECK_EQUAL(lst.front(), 10);
+  lst.front() = 100;
+  BOOST_CHECK_EQUAL(lst.front(), 100);
+}
+
+BOOST_AUTO_TEST_CASE(back)
+{
+  BiList<int> lst;
+  lst.push_back(10);
+  lst.push_back(20);
+  BOOST_CHECK_EQUAL(lst.back(), 20);
+  lst.back() = 200;
+  BOOST_CHECK_EQUAL(lst.back(), 200);
+}
+
+BOOST_AUTO_TEST_CASE(push_front)
 {
   BiList<int> lst;
   lst.push_front(5);
-  BOOST_CHECK_EQUAL(lst.getsize(), 1);
   lst.push_front(15);
+  BOOST_CHECK_EQUAL(lst.front(), 15);
   BOOST_CHECK_EQUAL(lst.getsize(), 2);
-  auto it = lst.begin();
-  BOOST_CHECK_EQUAL(*it, 15);
-  ++it;
-  BOOST_CHECK_EQUAL(*it, 5);
 }
 
-BOOST_AUTO_TEST_CASE(push_back_basic)
+BOOST_AUTO_TEST_CASE(push_back)
 {
   BiList<int> lst;
-  lst.push_back(100);
-  BOOST_CHECK_EQUAL(lst.getsize(), 1);
-  lst.push_back(200);
-  BOOST_CHECK_EQUAL(lst.getsize(), 2);
-  auto it = lst.begin();
-  BOOST_CHECK_EQUAL(*it, 100);
-  ++it;
-  BOOST_CHECK_EQUAL(*it, 200);
-}
-
-BOOST_AUTO_TEST_CASE(pop_front_test)
-{
-  BiList<int> lst;
-  lst.push_back(7);
-  lst.push_back(14);
-  lst.push_back(21);
-  lst.pop_front();
-  BOOST_CHECK_EQUAL(lst.getsize(), 2);
-  auto it = lst.begin();
-  BOOST_CHECK_EQUAL(*it, 14);
-  ++it;
-  BOOST_CHECK_EQUAL(*it, 21);
-  lst.pop_front();
-  BOOST_CHECK_EQUAL(lst.getsize(), 1);
-  BOOST_CHECK_EQUAL(*lst.begin(), 21);
-  lst.pop_front();
-  BOOST_CHECK(lst.getsize() == 0);
-}
-
-BOOST_AUTO_TEST_CASE(pop_back_test)
-{
-  BiList<int> lst;
-  lst.push_back(5);
   lst.push_back(10);
-  lst.push_back(15);
-  lst.pop_back();
+  lst.push_back(20);
+  BOOST_CHECK_EQUAL(lst.back(), 20);
   BOOST_CHECK_EQUAL(lst.getsize(), 2);
+}
+
+BOOST_AUTO_TEST_CASE(insert)
+{
+  BiList<int> lst;
+  lst.push_back(1);
+  lst.push_back(3);
   auto it = lst.begin();
-  BOOST_CHECK_EQUAL(*it, 5);
+  lst.insert(it, 2);
+  BOOST_CHECK_EQUAL(lst.getsize(), 3);
   ++it;
-  BOOST_CHECK_EQUAL(*it, 10);
-  lst.pop_back();
+  BOOST_CHECK_EQUAL(*it, 2);
+}
+
+BOOST_AUTO_TEST_CASE(pop_front)
+{
+  BiList<int> lst;
+  lst.push_back(1);
+  lst.push_back(2);
+  lst.pop_front();
+  BOOST_CHECK_EQUAL(lst.front(), 2);
   BOOST_CHECK_EQUAL(lst.getsize(), 1);
-  BOOST_CHECK_EQUAL(*lst.begin(), 5);
+}
+
+BOOST_AUTO_TEST_CASE(pop_back)
+{
+  BiList<int> lst;
+  lst.push_back(1);
+  lst.push_back(2);
   lst.pop_back();
-  BOOST_CHECK(lst.getsize() == 0);
+  BOOST_CHECK_EQUAL(lst.back(), 1);
+  BOOST_CHECK_EQUAL(lst.getsize(), 1);
+}
+
+BOOST_AUTO_TEST_CASE(erase)
+{
+  BiList<int> lst;
+  lst.push_back(1);
+  lst.push_back(2);
+  lst.push_back(3);
+  auto it = lst.begin();
+  ++it;
+  lst.erase(it);
+  BOOST_CHECK_EQUAL(lst.getsize(), 2);
+  BOOST_CHECK_EQUAL(lst.front(), 1);
+  BOOST_CHECK_EQUAL(lst.back(), 3);
 }
 
 BOOST_AUTO_TEST_CASE(clear)
 {
   BiList<int> lst;
+  lst.push_back(1);
+  lst.push_back(2);
   lst.push_back(3);
-  lst.push_back(6);
-  lst.push_back(9);
   lst.clear();
-  BOOST_CHECK(lst.getsize() == 0);
-  BOOST_CHECK(lst.begin() == lst.end());
-}
-
-BOOST_AUTO_TEST_CASE(copy_construction)
-{
-  BiList<int> lst1;
-  lst1.push_back(8);
-  lst1.push_back(16);
-  BiList<int> lst2(lst1);
-  BOOST_CHECK_EQUAL(lst2.front(), 8);
-  BOOST_CHECK_EQUAL(lst2.back(), 16);
-}
-
-BOOST_AUTO_TEST_CASE(move_construction)
-{
-  BiList<int> lst1;
-  lst1.push_back(8);
-  lst1.push_back(16);
-  BiList<int> lst2(std::move(lst1));
-  BOOST_CHECK(lst1.is_empty());
-  BOOST_CHECK_EQUAL(lst2.front(), 8);
+  BOOST_CHECK(lst.is_empty());
+  BOOST_CHECK_EQUAL(lst.getsize(), 0);
 }

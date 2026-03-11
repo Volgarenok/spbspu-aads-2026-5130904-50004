@@ -1,7 +1,9 @@
 #ifndef BILIST_HPP
 #define BILIST_HPP
+
 #include <iostream>
 #include <utility>
+
 namespace haliullin
 {
   template< class T > class BiList;
@@ -12,21 +14,25 @@ namespace haliullin
     T val;
     Node *prev;
     Node *next;
-    explicit Node(const T & value) :
+
+    Node(const T & value) :
       val(value),
       prev(nullptr),
       next(nullptr)
     {}
-    explicit Node(T && value) :
+
+    Node(T && value) :
       val(std::move(value)),
       prev(nullptr),
       next(nullptr)
     {}
+
     Node(const T & value, Node * p, Node * n) :
       val(value),
       prev(p),
       next(n)
     {}
+
     Node(T && value, Node * p, Node * n) :
       val(std::move(value)),
       prev(p),
@@ -40,7 +46,7 @@ namespace haliullin
     friend class BiList<T>;
     Node<T> * cur;
     Node<T> * head;
-    explicit LIter(Node<T> * node, Node<T> * listHead) noexcept :
+    LIter(Node<T> * node, Node<T> * listHead) noexcept :
       cur(node),
       head(listHead)
     {}
@@ -127,7 +133,7 @@ namespace haliullin
     friend class BiList< T >;
     const Node< T > * cur;
     const Node< T > * head;
-    explicit LCIter(const Node<T> * node, const Node<T> * listHead) noexcept :
+    LCIter(const Node<T> * node, const Node<T> * listHead) noexcept :
       cur(node),
       head(listHead)
     {}
@@ -430,7 +436,7 @@ namespace haliullin
       }
     }
 
-    LIter<T> insert_after(LIter<T> pos, const T & value)
+    LIter<T> insert(LIter<T> pos, const T & value)
     {
       if (is_empty())
       {
@@ -453,7 +459,7 @@ namespace haliullin
       return LIter<T>(newNode, head);
     }
 
-    LIter<T> insert_after(LIter<T> pos, T && value)
+    LIter<T> insert(LIter<T> pos, T && value)
     {
       if (is_empty())
       {
@@ -474,28 +480,6 @@ namespace haliullin
       }
       ++size;
       return LIter<T>(newNode, head);
-    }
-
-    LIter<T> insert_before(LIter<T> pos, const T & value)
-    {
-      if (pos.cur == nullptr)
-      {
-        push_back(value);
-        return LIter<T>(head->prev, head);
-      }
-      LIter<T> prev(pos.cur->prev, head);
-      return insert_after(prev, value);
-    }
-
-    LIter<T> insert_before(LIter<T> pos, T && value)
-    {
-      if (pos.cur == nullptr)
-      {
-        push_back(std::move(value));
-        return LIter<T>(head->prev, head);
-      }
-      LIter<T> prev(pos.cur->prev, head);
-      return insert_after(prev, std::move(value));
     }
 
     void pop_front()
@@ -588,16 +572,6 @@ namespace haliullin
       {
         pop_front();
       }
-    }
-
-    void swap(BiList & other) noexcept
-    {
-      Node<T> * tmp_head = head;
-      size_t tmp_size = size;
-      head = other.head;
-      size = other.size;
-      other.head = tmp_head;
-      other.size = tmp_size;
     }
   };
 }
