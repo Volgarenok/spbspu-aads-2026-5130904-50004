@@ -140,6 +140,49 @@ namespace aydogan
       clear();
       delete fake_;
     }
+    List(const List& other):
+  List()
+{
+  Iterator< T > tail = beforeBegin();
+  for (ConstIterator< T > it = other.cbegin(); it != other.cend(); ++it)
+  {
+    tail = insertAfter(tail, *it);
+  }
+}
+
+List(List&& other):
+  fake_(other.fake_)
+{
+  other.fake_ = new detail::Node< T >();
+}
+
+List& operator=(const List& other)
+{
+  if (this != &other)
+  {
+    List tmp(other);
+    swap(tmp);
+  }
+  return *this;
+}
+
+List& operator=(List&& other)
+{
+  if (this != &other)
+  {
+    clear();
+    delete fake_;
+    fake_ = other.fake_;
+    other.fake_ = new detail::Node< T >();
+  }
+  return *this;
+}
+
+void swap(List& other) noexcept
+{
+  std::swap(fake_, other.fake_);
+}
+
 
     bool empty() const noexcept
     {
