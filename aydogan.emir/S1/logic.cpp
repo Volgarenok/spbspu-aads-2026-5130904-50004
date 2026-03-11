@@ -49,6 +49,27 @@ int runProgram(
   std::ostream& err
 )
 {
+  if (data.empty())
+  {
+    out << "0\n";
+    return 0;
+  }
+
+  bool first = true;
+
+  for (auto it = data.cbegin(); it != data.cend(); ++it)
+  {
+    if (!first)
+    {
+      out << " ";
+    }
+
+    out << it->first;
+    first = false;
+  }
+
+  out << "\n";
+
   return 0;
 }
 
