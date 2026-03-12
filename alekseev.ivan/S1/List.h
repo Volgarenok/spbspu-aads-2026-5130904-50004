@@ -9,19 +9,15 @@ namespace alekseev {
   };
 
   template< class T >
-  List< T > * fake(List< T > * head)
+  List< T > * fake(List< T > * head = nullptr)
   {
     List< T > * fake_node = static_cast< List< T > * >(::operator new(sizeof(List< T > *)));
-    fake_node->next = head;
-    head->next = fake_node;
-    return fake_node;
-  }
-
-  template< class T >
-  List< T > * fake()
-  {
-    List< T > * fake_node = static_cast< List< T > * >(::operator new(sizeof(List< T > *)));
-    fake_node->next = fake_node;
+    if (head) {
+      fake_node->next = head;
+      head->next = fake_node;
+    } else {
+      fake_node->next = fake_node;
+    }
     return fake_node;
   }
 
