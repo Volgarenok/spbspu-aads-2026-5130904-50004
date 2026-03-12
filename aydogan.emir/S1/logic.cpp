@@ -76,6 +76,8 @@ for (auto it = data.cbegin(); it != data.cend(); ++it)
 {
   iterTail = iters.insertAfter(iterTail, it->second.cbegin());
 }
+List<unsigned long long> sums;
+auto sumTail = sums.beforeBegin();
 bool hasMore = true;
 
 while (hasMore)
@@ -86,6 +88,10 @@ while (hasMore)
   auto seqNode = data.cbegin();
 
   bool firstValue = true;
+  unsigned long long currentSum = 0;
+bool overflow = false;
+bool rowHasValues = false;
+
 
   while (iterNode != iters.end())
   {
@@ -97,6 +103,30 @@ while (hasMore)
       }
 
       out << **iterNode;
+
+      unsigned long long value = **iterNode;
+
+if (std::numeric_limits<unsigned long long>::max() - currentSum < value)
+{
+  overflow = true;
+}
+else
+{
+  currentSum += value;
+}
+
+rowHasValues = true;
+if (rowHasValues)
+{
+  if (overflow)
+  {
+    err << "Overflow\n";
+    return 1;
+  }
+
+  sumTail = sums.insertAfter(sumTail, currentSum);
+}
+
 
       ++(*iterNode);
       hasMore = true;
