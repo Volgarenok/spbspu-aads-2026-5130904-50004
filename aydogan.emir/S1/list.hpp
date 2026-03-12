@@ -2,6 +2,7 @@
 #define LIST_HPP
 
 #include <stdexcept>
+#include <utility>
 
 namespace aydogan
 {
@@ -31,6 +32,11 @@ namespace aydogan
         data(value),
         next(nextNode)
       {}
+
+      Node(T&& value, Node* nextNode):
+        data(std::move(value)),
+        next(nextNode)
+      {}
     };
   }
 
@@ -57,8 +63,18 @@ namespace aydogan
 
     Iterator& operator++()
     {
-      node_ = node_->next;
+      if (node_ != nullptr)
+      {
+        node_ = node_->next;
+      }
       return *this;
+    }
+
+    Iterator operator++(int)
+    {
+      Iterator tmp(*this);
+      ++(*this);
+      return tmp;
     }
 
     bool operator==(const Iterator& other) const
@@ -105,8 +121,18 @@ namespace aydogan
 
     ConstIterator& operator++()
     {
-      node_ = node_->next;
+      if (node_ != nullptr)
+      {
+        node_ = node_->next;
+      }
       return *this;
+    }
+
+    ConstIterator operator++(int)
+    {
+      ConstIterator tmp(*this);
+      ++(*this);
+      return tmp;
     }
 
     bool operator==(const ConstIterator& other) const
@@ -130,59 +156,62 @@ namespace aydogan
   template< class T >
   class List
   {
+    friend class Iterator< T >;
+    friend class ConstIterator< T >;
+
   public:
     List():
       fake_(new detail::Node< T >())
     {}
+
+    List(const List& other):
+      List()
+    {
+      Iterator< T > tail = beforeBegin();
+      for (ConstIterator< T > it = other.cbegin(); it != other.cend(); ++it)
+      {
+        tail = insertAfter(tail, *it);
+      }
+    }
+
+    List(List&& other):
+      fake_(other.fake_)
+    {
+      other.fake_ = new detail::Node< T >();
+    }
 
     ~List()
     {
       clear();
       delete fake_;
     }
-    List(const List& other):
-  List()
-{
-  Iterator< T > tail = beforeBegin();
-  for (ConstIterator< T > it = other.cbegin(); it != other.cend(); ++it)
-  {
-    tail = insertAfter(tail, *it);
-  }
-}
 
-List(List&& other):
-  fake_(other.fake_)
-{
-  other.fake_ = new detail::Node< T >();
-}
+    List& operator=(const List& other)
+    {
+      if (this != &other)
+      {
+        List tmp(other);
+        swap(tmp);
+      }
+      return *this;
+    }
 
-List& operator=(const List& other)
-{
-  if (this != &other)
-  {
-    List tmp(other);
-    swap(tmp);
-  }
-  return *this;
-}
+    List& operator=(List&& other)
+    {
+      if (this != &other)
+      {
+        clear();
+        delete fake_;
+        fake_ = other.fake_;
+        other.fake_ = new detail::Node< T >();
+      }
+      return *this;
+    }
 
-List& operator=(List&& other)
-{
-  if (this != &other)
-  {
-    clear();
-    delete fake_;
-    fake_ = other.fake_;
-    other.fake_ = new detail::Node< T >();
-  }
-  return *this;
-}
-
-void swap(List& other) noexcept
-{
-  std::swap(fake_, other.fake_);
-}
-
+    void swap(List& other) noexcept
+    {
+      std::swap(fake_, other.fake_);
+    }
 
     bool empty() const noexcept
     {
@@ -192,6 +221,11 @@ void swap(List& other) noexcept
     Iterator< T > beforeBegin() noexcept
     {
       return Iterator< T >(fake_);
+    }
+
+    ConstIterator< T > beforeBegin() const noexcept
+    {
+      return ConstIterator< T >(fake_);
     }
 
     Iterator< T > begin() noexcept
@@ -212,7 +246,7 @@ void swap(List& other) noexcept
     Iterator< T > end() noexcept
     {
       return Iterator< T >(nullptr);
-    }
+}
 
     ConstIterator< T > end() const noexcept
     {
@@ -247,6 +281,11 @@ void swap(List& other) noexcept
       insertAfter(beforeBegin(), value);
     }
 
+    void push_front(T&& value)
+    {
+      insertAfter(beforeBegin(), std::move(value));
+    }
+
     void pop_front()
     {
       if (empty())
@@ -270,6 +309,20 @@ void swap(List& other) noexcept
       return Iterator< T >(newNode);
     }
 
+    Iterator< T > insertAfter(Iterator< T > pos, T&& value)
+    {
+      if (pos.node_ == nullptr)
+      {
+        throw std::out_of_range("Invalid iterator");
+      }
+
+      detail::Node< T >* newNode =
+        new detail::Node< T >(std::move(value), pos.node_->next);
+
+      pos.node_->next = newNode;
+      return Iterator< T >(newNode);
+    }
+
     Iterator< T > eraseAfter(Iterator< T > pos)
     {
       if (pos.node_ == nullptr || pos.node_->next == nullptr)
@@ -280,7 +333,8 @@ void swap(List& other) noexcept
       detail::Node< T >* toDelete = pos.node_->next;
       pos.node_->next = toDelete->next;
       delete toDelete;
-return Iterator< T >(pos.node_->next);
+
+      return Iterator< T >(pos.node_->next);
     }
 
     void clear() noexcept
