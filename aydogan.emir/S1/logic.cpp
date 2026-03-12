@@ -69,7 +69,13 @@ int runProgram(
   }
 
   out << "\n";
+List< ConstIterator< unsigned long long > > iters;
+auto iterTail = iters.beforeBegin();
 
+for (auto it = data.cbegin(); it != data.cend(); ++it)
+{
+  iterTail = iters.insertAfter(iterTail, it->second.cbegin());
+}
   return 0;
 }
 
