@@ -76,6 +76,43 @@ for (auto it = data.cbegin(); it != data.cend(); ++it)
 {
   iterTail = iters.insertAfter(iterTail, it->second.cbegin());
 }
+bool hasMore = true;
+
+while (hasMore)
+{
+  hasMore = false;
+
+  auto iterNode = iters.begin();
+  auto seqNode = data.cbegin();
+
+  bool firstValue = true;
+
+  while (iterNode != iters.end())
+  {
+    if (*iterNode != seqNode->second.cend())
+    {
+      if (!firstValue)
+      {
+        out << " ";
+      }
+
+      out << **iterNode;
+
+      ++(*iterNode);
+      hasMore = true;
+      firstValue = false;
+    }
+
+    ++iterNode;
+    ++seqNode;
+  }
+
+  if (!firstValue)
+  {
+    out << "\n";
+  }
+}
+
   return 0;
 }
 
