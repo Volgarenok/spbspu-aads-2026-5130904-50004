@@ -11,7 +11,7 @@ namespace alekseev {
 
     ListIteratorBase();
 
-    ListIteratorBase(List< T > * node);
+    explicit ListIteratorBase(List< T > * node);
 
     ListIteratorBase< T > & operator++();
     ListIteratorBase< T > operator++(int);
@@ -66,7 +66,7 @@ namespace alekseev {
   struct LIter: ListIteratorBase< T > {
     using ListIteratorBase< T >::ListIteratorBase;
 
-    LIter(const ListIteratorBase< T > & base);
+    explicit LIter(const ListIteratorBase< T > & base);
 
     T & operator*() const;
     T * operator->() const;
@@ -119,8 +119,8 @@ namespace alekseev {
   struct LCIter: ListIteratorBase< T > {
     using ListIteratorBase< T >::ListIteratorBase;
 
-    LCIter(const LIter< T > & rhs);
-    LCIter(const ListIteratorBase< T > & base);
+    explicit LCIter(const LIter< T > & rhs);
+    explicit LCIter(const ListIteratorBase< T > & base);
 
     const T & operator*() const;
     const T * operator->() const;
