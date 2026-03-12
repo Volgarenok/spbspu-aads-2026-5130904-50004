@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(pop_front_on_empty_throws_test)
 BOOST_AUTO_TEST_CASE(erase_after_invalid_throws_test)
 {
   aydogan::List< int > list;
-  
+
   BOOST_CHECK_THROW(list.eraseAfter(list.beforeBegin()), std::out_of_range);
 
   list.push_front(1);
