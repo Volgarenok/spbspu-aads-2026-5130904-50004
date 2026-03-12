@@ -70,6 +70,10 @@ namespace alekseev {
 
     T & operator*() const;
     T * operator->() const;
+
+    friend LIter< T > insert_after(LIter< T > & element, T & value);
+    friend LIter< T > erase_after(LIter< T > & element);
+    friend LIter< T > clear(LIter< T > & start, LIter< T > & end);
   };
 
   template< class T >
@@ -88,6 +92,27 @@ namespace alekseev {
   T * LIter< T >::operator->() const
   {
     return std::addressof(this->node->data);
+  }
+
+  template< class T >
+  LIter< T > insert_after(LIter< T > & element, T & value)
+  {
+    element.node_ = insert_after(element.node_, value);
+    return element;
+  }
+
+  template< class T >
+  LIter< T > erase_after(LIter< T > & element)
+  {
+    element.node_ = erase_after(element.node_);
+    return element;
+  }
+
+  template< class T >
+  LIter< T > clear(LIter< T > & start, LIter< T > & end)
+  {
+    start.node_ = clear(start.node_, end.node_);
+    return start;
   }
 
   template< class T >

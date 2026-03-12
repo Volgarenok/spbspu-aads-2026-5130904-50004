@@ -30,7 +30,7 @@ namespace alekseev {
   }
 
   template< class T >
-  List< T > insert_after(List< T > * element, const T & value)
+  List< T > * insert_after(List< T > * element, T & value)
   {
     List< T > * new_node = new List< T >();
     new_node->data = value;
