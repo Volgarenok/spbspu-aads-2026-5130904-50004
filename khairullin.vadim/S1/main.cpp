@@ -87,4 +87,23 @@ int main()
     Citer_str = Citer_str.next();
     std::cout << Citer_str.value() << " ";
   }
+  std::cout << "\n";
+
+  while (Citer_LIter.hasNext())
+  {
+    Citer_LIter = Citer_LIter.next();
+    LIter<int> iter_int = Citer_LIter.value();
+    while (iter_int.hasNext())
+    {
+      iter_int = iter_int.next();
+      std::cout << iter_int.value() << " ";
+    }
+    std::cout << "\n";
+  }
+  while(Citer_sum.hasNext())
+  {
+    Citer_sum = Citer_sum.next();
+    std::cout << Citer_sum.value() << " ";
+  }
+  std::cout << "\n";
 }
