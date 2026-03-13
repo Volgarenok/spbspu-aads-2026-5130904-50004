@@ -75,7 +75,7 @@ namespace alekseev {
   struct LIter: ListIteratorBase< T > {
     using ListIteratorBase< T >::ListIteratorBase;
 
-    explicit LIter(const ListIteratorBase< T > & base);
+    LIter(const ListIteratorBase< T > & base);
 
     T & operator*() const;
     T * operator->() const;
@@ -129,7 +129,7 @@ namespace alekseev {
     using ListIteratorBase< T >::ListIteratorBase;
 
     explicit LCIter(const LIter< T > & rhs);
-    explicit LCIter(const ListIteratorBase< T > & base);
+    LCIter(const ListIteratorBase< T > & base);
 
     const T & operator*() const;
     const T * operator->() const;
