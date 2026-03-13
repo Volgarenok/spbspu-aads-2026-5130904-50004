@@ -16,8 +16,11 @@ namespace alekseev {
     Derived & operator++();
     Derived operator++(int);
 
-    bool operator==(const ListIteratorBase< T, Derived > & other) const;
-    bool operator!=(const ListIteratorBase< T, Derived > & other) const;
+    template< class OtherDerived >
+    bool operator==(const ListIteratorBase< T, OtherDerived > & other) const;
+
+    template< class OtherDerived >
+    bool operator!=(const ListIteratorBase< T, OtherDerived > & other) const;
 
     protected:
       List< T > * node_;
@@ -39,7 +42,7 @@ namespace alekseev {
   Derived & ListIteratorBase< T, Derived >::operator++()
   {
     node_ = node_->next;
-    return static_cast<Derived &>(*this);
+    return static_cast< Derived & >(*this);
   }
 
   template< class T, class Derived >
@@ -47,17 +50,21 @@ namespace alekseev {
   {
     ListIteratorBase< T, Derived > tmp = *this;
     ++(*this);
-    return static_cast<Derived &>(tmp);
+    return static_cast< Derived & >(tmp);
   }
 
   template< class T, class Derived >
-  bool ListIteratorBase< T, Derived >::operator==(const ListIteratorBase< T, Derived > & other) const
+  template< class OtherDerived >
+  bool ListIteratorBase< T, Derived >::operator==(
+      const ListIteratorBase< T, OtherDerived > & other) const
   {
     return node_ == other.node_;
   }
 
   template< class T, class Derived >
-  bool ListIteratorBase< T, Derived >::operator!=(const ListIteratorBase< T, Derived > & other) const
+  template< class OtherDerived >
+  bool ListIteratorBase< T, Derived >::operator!=(
+      const ListIteratorBase< T, OtherDerived > & other) const
   {
     return !(*this == other);
   }
