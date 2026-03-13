@@ -11,7 +11,7 @@ namespace alekseev {
   template< class T >
   List< T > * fake(List< T > * head = nullptr)
   {
-    List< T > * fake_node = static_cast< List< T > * >(::operator new(sizeof(List< T > *)));
+    List< T > * fake_node = static_cast< List< T > * >(::operator new(sizeof(List< T >)));
     if (head) {
       fake_node->next = head;
       head->next = fake_node;
