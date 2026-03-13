@@ -63,6 +63,15 @@ namespace alekseev {
   }
 
   template< class T >
+  struct LIter;
+  template< class T >
+  LIter< T > insert_after(LIter< T > & element, T & value);
+  template< class T >
+  LIter< T > erase_after(LIter< T > & element);
+  template< class T >
+  LIter< T > clear(LIter< T > & start, LIter< T > & end);
+
+  template< class T >
   struct LIter: ListIteratorBase< T > {
     using ListIteratorBase< T >::ListIteratorBase;
 
@@ -71,9 +80,9 @@ namespace alekseev {
     T & operator*() const;
     T * operator->() const;
 
-    friend LIter< T > insert_after(LIter< T > & element, T & value);
-    friend LIter< T > erase_after(LIter< T > & element);
-    friend LIter< T > clear(LIter< T > & start, LIter< T > & end);
+    friend LIter< T > insert_after< T >(LIter< T > & element, T & value);
+    friend LIter< T > erase_after< T >(LIter< T > & element);
+    friend LIter< T > clear< T >(LIter< T > & start, LIter & end);
   };
 
   template< class T >
@@ -85,13 +94,13 @@ namespace alekseev {
   template< class T >
   T & LIter< T >::operator*() const
   {
-    return this->node->data;
+    return this->node_->data;
   }
 
   template< class T >
   T * LIter< T >::operator->() const
   {
-    return std::addressof(this->node->data);
+    return std::addressof(this->node_->data);
   }
 
   template< class T >
@@ -141,13 +150,13 @@ namespace alekseev {
   template< class T >
   const T & LCIter< T >::operator*() const
   {
-    return this->node->data;
+    return this->node_->data;
   }
 
   template< class T >
   const T * LCIter< T >::operator->() const
   {
-    return std::addressof(this->node->data);
+    return std::addressof(this->node_->data);
   }
 
   template< class T >
