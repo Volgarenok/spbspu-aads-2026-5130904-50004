@@ -8,7 +8,7 @@ namespace alekseev {
   {
     out << p.first << "\n";
     LIter< int > start = begin(p.second);
-    LIter< int > end = next(alekseev::end(p.second));
+    LIter< int > end = alekseev::end(p.second);
     while (start != end) {
       std::cout << *(start++) << " ";
     }
@@ -21,6 +21,7 @@ int main()
 {
   alekseev::List< alekseev::PStrI > * matter_list = alekseev::fake< alekseev::PStrI >();
   alekseev::LIter< alekseev::PStrI > matter_iter = alekseev::before_begin(matter_list);
+  size_t matter_size = 0;
 
   std::string name;
   size_t counter = 0;
@@ -41,13 +42,14 @@ int main()
     }
     alekseev::PStrI tmp(name, some_list);
     alekseev::insert_after< alekseev::PStrI >(matter_iter, tmp);
+    ++matter_size;
 
     //alekseev::print(std::cout, *matter_iter);
   }
 
-  alekseev::LIter< alekseev::PStrI > matter_iter_start = alekseev::before_begin(matter_list);
-  while (matter_iter_start != matter_iter) {
-    std::cout << (++matter_iter_start)->first << " ";
+  ++matter_iter;
+  for (size_t i = 0; i < matter_size; ++i) {
+    std::cout << (++matter_iter)->first << " ";
   }
   std::cout << "\n";
 }
