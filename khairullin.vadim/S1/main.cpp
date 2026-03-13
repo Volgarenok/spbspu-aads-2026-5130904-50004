@@ -33,6 +33,20 @@ int main()
     {
       break;
     }
-   iter_str = iter_str.insert_value(temp_str);
+    iter_str = iter_str.insert_value(temp_str);
+    int temp_int = 0;
+    while (std::cin >> temp_int)
+    {
+      if (!iter_ll.hasNext())
+      {
+        List<int> * fake_int = List<int>::fake(nullptr);
+        LIter<int> iter_int = LIter<int>(fake_int);
+        iter_ll = iter_ll.insert_value(fake_int);
+        iter_LIter = iter_LIter.insert_value(iter_int);
+        Citer_LIter = Citer_LIter.insert_value(iter_int);
+        iter_int = iter_int.insert_value(temp_int);
+        iter_sum = iter_sum.insert_value(temp_int);
+      }
+    }
   }
 }
