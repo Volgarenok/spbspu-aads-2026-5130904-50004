@@ -47,6 +47,29 @@ int main()
         iter_int = iter_int.insert_value(temp_int);
         iter_sum = iter_sum.insert_value(temp_int);
       }
+      else
+      {
+        iter_sum = iter_sum.next();
+        iter_LIter = iter_LIter.next();
+        if (iter_LIter.value().hasNext())
+        {
+          iter_LIter.value() = iter_LIter.value().next();
+        }
+        iter_ll = iter_ll.next();
+        iter_LIter.value() = iter_LIter.value().insert_value(temp_int);
+        iter_sum.value() += temp_int;
+      }
+    }
+    if (std::cin.eof())
+    {
+      break;
+    }
+    else
+    {
+      std::cin.clear();
+      iter_ll = iter_ll.begin(fake_ll);
+      iter_LIter = iter_LIter.begin(fake_LIter);
+      iter_sum = iter_sum.begin(fake_sum);
     }
   }
 }
