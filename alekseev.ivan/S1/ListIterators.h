@@ -174,11 +174,7 @@ namespace alekseev {
   template< class T >
   LIter< T > end(List< T > * fake_node)
   {
-    List< T > * current = fake_node;
-    while (current->next != fake_node) {
-      current = current->next;
-    }
-    return LIter< T >(current);
+    return LIter< T >(fake_node);
   }
 
   template< class T >
@@ -196,11 +192,7 @@ namespace alekseev {
   template< class T >
   LCIter< T > end(const List< T > * fake_node)
   {
-    List< T > * current = fake_node;
-    while (current->next != fake_node) {
-      current = current->next;
-    }
-    return LCIter< T >(current);
+    return LCIter< T >(fake_node);
   }
 
   template< class Iter >
