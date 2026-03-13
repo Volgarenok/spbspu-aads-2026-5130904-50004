@@ -7,11 +7,13 @@
 namespace alekseev {
   template< class T, class Derived >
   struct ListIteratorBase {
+    List< T > * node_;
+
     friend class List< T >;
 
     ListIteratorBase();
 
-    explicit ListIteratorBase(List< T > * node);
+    ListIteratorBase(List< T > * node);
 
     Derived & operator++();
     Derived operator++(int);
@@ -21,9 +23,6 @@ namespace alekseev {
 
     template< class OtherDerived >
     bool operator!=(const ListIteratorBase< T, OtherDerived > & other) const;
-
-    protected:
-      List< T > * node_;
   };
 
   template< class T, class Derived >
@@ -135,7 +134,7 @@ namespace alekseev {
   struct LCIter: ListIteratorBase< T, LCIter< T > > {
     using ListIteratorBase< T, LCIter< T > >::ListIteratorBase;
 
-    explicit LCIter(const LIter< T > & rhs);
+    LCIter(const LIter< T > & rhs);
     LCIter(const ListIteratorBase< T, LCIter< T > > & base);
 
     const T & operator*() const;
@@ -144,7 +143,7 @@ namespace alekseev {
 
   template< class T >
   LCIter< T >::LCIter(const LIter< T > & rhs):
-    ListIteratorBase< T, LCIter< T > >(rhs)
+    ListIteratorBase< T, LCIter< T > >(rhs.node_)
   {
   }
 
