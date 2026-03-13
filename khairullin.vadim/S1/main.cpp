@@ -79,6 +79,11 @@ int main()
   {
     std::cout << "0\n";
     std::cerr << "There is no sequence, the amount can't be calculated\n";
+    Citer_ll.list->cut_fake(fake_ll);
+    Citer_LIter.list->cut_fake(fake_CLIter);
+    iter_LIter.list->cut_fake(fake_LIter);
+    Citer_sum.list->cut_fake(fake_sum);
+    Citer_str.list->cut_fake(fake_str);
     return 1;
   }
 
