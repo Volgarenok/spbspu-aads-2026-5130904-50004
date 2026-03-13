@@ -15,3 +15,5 @@ struct CLIter
   CLIter next();
   T & value();
 };
+
+#endif
