@@ -24,4 +24,15 @@ int main()
   LIter<LIter<int>> Citer_LIter = LIter<LIter<int>>(fake_CLIter);
   CLIter<List<int>*> Citer_ll = CLIter<List<int>*>(fake_ll);
   CLIter<int> Citer_sum = CLIter<int>(fake_sum);
+
+  while (true)
+  {
+    std::string temp_str = "";
+    std::cin >> temp_str;
+    if (std::cin.eof())
+    {
+      break;
+    }
+   iter_str = iter_str.insert_value(temp_str);
+  }
 }
