@@ -24,7 +24,7 @@ int main()
 
   std::string name;
   size_t counter = 0;
-  while (std::cin >> name && !std::cin.eof() && ++counter < 4) {
+  while (++counter < 5 && std::cin >> name && !std::cin.eof()) {
     alekseev::List< int > * some_list = alekseev::fake< int >();
     alekseev::LIter< int > some_iter = alekseev::before_begin(some_list);
 
@@ -42,6 +42,12 @@ int main()
     alekseev::PStrI tmp(name, some_list);
     alekseev::insert_after< alekseev::PStrI >(matter_iter, tmp);
 
-    alekseev::print(std::cout, *matter_iter);
+    //alekseev::print(std::cout, *matter_iter);
   }
+
+  alekseev::LIter< alekseev::PStrI > matter_iter_start = alekseev::before_begin(matter_list);
+  while (matter_iter_start != matter_iter) {
+    std::cout << (++matter_iter_start)->first << " ";
+  }
+  std::cout << "\n";
 }
