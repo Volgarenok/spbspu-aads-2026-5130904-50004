@@ -5,7 +5,7 @@
 #include <memory>
 
 namespace alekseev {
-  template< class T >
+  template< class T, class Derived >
   struct ListIteratorBase {
     friend class List< T >;
 
@@ -13,51 +13,51 @@ namespace alekseev {
 
     explicit ListIteratorBase(List< T > * node);
 
-    ListIteratorBase< T > & operator++();
-    ListIteratorBase< T > operator++(int);
+    Derived & operator++();
+    Derived operator++(int);
 
-    bool operator==(const ListIteratorBase< T > & other) const;
-    bool operator!=(const ListIteratorBase< T > & other) const;
+    bool operator==(const ListIteratorBase< T, Derived > & other) const;
+    bool operator!=(const ListIteratorBase< T, Derived > & other) const;
 
     protected:
       List< T > * node_;
   };
 
-  template< class T >
-  ListIteratorBase< T >::ListIteratorBase():
+  template< class T, class Derived >
+  ListIteratorBase< T, Derived >::ListIteratorBase():
     node_(nullptr)
   {
   }
 
-  template< class T >
-  ListIteratorBase< T >::ListIteratorBase(List< T > * node):
+  template< class T, class Derived >
+  ListIteratorBase< T, Derived >::ListIteratorBase(List< T > * node):
     node_(node)
   {
   }
 
-  template< class T >
-  ListIteratorBase< T > & ListIteratorBase< T >::operator++()
+  template< class T, class Derived >
+  Derived & ListIteratorBase< T, Derived >::operator++()
   {
     node_ = node_->next;
-    return *this;
+    return static_cast<Derived &>(*this);
   }
 
-  template< class T >
-  ListIteratorBase< T > ListIteratorBase< T >::operator++(int)
+  template< class T, class Derived >
+  Derived ListIteratorBase< T, Derived >::operator++(int)
   {
-    ListIteratorBase< T > tmp = *this;
+    ListIteratorBase< T, Derived > tmp = *this;
     ++(*this);
-    return tmp;
+    return static_cast<Derived &>(tmp);
   }
 
-  template< class T >
-  bool ListIteratorBase< T >::operator==(const ListIteratorBase< T > & other) const
+  template< class T, class Derived >
+  bool ListIteratorBase< T, Derived >::operator==(const ListIteratorBase< T, Derived > & other) const
   {
     return node_ == other.node_;
   }
 
-  template< class T >
-  bool ListIteratorBase< T >::operator!=(const ListIteratorBase< T > & other) const
+  template< class T, class Derived >
+  bool ListIteratorBase< T, Derived >::operator!=(const ListIteratorBase< T, Derived > & other) const
   {
     return !(*this == other);
   }
@@ -72,10 +72,10 @@ namespace alekseev {
   LIter< T > clear(LIter< T > & start, LIter< T > & end);
 
   template< class T >
-  struct LIter: ListIteratorBase< T > {
-    using ListIteratorBase< T >::ListIteratorBase;
+  struct LIter: ListIteratorBase< T, LIter< T > > {
+    using ListIteratorBase< T, LIter< T > >::ListIteratorBase;
 
-    LIter(const ListIteratorBase< T > & base);
+    LIter(const ListIteratorBase< T, LIter< T > > & base);
 
     T & operator*() const;
     T * operator->() const;
@@ -86,8 +86,8 @@ namespace alekseev {
   };
 
   template< class T >
-  LIter< T >::LIter(const ListIteratorBase< T > & base):
-    ListIteratorBase< T >(base)
+  LIter< T >::LIter(const ListIteratorBase< T, LIter< T > > & base):
+    ListIteratorBase< T, LIter< T > >(base)
   {
   }
 
@@ -125,11 +125,11 @@ namespace alekseev {
   }
 
   template< class T >
-  struct LCIter: ListIteratorBase< T > {
-    using ListIteratorBase< T >::ListIteratorBase;
+  struct LCIter: ListIteratorBase< T, LCIter< T > > {
+    using ListIteratorBase< T, LCIter< T > >::ListIteratorBase;
 
     explicit LCIter(const LIter< T > & rhs);
-    LCIter(const ListIteratorBase< T > & base);
+    LCIter(const ListIteratorBase< T, LCIter< T > > & base);
 
     const T & operator*() const;
     const T * operator->() const;
@@ -137,13 +137,13 @@ namespace alekseev {
 
   template< class T >
   LCIter< T >::LCIter(const LIter< T > & rhs):
-    ListIteratorBase< T >(rhs)
+    ListIteratorBase< T, LCIter< T > >(rhs)
   {
   }
 
   template< class T >
-  LCIter< T >::LCIter(const ListIteratorBase< T > & base):
-    ListIteratorBase< T >(base)
+  LCIter< T >::LCIter(const ListIteratorBase< T, LCIter< T > > & base):
+    ListIteratorBase< T, LCIter< T > >(base)
   {
   }
 
