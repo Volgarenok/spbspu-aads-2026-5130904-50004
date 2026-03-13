@@ -37,27 +37,58 @@ int main()
     int temp_int = 0;
     while (std::cin >> temp_int)
     {
-      if (!iter_ll.hasNext())
+      try
       {
-        List<int> * fake_int = List<int>::fake(nullptr);
-        LIter<int> iter_int = LIter<int>(fake_int);
-        iter_ll = iter_ll.insert_value(fake_int);
-        iter_LIter = iter_LIter.insert_value(iter_int);
-        Citer_LIter = Citer_LIter.insert_value(iter_int);
-        iter_int = iter_int.insert_value(temp_int);
-        iter_sum = iter_sum.insert_value(temp_int);
-      }
-      else
-      {
-        iter_sum = iter_sum.next();
-        iter_LIter = iter_LIter.next();
-        if (iter_LIter.value().hasNext())
+        if (!iter_ll.hasNext())
         {
-          iter_LIter.value() = iter_LIter.value().next();
+          List<int> * fake_int = List<int>::fake(nullptr);
+          LIter<int> iter_int = LIter<int>(fake_int);
+          iter_ll = iter_ll.insert_value(fake_int);
+          iter_LIter = iter_LIter.insert_value(iter_int);
+          Citer_LIter = Citer_LIter.insert_value(iter_int);
+          iter_int = iter_int.insert_value(temp_int);
+          iter_sum = iter_sum.insert_value(temp_int);
         }
-        iter_ll = iter_ll.next();
-        iter_LIter.value() = iter_LIter.value().insert_value(temp_int);
-        iter_sum.value() += temp_int;
+        else
+        {
+          iter_sum = iter_sum.next();
+          iter_LIter = iter_LIter.next();
+          if (iter_LIter.value().hasNext())
+          {
+            iter_LIter.value() = iter_LIter.value().next();
+          }
+          iter_ll = iter_ll.next();
+          iter_LIter.value() = iter_LIter.value().insert_value(temp_int);
+          iter_sum.value() += temp_int;
+        }
+      }
+      catch (...)
+      {
+        std::cerr << "Error\n";
+        Citer_ll = Citer_ll.list->cut_fake(fake_ll);
+        while (Citer_ll.not_empty())
+        {
+          Citer_ll.value() = Citer_ll.value()->cut_fake(Citer_ll.value());
+          Citer_ll.value()->clear(Citer_ll.value());
+          Citer_ll = Citer_ll.next();
+        }
+          Citer_sum = Citer_sum.begin(fake_sum);
+          Citer_sum = Citer_sum.list->cut_fake(fake_sum);
+          Citer_sum.list->clear(Citer_sum.list);
+
+          Citer_str = Citer_str.begin(fake_str);
+          Citer_str = Citer_str.list->cut_fake(fake_str);
+          Citer_str.list->clear(Citer_str.list);
+
+          Citer_LIter = Citer_LIter.begin(fake_CLIter);
+          Citer_LIter = Citer_LIter.list->cut_fake(Citer_LIter.list);
+          Citer_LIter.list->clear(Citer_LIter.list);
+
+          iter_LIter = iter_LIter.begin(fake_LIter);
+          iter_LIter = iter_LIter.list->cut_fake(iter_LIter.list);
+          iter_LIter.list->clear(iter_LIter.list);
+                
+          return 1;
       }
     }
     if (std::cin.eof())
