@@ -92,4 +92,19 @@ int main()
     if (hasElements == false) {
       break;
     }
+
+  bool isFirstNum = true;
+    pozdeev::LCIter<int> printIt = currentLine.cbegin();
+    while (printIt != currentLine.cend()) {
+      if (isFirstNum == false) {
+        std::cout << " ";
+      }
+      std::cout << *printIt;
+      isFirstNum = false;
+      ++printIt;
+    }
+    std::cout << "\n";
+
+    allSums.pushBack(currentSum);
+  }
 }
