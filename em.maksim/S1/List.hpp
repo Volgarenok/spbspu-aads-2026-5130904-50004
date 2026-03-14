@@ -69,6 +69,26 @@ public:
     delete tmp;
     sz--;
   }
+
+  void pop_back() {
+    if (sz == 0) {
+      return;
+    }
+    if (head->next == tail) {
+      delete tail;
+      tail = head;
+      head->next = nullptr;
+    } else {
+      Elem* tmp = head;
+      while (tmp->next != tail) {
+        tmp = tmp->next;
+      }
+      delete tail;
+      tail = tmp;
+      tail->next = nullptr;
+    }
+    sz--;
+  }
 };
 
 }
