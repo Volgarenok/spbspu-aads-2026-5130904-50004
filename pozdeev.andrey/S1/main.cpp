@@ -107,4 +107,18 @@ int main()
 
     allSums.pushBack(currentSum);
   }
+
+  bool isFirstSum = true;
+  pozdeev::LCIter<long long> sumIt = allSums.cbegin();
+  while (sumIt != allSums.cend()) {
+    if (isFirstSum == false) {
+      std::cout << " ";
+    }
+    std::cout << *sumIt;
+    isFirstSum = false;
+    ++sumIt;
+  }
+  std::cout << "\n";
+
+  return 0;
 }
