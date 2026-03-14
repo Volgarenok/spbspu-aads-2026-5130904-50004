@@ -335,6 +335,26 @@ public:
     }
     return tail_->val_;
   }
+
+  LIter<T> begin() noexcept
+  {
+    return LIter<T>(head_, tail_);
+  }
+
+  LCIter<T> cbegin() const noexcept
+  {
+    return LCIter<T>(head_, tail_);
+  }
+
+  LIter<T> end() noexcept
+  {
+    return LIter<T>(nullptr, tail_);
+  }
+
+  LCIter<T> cend() const noexcept
+  {
+    return LCIter<T>(nullptr, tail_);
+  }
 };
 
 }
