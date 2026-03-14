@@ -15,6 +15,13 @@ public:
     T val;
     Node* next;
     Node* prev;
+
+    Node(const T& value)
+    {
+      val = value;
+      next = nullptr;
+      prev = nullptr;
+    }
   };
 
   Node* head;
@@ -24,6 +31,28 @@ public:
   {
     head = nullptr;
     tail = nullptr;
+  }
+
+  bool empty() const
+  {
+    return head == nullptr;
+  }
+
+  void push_back(const T& value)
+  {
+    Node* node = new Node(value);
+
+    if (empty())
+    {
+      head = node;
+      tail = node;
+    }
+    else
+    {
+      tail->next = node;
+      node->prev = tail;
+      tail = node;
+    }
   }
 
 };
