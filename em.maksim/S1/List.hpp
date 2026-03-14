@@ -6,7 +6,31 @@
 namespace em {
 
 template <class T>
+class List;
+
+template <class T>
+class LIter {
+  friend class List<T>;
+
+private:
+  typename List<T>::Elem* ptr;
+
+  explicit LIter(typename List<T>::Elem* p) noexcept : ptr(p) {}
+
+public:
+  LIter() noexcept : ptr(nullptr) {}
+  LIter(const LIter&) noexcept = default;
+  LIter(LIter&&) noexcept = default;
+  ~LIter() = default;
+
+  LIter& operator=(const LIter&) noexcept = default;
+  LIter& operator=(LIter&&) noexcept = default;
+};
+
+template <class T>
 class List {
+  friend class LIter<T>;
+
 protected:
   struct Elem {
     T data;
