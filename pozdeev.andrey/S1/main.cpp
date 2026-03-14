@@ -2,6 +2,7 @@
 #include <limits>
 #include <string>
 #include <utility>
+#include <stdexcept>
 
 #include "biList.hpp"
 
@@ -21,18 +22,36 @@ int main()
       }
       std::cin.unget();
 
-      long long num = 0;
-      if (!(std::cin >> num)) {
-        std::cerr << "Invalid input\n";
-        return 1;
+      std::string token;
+      int inner_ch = std::cin.get();
+      while (inner_ch != std::char_traits<char>::eof() && !std::isspace(inner_ch)) {
+        token += static_cast<char>(inner_ch);
+        inner_ch = std::cin.get();
+      }
+      if (inner_ch != std::char_traits<char>::eof()) {
+        std::cin.unget();
       }
 
-      if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min()) {
+      try {
+        size_t pos;
+        long long num = std::stoll(token, &pos);
+        if (pos != token.length()) {
+          std::cerr << "Invalid input\n";
+          return 1;
+        }
+        if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min()) {
+           std::cerr << "Overflow\n";
+           return 1;
+        }
+        numbers.pushBack(static_cast<int>(num));
+      } catch (const std::out_of_range&) {
          std::cerr << "Overflow\n";
+         return 1;
+      } catch (const std::invalid_argument&) {
+         std::cerr << "Invalid input\n";
          return 1;
       }
 
-      numbers.pushBack(static_cast<int>(num));
       ch = std::cin.get();
     }
     listNames.pushBack(currentName);
