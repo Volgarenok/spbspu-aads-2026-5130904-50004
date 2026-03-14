@@ -15,14 +15,16 @@ public:
     T val;
     Node* next;
     Node* prev;
-
-    Node(const T& value)
-    {
-      val = value;
-      next = nullptr;
-      prev = nullptr;
-    }
   };
+
+  Node* head;
+  Node* tail;
+
+  BiList()
+  {
+    head = nullptr;
+    tail = nullptr;
+  }
 
 };
 
