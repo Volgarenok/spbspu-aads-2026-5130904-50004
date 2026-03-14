@@ -289,6 +289,15 @@ public:
     }
     return *this;
   }
+
+  bool isEmpty() const noexcept
+  {
+    if (size_ == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 };
 
 }
