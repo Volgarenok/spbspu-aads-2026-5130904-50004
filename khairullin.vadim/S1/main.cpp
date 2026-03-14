@@ -80,11 +80,11 @@ int main()
       catch (...)
       {
         std::cerr << "Bad alloc\n";
-        delete_LL(Citer_ll);
-        delete_List(Citer_sum, fake_sum);
-        delete_List(Citer_str, fake_str);
-        delete_List(Citer_LIter, fake_CLIter);
-        delete_List(iter_LIter, fake_LIter);
+        delete_LL(fake_ll);
+        delete_List(fake_sum);
+        delete_List(fake_str);
+        delete_List(fake_CLIter);
+        delete_List(fake_LIter);
         return 1;
       }
     }
@@ -104,11 +104,11 @@ int main()
   if(overflow)
   {
     std::cerr << "Overflow\n";
-    delete_LL(Citer_ll);
-    delete_List(Citer_sum, fake_sum);
-    delete_List(Citer_str, fake_str);
-    delete_List(Citer_LIter, fake_CLIter);
-    delete_List(iter_LIter, fake_LIter);
+    delete_LL(fake_ll);
+    delete_List(fake_sum);
+    delete_List(fake_str);
+    delete_List(fake_CLIter);
+    delete_List(fake_LIter);
     return 1;
   }
 
@@ -165,9 +165,9 @@ int main()
     }
   }
 
-  delete_LL(Citer_ll);
-  delete_List(Citer_sum, fake_sum);
-  delete_List(Citer_str, fake_str);
-  delete_List(Citer_LIter, fake_CLIter);
-  delete_List(iter_LIter, fake_LIter);
+  delete_LL(fake_ll);
+  delete_List(fake_sum);
+  delete_List(fake_str);
+  delete_List(fake_CLIter);
+  delete_List(fake_LIter);
 }

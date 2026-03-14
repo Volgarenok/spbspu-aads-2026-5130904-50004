@@ -1,38 +1,27 @@
 #include "delete_list.hpp"
 
 template<class T>
-void delete_LL(CLIter<T> iter)
+void delete_LL(List<T> * fake)
 {
-  iter = iter.list->cut_fake(iter.list);
-  while(iter.not_empty())
+  List<T> * head = fake->cut_fake(fake);
+  while(head)
   {
-    iter.value() = iter.value()->cut_fake(iter.value());
-    if (iter.value())
+    head->val = head->val->cut_fake(head->val);
+    if (head->val)
     {
-      iter.value()->clear(iter.value());
+      head->val->clear(head->val);
     }
-    iter = iter.list->cut(iter.list);
+    head = head->cut(head);
   }
 }
 
 template<class T>
-void delete_List(CLIter<T> iter, List<T> * fake)
+void delete_List(List<T> * fake)
 {
-  iter = iter.begin(fake);
-  iter = iter.list->cut_fake(fake);
-  if (iter.list)
+  List<T> * head = fake->next;
+  fake->cut_fake(fake);
+  if (head)
   {
-    iter.list->clear(iter.list);
-  }
-}
-
-template<class T>
-void delete_List(LIter<T> iter, List<T> * fake)
-{
-  iter = iter.begin(fake);
-  iter = iter.list->cut_fake(fake);
-  if (iter.list)
-  {
-    iter.list->clear(iter.list);
+    head->clear(head);
   }
 }
