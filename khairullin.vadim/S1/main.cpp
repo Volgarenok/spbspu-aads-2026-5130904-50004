@@ -4,6 +4,8 @@
 #include "LIter.cpp"
 #include "CLIter.hpp"
 #include "CLIter.cpp"
+#include "delete_list.hpp"
+#include "delete_list.cpp"
 #include <iostream>
 #include <string>
 #include <limits>
@@ -29,6 +31,7 @@ int main()
   CLIter<ull> Citer_sum = CLIter<ull>(fake_sum);
 
   const ull MAX = std::numeric_limits<ull>::max();
+  bool overflow = false;
   while (true)
   {
     std::string temp_str = "";
@@ -63,50 +66,25 @@ int main()
           }
           iter_ll = iter_ll.next();
           iter_LIter.value() = iter_LIter.value().insert_value(temp_ull);
-          try
+          if (iter_sum.value() < MAX - temp_ull)
           {
-            if (iter_sum.value() < MAX - temp_ull)
-            {
-              iter_sum.value() += temp_ull;
-            }
-            else
-            {
-              throw std::exception();
-            }
+            iter_sum.value() += temp_ull;
           }
-          catch (...)
+          else
           {
-            throw;
+            overflow = true;
           }
         }
       }
       catch (...)
       {
-        std::cerr << "Error\n";
-        Citer_ll = Citer_ll.list->cut_fake(fake_ll);
-        while (Citer_ll.not_empty())
-        {
-          Citer_ll.value() = Citer_ll.value()->cut_fake(Citer_ll.value());
-          Citer_ll.value()->clear(Citer_ll.value());
-          Citer_ll = Citer_ll.next();
-        }
-          Citer_sum = Citer_sum.begin(fake_sum);
-          Citer_sum = Citer_sum.list->cut_fake(fake_sum);
-          Citer_sum.list->clear(Citer_sum.list);
-
-          Citer_str = Citer_str.begin(fake_str);
-          Citer_str = Citer_str.list->cut_fake(fake_str);
-          Citer_str.list->clear(Citer_str.list);
-
-          Citer_LIter = Citer_LIter.begin(fake_CLIter);
-          Citer_LIter = Citer_LIter.list->cut_fake(Citer_LIter.list);
-          Citer_LIter.list->clear(Citer_LIter.list);
-
-          iter_LIter = iter_LIter.begin(fake_LIter);
-          iter_LIter = iter_LIter.list->cut_fake(iter_LIter.list);
-          iter_LIter.list->clear(iter_LIter.list);
-
-          return 1;
+        std::cerr << "Bad alloc\n";
+        delete_LL(Citer_ll);
+        delete_List(Citer_sum, fake_sum);
+        delete_List(Citer_str, fake_str);
+        delete_List(Citer_LIter, fake_CLIter);
+        delete_List(iter_LIter, fake_LIter);
+        return 1;
       }
     }
     if (std::cin.eof())
@@ -120,6 +98,17 @@ int main()
       iter_LIter = iter_LIter.begin(fake_LIter);
       iter_sum = iter_sum.begin(fake_sum);
     }
+  }
+
+  if(overflow)
+  {
+    std::cerr << "Overflow\n";
+    delete_LL(Citer_ll);
+    delete_List(Citer_sum, fake_sum);
+    delete_List(Citer_str, fake_str);
+    delete_List(Citer_LIter, fake_CLIter);
+    delete_List(iter_LIter, fake_LIter);
+    return 1;
   }
 
   Citer_LIter = Citer_LIter.begin(fake_CLIter);
@@ -175,26 +164,9 @@ int main()
     }
   }
 
-  Citer_ll = Citer_ll.list->cut_fake(fake_ll);
-  while(Citer_ll.not_empty())
-  {
-    Citer_ll.value() = Citer_ll.value()->cut_fake(Citer_ll.value());
-    Citer_ll.value()->clear(Citer_ll.value());
-    Citer_ll = Citer_ll.next();
-  }
-  Citer_sum = Citer_sum.begin(fake_sum);
-  Citer_sum = Citer_sum.list->cut_fake(fake_sum);
-  Citer_sum.list->clear(Citer_sum.list);
-
-  Citer_str = Citer_str.begin(fake_str);
-  Citer_str = Citer_str.list->cut_fake(fake_str);
-  Citer_str.list->clear(Citer_str.list);
-
-  Citer_LIter = Citer_LIter.begin(fake_CLIter);
-  Citer_LIter = Citer_LIter.list->cut_fake(Citer_LIter.list);
-  Citer_LIter.list->clear(Citer_LIter.list);
-
-  iter_LIter = iter_LIter.begin(fake_LIter);
-  iter_LIter = iter_LIter.list->cut_fake(iter_LIter.list);
-  iter_LIter.list->clear(iter_LIter.list);
+  delete_LL(Citer_ll);
+  delete_List(Citer_sum, fake_sum);
+  delete_List(Citer_str, fake_str);
+  delete_List(Citer_LIter, fake_CLIter);
+  delete_List(iter_LIter, fake_LIter);
 }
