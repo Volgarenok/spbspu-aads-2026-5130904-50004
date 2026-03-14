@@ -19,6 +19,12 @@ protected:
   Elem* head;
   Elem* tail;
   size_t sz;
+
+public:
+  List() : sz(0) {
+    head = new Elem(T());
+    tail = head;
+  }
 };
 
 }
