@@ -411,6 +411,23 @@ public:
     }
     size_ = size_ + 1;
   }
+
+  LIter<T> insert(LIter<T> pos, const T& value)
+  {
+    if (pos == end()) {
+      pushBack(value);
+      return LIter<T>(tail_, tail_);
+    }
+    if (pos == begin()) {
+      pushFront(value);
+      return begin();
+    }
+    Node<T>* newNode = new Node<T>(value, pos.cur_->prev_, pos.cur_);
+    pos.cur_->prev_->next_ = newNode;
+    pos.cur_->prev_ = newNode;
+    size_ = size_ + 1;
+    return LIter<T>(newNode, tail_);
+  }
 };
 
 }
