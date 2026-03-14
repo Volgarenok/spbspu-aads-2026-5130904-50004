@@ -428,6 +428,40 @@ public:
     size_ = size_ + 1;
     return LIter<T>(newNode, tail_);
   }
+
+  void popFront()
+  {
+    if (size_ == 0) {
+      throw std::runtime_error("List is empty");
+    }
+    Node<T>* temp = head_;
+    if (size_ == 1) {
+      head_ = nullptr;
+      tail_ = nullptr;
+    } else {
+      head_ = head_->next_;
+      head_->prev_ = nullptr;
+    }
+    delete temp;
+    size_ = size_ - 1;
+  }
+
+  void popBack()
+  {
+    if (size_ == 0) {
+      throw std::runtime_error("List is empty");
+    }
+    Node<T>* temp = tail_;
+    if (size_ == 1) {
+      head_ = nullptr;
+      tail_ = nullptr;
+    } else {
+      tail_ = tail_->prev_;
+      tail_->next_ = nullptr;
+    }
+    delete temp;
+    size_ = size_ - 1;
+  }
 };
 
 }
