@@ -58,3 +58,38 @@ BOOST_AUTO_TEST_CASE(pushBackCheck)
   BOOST_CHECK_EQUAL(lst.back(), 20);
   BOOST_CHECK_EQUAL(lst.getSize(), 2);
 }
+
+BOOST_AUTO_TEST_CASE(insertCheck)
+{
+  BiList<int> lst;
+  lst.pushBack(1);
+  lst.pushBack(3);
+  auto it = lst.begin();
+  lst.insert(it, 0);
+  BOOST_CHECK_EQUAL(lst.front(), 0);
+  auto it2 = lst.begin();
+  ++it2; ++it2;
+  lst.insert(it2, 2);
+
+  BOOST_CHECK_EQUAL(lst.getSize(), 4);
+}
+
+BOOST_AUTO_TEST_CASE(popFrontCheck)
+{
+  BiList<int> lst;
+  lst.pushBack(1);
+  lst.pushBack(2);
+  lst.popFront();
+  BOOST_CHECK_EQUAL(lst.front(), 2);
+  BOOST_CHECK_EQUAL(lst.getSize(), 1);
+}
+
+BOOST_AUTO_TEST_CASE(popBackCheck)
+{
+  BiList<int> lst;
+  lst.pushBack(1);
+  lst.pushBack(2);
+  lst.popBack();
+  BOOST_CHECK_EQUAL(lst.back(), 1);
+  BOOST_CHECK_EQUAL(lst.getSize(), 1);
+}
