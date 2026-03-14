@@ -56,6 +56,19 @@ public:
     tail = nw;
     sz++;
   }
+
+  void pop_front() {
+    if (sz == 0) {
+      return;
+    }
+    Elem* tmp = head->next;
+    head->next = tmp->next;
+    if (tmp == tail) {
+      tail = head;
+    }
+    delete tmp;
+    sz--;
+  }
 };
 
 }
