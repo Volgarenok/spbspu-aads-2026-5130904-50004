@@ -14,15 +14,51 @@ int main()
   try
   {
     BiList<std::pair<std::string, BiList<unsigned long long>>> sequences;
-    std::string name;
+    std::string line;
 
-    while (std::cin >> name)
+    while (std::getline(std::cin, line))
     {
-      BiList<unsigned long long> numbers;
-      std::string token;
-
-      while (std::cin >> token && std::isdigit(token[0]))
+      if (line.empty())
       {
+        continue;
+      }
+
+      size_t i = 0;
+      while (i < line.size() && std::isspace(line[i]))
+      {
+        i++;
+      }
+      if (i == line.size())
+      {
+        continue;
+      }
+
+      size_t start = i;
+      while (i < line.size() && !std::isspace(line[i]))
+      {
+        i++;
+      }
+      std::string name = line.substr(start, i - start);
+
+      BiList<unsigned long long> numbers;
+      while (i < line.size())
+      {
+        while (i < line.size() && std::isspace(line[i]))
+        {
+          i++;
+        }
+        if (i == line.size())
+        {
+          break;
+        }
+
+        start = i;
+        while (i < line.size() && !std::isspace(line[i]))
+        {
+          i++;
+        }
+        std::string token = line.substr(start, i - start);
+
         try
         {
           unsigned long long num = std::stoull(token);
@@ -31,14 +67,21 @@ int main()
         catch (const std::out_of_range&)
         {
           sequences.pushBack(std::make_pair(name, std::move(numbers)));
+          bool isFirstInHeader = true;
+          for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
+          {
+            if (!isFirstInHeader)
+            {
+              std::cout << " ";
+            }
+            std::cout << it->first;
+            isFirstInHeader = false;
+          }
+          std::cout << "\n";
           throw std::overflow_error("Overflow");
         }
       }
-
       sequences.pushBack(std::make_pair(name, std::move(numbers)));
-
-      if (std::cin.eof()) break;
-      std::cin.clear();
     }
 
     if (sequences.isEmpty())
@@ -47,76 +90,82 @@ int main()
       return 0;
     }
 
-    bool first = true;
-    for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
-    {
-      if (!first) std::cout << " ";
-      std::cout << it->first;
-      first = false;
-    }
-    std::cout << "\n";
-
+    bool isFirstHeader = true;
     size_t maxLen = 0;
+    bool allEmpty = true;
     for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
     {
+      if (!isFirstHeader)
+      {
+        std::cout << " ";
+      }
+      std::cout << it->first;
+      isFirstHeader = false;
+
       if (it->second.getSize() > maxLen)
       {
         maxLen = it->second.getSize();
       }
+      if (!it->second.isEmpty())
+      {
+        allEmpty = false;
+      }
+    }
+    std::cout << "\n";
+
+    if (allEmpty)
+    {
+      std::cout << "0\n";
+      return 0;
     }
 
-    BiList<BiList<unsigned long long>> transp;
+    BiList<unsigned long long> resultSums;
     for (size_t i = 0; i < maxLen; ++i)
     {
-      BiList<unsigned long long> newList;
+      bool isFirstInRow = true;
+      unsigned long long currentTotal = 0;
+
       for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
       {
         if (i < it->second.getSize())
         {
           auto elemIt = it->second.cbegin();
-          for (size_t j = 0; j < i; ++j) ++elemIt;
-          newList.pushBack(*elemIt);
+          for (size_t j = 0; j < i; ++j)
+          {
+            ++elemIt;
+          }
+
+          unsigned long long val = *elemIt;
+          if (!isFirstInRow)
+          {
+            std::cout << " ";
+          }
+          std::cout << val;
+          isFirstInRow = false;
+
+          if (currentTotal > std::numeric_limits<unsigned long long>::max() - val)
+          {
+            std::cout << "\n";
+            throw std::overflow_error("Overflow");
+          }
+          currentTotal += val;
         }
       }
-      if (!newList.isEmpty())
-      {
-        transp.pushBack(std::move(newList));
-      }
-    }
-
-    BiList<unsigned long long> sums;
-    for (auto it = transp.cbegin(); it != transp.cend(); ++it)
-    {
-      bool firstInRow = true;
-      unsigned long long total = 0;
-      for (auto elemIt = it->cbegin(); elemIt != it->cend(); ++elemIt)
-      {
-        if (!firstInRow) std::cout << " ";
-        std::cout << *elemIt;
-        firstInRow = false;
-
-        if (total > std::numeric_limits<unsigned long long>::max() - *elemIt)
-        {
-          std::cout << "\n";
-          throw std::overflow_error("Overflow");
-        }
-        total += *elemIt;
-      }
       std::cout << "\n";
-      sums.pushBack(total);
+      resultSums.pushBack(currentTotal);
     }
 
-    if (!sums.isEmpty())
+    bool isFirstSum = true;
+    for (auto it = resultSums.cbegin(); it != resultSums.cend(); ++it)
     {
-      first = true;
-      for (auto it = sums.cbegin(); it != sums.cend(); ++it)
+      if (!isFirstSum)
       {
-        if (!first) std::cout << " ";
-        std::cout << *it;
-        first = false;
+        std::cout << " ";
       }
-      std::cout << "\n";
+      std::cout << *it;
+      isFirstSum = false;
     }
+    std::cout << "\n";
 
     return 0;
   }
