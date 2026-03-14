@@ -144,6 +144,22 @@ public:
     sz = 0;
   }
 
+  LIter<T> begin() noexcept {
+    return LIter<T>(head->next);
+  }
+
+  LIter<T> end() noexcept {
+    return LIter<T>(nullptr);
+  }
+
+  LCIter<T> cbegin() const noexcept {
+    return LCIter<T>(head->next);
+  }
+
+  LCIter<T> cend() const noexcept {
+    return LCIter<T>(nullptr);
+  }
+
   void push_front(const T& value) {
     Elem* nw = new Elem(value, head->next);
     head->next = nw;
