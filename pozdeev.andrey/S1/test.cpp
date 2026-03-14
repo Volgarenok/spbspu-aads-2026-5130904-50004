@@ -93,3 +93,28 @@ BOOST_AUTO_TEST_CASE(popBackCheck)
   BOOST_CHECK_EQUAL(lst.back(), 1);
   BOOST_CHECK_EQUAL(lst.getSize(), 1);
 }
+
+BOOST_AUTO_TEST_CASE(eraseCheck)
+{
+  BiList<int> lst;
+  lst.pushBack(1);
+  lst.pushBack(2);
+  lst.pushBack(3);
+  auto it = lst.begin();
+  ++it;
+  lst.erase(it);
+  BOOST_CHECK_EQUAL(lst.getSize(), 2);
+  BOOST_CHECK_EQUAL(lst.front(), 1);
+  BOOST_CHECK_EQUAL(lst.back(), 3);
+}
+
+BOOST_AUTO_TEST_CASE(clearCheck)
+{
+  BiList<int> lst;
+  lst.pushBack(1);
+  lst.pushBack(2);
+  lst.pushBack(3);
+  lst.clear();
+  BOOST_CHECK(lst.isEmpty());
+  BOOST_CHECK_EQUAL(lst.getSize(), 0);
+}
