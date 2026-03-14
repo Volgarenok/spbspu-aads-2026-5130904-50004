@@ -40,3 +40,21 @@ BOOST_AUTO_TEST_CASE(backCheck)
   lst.back() = 200;
   BOOST_CHECK_EQUAL(lst.back(), 200);
 }
+
+BOOST_AUTO_TEST_CASE(pushFrontCheck)
+{
+  BiList<int> lst;
+  lst.pushFront(5);
+  lst.pushFront(15);
+  BOOST_CHECK_EQUAL(lst.front(), 15);
+  BOOST_CHECK_EQUAL(lst.getSize(), 2);
+}
+
+BOOST_AUTO_TEST_CASE(pushBackCheck)
+{
+  BiList<int> lst;
+  lst.pushBack(10);
+  lst.pushBack(20);
+  BOOST_CHECK_EQUAL(lst.back(), 20);
+  BOOST_CHECK_EQUAL(lst.getSize(), 2);
+}
