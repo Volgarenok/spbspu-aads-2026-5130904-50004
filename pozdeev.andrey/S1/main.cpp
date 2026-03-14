@@ -11,9 +11,13 @@ int main()
   pozdeev::BiList<std::string> listNames;
   pozdeev::BiList<pozdeev::BiList<int>> listValues;
   std::string currentName;
+  bool has_overflow = false;
+  bool has_invalid = false;
 
   while (std::cin >> currentName) {
     pozdeev::BiList<int> numbers;
+    bool line_error = false;
+
     int ch = std::cin.get();
     while (ch != std::char_traits<char>::eof() && ch != '\n') {
       if (std::isspace(ch)) {
@@ -24,7 +28,7 @@ int main()
 
       std::string token;
       int inner_ch = std::cin.get();
-      while (inner_ch != std::char_traits<char>::eof() && !std::isspace(inner_ch)) {
+      while (inner_ch != std::char_traits<char>::eof() && inner_ch != '\n' && !std::isspace(inner_ch)) {
         token += static_cast<char>(inner_ch);
         inner_ch = std::cin.get();
       }
@@ -36,44 +40,63 @@ int main()
         size_t pos;
         long long num = std::stoll(token, &pos);
         if (pos != token.length()) {
-          std::cerr << "Invalid input\n";
-          return 1;
+          has_invalid = true;
+          line_error = true;
+          break;
         }
         if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min()) {
-           std::cerr << "Overflow\n";
-           return 1;
+          has_overflow = true;
+          line_error = true;
+          break;
         }
         numbers.pushBack(static_cast<int>(num));
       } catch (const std::out_of_range&) {
-         std::cerr << "Overflow\n";
-         return 1;
+        has_overflow = true;
+        line_error = true;
+        break;
       } catch (const std::invalid_argument&) {
-         std::cerr << "Invalid input\n";
-         return 1;
+        has_invalid = true;
+        line_error = true;
+        break;
       }
-
       ch = std::cin.get();
     }
+
+    if (line_error) {
+      listNames.pushBack(currentName);
+      listValues.pushBack(std::move(numbers));
+      break;
+    }
+
     listNames.pushBack(currentName);
     listValues.pushBack(std::move(numbers));
   }
 
-  if (listNames.isEmpty()) {
+  if (!listNames.isEmpty()) {
+    bool isFirstWord = true;
+    auto nameIt = listNames.cbegin();
+    while (nameIt != listNames.cend()) {
+      if (!isFirstWord) {
+        std::cout << " ";
+      }
+      std::cout << *nameIt;
+      isFirstWord = false;
+      ++nameIt;
+    }
+    std::cout << "\n";
+  } else if (!has_overflow && !has_invalid) {
     std::cout << "0\n";
     return 0;
   }
 
-  bool isFirstWord = true;
-  auto nameIt = listNames.cbegin();
-  while (nameIt != listNames.cend()) {
-    if (!isFirstWord) {
-      std::cout << " ";
-    }
-    std::cout << *nameIt;
-    isFirstWord = false;
-    ++nameIt;
+  if (has_invalid) {
+    std::cerr << "Invalid input\n";
+    return 1;
   }
-  std::cout << "\n";
+  if (has_overflow) {
+    std::cerr << "Overflow\n";
+    return 1;
+  }
 
   bool hasAnyNumbers = false;
   auto checkIt = listValues.begin();
@@ -115,11 +138,11 @@ int main()
         currentLine.pushBack(val);
 
         if (val > 0 && currentSum > (std::numeric_limits<long long>::max() - val)) {
-          std::cerr << "Sum overflow\n";
+          std::cerr << "Overflow\n";
           return 1;
         }
         if (val < 0 && currentSum < (std::numeric_limits<long long>::min() - val)) {
-          std::cerr << "Sum overflow\n";
+          std::cerr << "Overflow\n";
           return 1;
         }
 
