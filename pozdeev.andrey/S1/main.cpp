@@ -59,4 +59,37 @@ int main()
     iterators.pushBack((*setupIt).begin());
     ++setupIt;
   }
+
+  pozdeev::BiList<long long> allSums;
+  bool hasElements = true;
+
+  while (hasElements) {
+    hasElements = false;
+    long long currentSum = 0;
+    pozdeev::BiList<int> currentLine;
+
+    pozdeev::LIter<pozdeev::BiList<int>> seqIt = listValues.begin();
+    pozdeev::LIter<pozdeev::LIter<int>> iterIt = iterators.begin();
+
+    while (seqIt != listValues.end()) {
+      if (*iterIt != (*seqIt).end()) {
+        hasElements = true;
+        int val = *(*iterIt);
+        currentLine.pushBack(val);
+
+        if (currentSum > (std::numeric_limits<long long>::max() - val)) {
+          std::cerr << "Sum is too big\n";
+          return 2;
+        }
+        currentSum = currentSum + val;
+
+        ++(*iterIt);
+      }
+      ++seqIt;
+      ++iterIt;
+    }
+
+    if (hasElements == false) {
+      break;
+    }
 }
