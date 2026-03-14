@@ -49,6 +49,13 @@ public:
     }
     sz++;
   }
+
+  void push_back(const T& value) {
+    Elem* nw = new Elem(value);
+    tail->next = nw;
+    tail = nw;
+    sz++;
+  }
 };
 
 }
