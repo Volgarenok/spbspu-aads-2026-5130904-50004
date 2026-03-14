@@ -74,6 +74,35 @@ public:
 
   LCIter& operator=(const LCIter&) noexcept = default;
   LCIter& operator=(LCIter&&) noexcept = default;
+
+  const T& operator*() const {
+    if (ptr == nullptr) {
+      throw std::out_of_range("Dereference null const iterator");
+    }
+    return ptr->data;
+  }
+
+  const T* operator->() const {
+    if (ptr == nullptr) {
+      throw std::out_of_range("Access null const iterator");
+    }
+    return &(ptr->data);
+  }
+
+  LCIter& operator++() noexcept {
+    if (ptr != nullptr) {
+      ptr = ptr->next;
+    }
+    return *this;
+  }
+
+  bool operator==(const LCIter& other) const noexcept {
+    return ptr == other.ptr;
+  }
+
+  bool operator!=(const LCIter& other) const noexcept {
+    return ptr != other.ptr;
+  }
 };
 
 template <class T>
