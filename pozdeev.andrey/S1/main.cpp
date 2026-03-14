@@ -1,10 +1,11 @@
+#include "biList.hpp"
+
 #include <iostream>
-#include <limits>
 #include <string>
 #include <utility>
+#include <limits>
 #include <stdexcept>
-
-#include "biList.hpp"
+#include <cctype>
 
 using namespace pozdeev;
 
@@ -18,21 +19,29 @@ int main()
     while (std::cin >> name)
     {
       BiList<unsigned long long> numbers;
-      unsigned long long num;
-      while (std::cin >> num)
+      std::string token;
+
+      while (std::cin >> token && std::isdigit(token[0]))
       {
-        numbers.push_back(num);
+        try
+        {
+          unsigned long long num = std::stoull(token);
+          numbers.pushBack(num);
+        }
+        catch (const std::out_of_range&)
+        {
+          sequences.pushBack(std::make_pair(name, std::move(numbers)));
+          throw std::overflow_error("Overflow");
+        }
       }
 
-      if (!std::cin.eof())
-      {
-        std::cin.clear();
-      }
+      sequences.pushBack(std::make_pair(name, std::move(numbers)));
 
-      sequences.push_back(std::make_pair(name, std::move(numbers)));
+      if (std::cin.eof()) break;
+      std::cin.clear();
     }
 
-    if (sequences.is_empty())
+    if (sequences.isEmpty())
     {
       std::cout << "0\n";
       return 0;
@@ -41,10 +50,7 @@ int main()
     bool first = true;
     for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
     {
-      if (!first)
-      {
-        std::cout << " ";
-      }
+      if (!first) std::cout << " ";
       std::cout << it->first;
       first = false;
     }
@@ -53,66 +59,61 @@ int main()
     size_t maxLen = 0;
     for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
     {
-      if (it->second.getsize() > maxLen)
+      if (it->second.getSize() > maxLen)
       {
-        maxLen = it->second.getsize();
+        maxLen = it->second.getSize();
+      }
+    }
+
+    BiList<BiList<unsigned long long>> transp;
+    for (size_t i = 0; i < maxLen; ++i)
+    {
+      BiList<unsigned long long> newList;
+      for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
+      {
+        if (i < it->second.getSize())
+        {
+          auto elemIt = it->second.cbegin();
+          for (size_t j = 0; j < i; ++j) ++elemIt;
+          newList.pushBack(*elemIt);
+        }
+      }
+      if (!newList.isEmpty())
+      {
+        transp.pushBack(std::move(newList));
       }
     }
 
     BiList<unsigned long long> sums;
-    for (size_t i = 0; i < maxLen; ++i)
+    for (auto it = transp.cbegin(); it != transp.cend(); ++it)
     {
-      unsigned long long currentSum = 0;
       bool firstInRow = true;
-
-      for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
+      unsigned long long total = 0;
+      for (auto elemIt = it->cbegin(); elemIt != it->cend(); ++elemIt)
       {
-        if (i < it->second.getsize())
+        if (!firstInRow) std::cout << " ";
+        std::cout << *elemIt;
+        firstInRow = false;
+
+        if (total > std::numeric_limits<unsigned long long>::max() - *elemIt)
         {
-          auto elemIt = it->second.cbegin();
-          for (size_t j = 0; j < i; ++j)
-          {
-            ++elemIt;
-          }
-
-          unsigned long long val = *elemIt;
-
-          if (firstInRow)
-          {
-            firstInRow = false;
-          }
-          else
-          {
-            std::cout << " ";
-          }
-          std::cout << val;
-
-          if (currentSum > std::numeric_limits<unsigned long long>::max() - val)
-          {
-            throw std::overflow_error("Overflow");
-          }
-          currentSum += val;
+          std::cout << "\n";
+          throw std::overflow_error("Overflow");
         }
+        total += *elemIt;
       }
       std::cout << "\n";
-      sums.push_back(currentSum);
+      sums.pushBack(total);
     }
 
-    if (sums.is_empty())
+    if (!sums.isEmpty())
     {
-      std::cout << "0\n";
-    }
-    else
-    {
-      bool firstSum = true;
+      first = true;
       for (auto it = sums.cbegin(); it != sums.cend(); ++it)
       {
-        if (!firstSum)
-        {
-          std::cout << " ";
-        }
+        if (!first) std::cout << " ";
         std::cout << *it;
-        firstSum = false;
+        first = false;
       }
       std::cout << "\n";
     }
@@ -121,12 +122,11 @@ int main()
   }
   catch (const std::overflow_error &e)
   {
-    std::cerr << e.what() << "\n";
+    std::cerr << "Overflow\n";
     return 1;
   }
   catch (const std::exception &e)
   {
-    std::cerr << "Error\n";
     return 1;
   }
 }
