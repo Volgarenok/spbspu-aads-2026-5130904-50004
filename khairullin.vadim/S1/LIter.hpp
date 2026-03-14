@@ -5,7 +5,7 @@
 template<class T>
 struct LIter
 {
-  friend class List<T>;
+  friend struct List<T>;
   List<T> * list;
   LIter(List<T> * h);
   static LIter begin(List<T> * head);

@@ -5,7 +5,7 @@
 template<class T>
 struct CLIter
 {
-  friend class List<T>;
+  friend struct List<T>;
   List<T> * list;
   CLIter(List<T> * h);
   static CLIter begin(List<T> * head);
