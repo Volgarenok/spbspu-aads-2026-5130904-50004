@@ -146,10 +146,31 @@ public:
     }
   }
 
+  List(List&& other) noexcept
+    : head(other.head), tail(other.tail), sz(other.sz) {
+    other.head = new Elem(T());
+    other.tail = other.head;
+    other.sz = 0;
+  }
+
   List& operator=(const List& other) {
     if (this != &other) {
       List tmp(other);
       swap(tmp);
+    }
+    return *this;
+  }
+
+  List& operator=(List&& other) noexcept {
+    if (this != &other) {
+      clear();
+      delete head;
+      head = other.head;
+      tail = other.tail;
+      sz = other.sz;
+      other.head = new Elem(T());
+      other.tail = other.head;
+      other.sz = 0;
     }
     return *this;
   }
