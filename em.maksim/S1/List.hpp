@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <stdexcept>
+#include <utility>
 
 namespace em {
 
@@ -117,6 +118,9 @@ protected:
 
     explicit Elem(const T& val, Elem* nxt = nullptr)
       : data(val), next(nxt) {}
+
+    explicit Elem(T&& val, Elem* nxt = nullptr)
+      : data(std::move(val)), next(nxt) {}
   };
 
   Elem* head;
@@ -132,6 +136,36 @@ public:
   ~List() {
     clear();
     delete head;
+  }
+
+  List(const List& other) : sz(0) {
+    head = new Elem(T());
+    tail = head;
+    for (Elem* curr = other.head->next; curr != nullptr; curr = curr->next) {
+      push_back(curr->data);
+    }
+  }
+
+  List& operator=(const List& other) {
+    if (this != &other) {
+      List tmp(other);
+      swap(tmp);
+    }
+    return *this;
+  }
+
+  void swap(List& other) noexcept {
+    Elem* tmp_head = head;
+    Elem* tmp_tail = tail;
+    size_t tmp_sz = sz;
+
+    head = other.head;
+    tail = other.tail;
+    sz = other.sz;
+
+    other.head = tmp_head;
+    other.tail = tmp_tail;
+    other.sz = tmp_sz;
   }
 
   void clear() {
