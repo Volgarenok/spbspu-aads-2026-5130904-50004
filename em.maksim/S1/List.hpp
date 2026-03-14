@@ -27,12 +27,18 @@ public:
   }
 
   ~List() {
+    clear();
+    delete head;
+  }
+
+  void clear() {
     while (head->next != nullptr) {
       Elem* tmp = head->next;
       head->next = tmp->next;
       delete tmp;
     }
-    delete head;
+    tail = head;
+    sz = 0;
   }
 };
 
