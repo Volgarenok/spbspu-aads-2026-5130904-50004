@@ -77,6 +77,17 @@ public:
     return head->val;
   }
 
+  void clear()
+  {
+    while (!empty())
+      pop_front();
+  }
+
+  ~BiList()
+  {
+    clear();
+  }
+
 };
 
 }
