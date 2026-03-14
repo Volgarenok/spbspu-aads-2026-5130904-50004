@@ -355,6 +355,34 @@ public:
   {
     return LCIter<T>(nullptr, tail_);
   }
+
+  void pushFront(const T& value)
+  {
+    Node<T>* newNode = new Node<T>(value);
+    if (size_ == 0) {
+      head_ = newNode;
+      tail_ = newNode;
+    } else {
+      newNode->next_ = head_;
+      head_->prev_ = newNode;
+      head_ = newNode;
+    }
+    size_ = size_ + 1;
+  }
+
+  void pushFront(T&& value)
+  {
+    Node<T>* newNode = new Node<T>(std::move(value));
+    if (size_ == 0) {
+      head_ = newNode;
+      tail_ = newNode;
+    } else {
+      newNode->next_ = head_;
+      head_->prev_ = newNode;
+      head_ = newNode;
+    }
+    size_ = size_ + 1;
+  }
 };
 
 }
