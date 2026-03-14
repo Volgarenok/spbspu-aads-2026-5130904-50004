@@ -87,7 +87,7 @@ int main()
           iter_LIter = iter_LIter.begin(fake_LIter);
           iter_LIter = iter_LIter.list->cut_fake(iter_LIter.list);
           iter_LIter.list->clear(iter_LIter.list);
-                
+
           return 1;
       }
     }
