@@ -6,176 +6,127 @@
 
 #include "biList.hpp"
 
+using namespace pozdeev;
+
 int main()
 {
-  pozdeev::BiList<std::string> listNames;
-  pozdeev::BiList<pozdeev::BiList<int>> listValues;
-  std::string currentName;
-  bool has_overflow = false;
-  bool has_invalid = false;
+  try
+  {
+    BiList<std::pair<std::string, BiList<unsigned long long>>> sequences;
+    std::string name;
 
-  while (std::cin >> currentName) {
-    pozdeev::BiList<int> numbers;
-    bool line_error = false;
-
-    int ch = std::cin.get();
-    while (ch != std::char_traits<char>::eof() && ch != '\n') {
-      if (std::isspace(ch)) {
-        ch = std::cin.get();
-        continue;
-      }
-      std::cin.unget();
-
-      std::string token;
-      int inner_ch = std::cin.get();
-      while (inner_ch != std::char_traits<char>::eof() && inner_ch != '\n' && !std::isspace(inner_ch)) {
-        token += static_cast<char>(inner_ch);
-        inner_ch = std::cin.get();
-      }
-      if (inner_ch != std::char_traits<char>::eof()) {
-        std::cin.unget();
+    while (std::cin >> name)
+    {
+      BiList<unsigned long long> numbers;
+      unsigned long long num;
+      while (std::cin >> num)
+      {
+        numbers.push_back(num);
       }
 
-      try {
-        size_t pos;
-        long long num = std::stoll(token, &pos);
-        if (pos != token.length()) {
-          has_invalid = true;
-          line_error = true;
-          break;
-        }
-        if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min()) {
-          has_overflow = true;
-          line_error = true;
-          break;
-        }
-        numbers.pushBack(static_cast<int>(num));
-      } catch (const std::out_of_range&) {
-        has_overflow = true;
-        line_error = true;
-        break;
-      } catch (const std::invalid_argument&) {
-        has_invalid = true;
-        line_error = true;
-        break;
+      if (!std::cin.eof())
+      {
+        std::cin.clear();
       }
-      ch = std::cin.get();
+
+      sequences.push_back(std::make_pair(name, std::move(numbers)));
     }
 
-    if (line_error) {
-      listNames.pushBack(currentName);
-      listValues.pushBack(std::move(numbers));
-      break;
+    if (sequences.is_empty())
+    {
+      std::cout << "0\n";
+      return 0;
     }
 
-    listNames.pushBack(currentName);
-    listValues.pushBack(std::move(numbers));
-  }
-
-  if (!listNames.isEmpty()) {
-    bool isFirstWord = true;
-    auto nameIt = listNames.cbegin();
-    while (nameIt != listNames.cend()) {
-      if (!isFirstWord) {
+    bool first = true;
+    for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
+    {
+      if (!first)
+      {
         std::cout << " ";
       }
-      std::cout << *nameIt;
-      isFirstWord = false;
-      ++nameIt;
+      std::cout << it->first;
+      first = false;
     }
     std::cout << "\n";
-  } else if (!has_overflow && !has_invalid) {
-    std::cout << "0\n";
-    return 0;
-  }
 
-  if (has_invalid) {
-    std::cerr << "Invalid input\n";
-    return 1;
-  }
-  if (has_overflow) {
-    std::cerr << "Overflow\n";
-    return 1;
-  }
-
-  bool hasAnyNumbers = false;
-  auto checkIt = listValues.begin();
-  while (checkIt != listValues.end()) {
-    if (!(*checkIt).isEmpty()) {
-      hasAnyNumbers = true;
-      break;
-    }
-    ++checkIt;
-  }
-
-  if (!hasAnyNumbers) {
-    std::cout << "0\n";
-    return 0;
-  }
-
-  pozdeev::BiList<pozdeev::LIter<int>> iterators;
-  auto setupIt = listValues.begin();
-  while (setupIt != listValues.end()) {
-    iterators.pushBack((*setupIt).begin());
-    ++setupIt;
-  }
-
-  pozdeev::BiList<long long> allSums;
-  bool hasElements = true;
-
-  while (hasElements) {
-    hasElements = false;
-    long long currentSum = 0;
-    pozdeev::BiList<int> currentLine;
-
-    auto seqIt = listValues.begin();
-    auto iterIt = iterators.begin();
-
-    while (seqIt != listValues.end()) {
-      if (*iterIt != (*seqIt).end()) {
-        hasElements = true;
-        int val = *(*iterIt);
-        currentLine.pushBack(val);
-
-        if (val > 0 && currentSum > (std::numeric_limits<long long>::max() - val)) {
-          std::cerr << "Overflow\n";
-          return 1;
-        }
-        if (val < 0 && currentSum < (std::numeric_limits<long long>::min() - val)) {
-          std::cerr << "Overflow\n";
-          return 1;
-        }
-
-        currentSum += val;
-        ++(*iterIt);
+    size_t maxLen = 0;
+    for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
+    {
+      if (it->second.getsize() > maxLen)
+      {
+        maxLen = it->second.getsize();
       }
-      ++seqIt;
-      ++iterIt;
     }
 
-    if (!hasElements) break;
+    BiList<unsigned long long> sums;
+    for (size_t i = 0; i < maxLen; ++i)
+    {
+      unsigned long long currentSum = 0;
+      bool firstInRow = true;
 
-    bool isFirstNum = true;
-    auto printIt = currentLine.cbegin();
-    while (printIt != currentLine.cend()) {
-      if (!isFirstNum) std::cout << " ";
-      std::cout << *printIt;
-      isFirstNum = false;
-      ++printIt;
+      for (auto it = sequences.cbegin(); it != sequences.cend(); ++it)
+      {
+        if (i < it->second.getsize())
+        {
+          auto elemIt = it->second.cbegin();
+          for (size_t j = 0; j < i; ++j)
+          {
+            ++elemIt;
+          }
+
+          unsigned long long val = *elemIt;
+
+          if (firstInRow)
+          {
+            firstInRow = false;
+          }
+          else
+          {
+            std::cout << " ";
+          }
+          std::cout << val;
+
+          if (currentSum > std::numeric_limits<unsigned long long>::max() - val)
+          {
+            throw std::overflow_error("Overflow");
+          }
+          currentSum += val;
+        }
+      }
+      std::cout << "\n";
+      sums.push_back(currentSum);
     }
-    std::cout << "\n";
-    allSums.pushBack(currentSum);
-  }
 
-  bool isFirstSum = true;
-  auto sumIt = allSums.cbegin();
-  while (sumIt != allSums.cend()) {
-    if (!isFirstSum) std::cout << " ";
-    std::cout << *sumIt;
-    isFirstSum = false;
-    ++sumIt;
-  }
-  std::cout << "\n";
+    if (sums.is_empty())
+    {
+      std::cout << "0\n";
+    }
+    else
+    {
+      bool firstSum = true;
+      for (auto it = sums.cbegin(); it != sums.cend(); ++it)
+      {
+        if (!firstSum)
+        {
+          std::cout << " ";
+        }
+        std::cout << *it;
+        firstSum = false;
+      }
+      std::cout << "\n";
+    }
 
-  return 0;
+    return 0;
+  }
+  catch (const std::overflow_error &e)
+  {
+    std::cerr << e.what() << "\n";
+    return 1;
+  }
+  catch (const std::exception &e)
+  {
+    std::cerr << "Error\n";
+    return 1;
+  }
 }
