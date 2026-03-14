@@ -133,6 +133,99 @@ private:
   }
 };
 
+template<class T>
+class LCIter {
+  friend class BiList<T>;
+
+public:
+  LCIter() noexcept :
+    cur_(nullptr),
+    tail_(nullptr)
+  {
+  }
+
+  LCIter(const LIter<T>& other) noexcept :
+    cur_(other.cur_),
+    tail_(other.tail_)
+  {
+  }
+
+  LCIter(const LCIter& other) noexcept = default;
+  LCIter(LCIter&& other) noexcept = default;
+  ~LCIter() = default;
+
+  LCIter& operator=(const LCIter& other) noexcept = default;
+  LCIter& operator=(LCIter&& other) noexcept = default;
+
+  bool operator==(const LCIter& other) const noexcept
+  {
+    return cur_ == other.cur_;
+  }
+
+  bool operator!=(const LCIter& other) const noexcept
+  {
+    return cur_ != other.cur_;
+  }
+
+  const T& operator*() const
+  {
+    return cur_->val_;
+  }
+
+  const T* operator->() const
+  {
+    return &(cur_->val_);
+  }
+
+  LCIter& operator++() noexcept
+  {
+    if (cur_ != nullptr) {
+      cur_ = cur_->next_;
+    }
+    return *this;
+  }
+
+  LCIter operator++(int) noexcept
+  {
+    LCIter tmp(*this);
+    if (cur_ != nullptr) {
+      cur_ = cur_->next_;
+    }
+    return tmp;
+  }
+
+  LCIter& operator--() noexcept
+  {
+    if (cur_ == nullptr) {
+      cur_ = tail_;
+    } else {
+      cur_ = cur_->prev_;
+    }
+    return *this;
+  }
+
+  LCIter operator--(int) noexcept
+  {
+    LCIter tmp(*this);
+    if (cur_ == nullptr) {
+      cur_ = tail_;
+    } else {
+      cur_ = cur_->prev_;
+    }
+    return tmp;
+  }
+
+private:
+  const Node<T>* cur_;
+  const Node<T>* tail_;
+
+  LCIter(const Node<T>* node, const Node<T>* listTail) noexcept :
+    cur_(node),
+    tail_(listTail)
+  {
+  }
+};
+
 }
 
 #endif
