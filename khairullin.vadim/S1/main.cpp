@@ -163,6 +163,7 @@ int main()
 
   if (overflow)
   {
+    std::cerr << "Overflow\n";
     return 1;
   }
 }
