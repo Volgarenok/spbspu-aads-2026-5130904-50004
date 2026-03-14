@@ -58,8 +58,28 @@ public:
 };
 
 template <class T>
+class LCIter {
+  friend class List<T>;
+
+private:
+  const typename List<T>::Elem* ptr;
+
+  explicit LCIter(const typename List<T>::Elem* p) noexcept : ptr(p) {}
+
+public:
+  LCIter() noexcept : ptr(nullptr) {}
+  LCIter(const LCIter&) noexcept = default;
+  LCIter(LCIter&&) noexcept = default;
+  ~LCIter() = default;
+
+  LCIter& operator=(const LCIter&) noexcept = default;
+  LCIter& operator=(LCIter&&) noexcept = default;
+};
+
+template <class T>
 class List {
   friend class LIter<T>;
+  friend class LCIter<T>;
 
 protected:
   struct Elem {
