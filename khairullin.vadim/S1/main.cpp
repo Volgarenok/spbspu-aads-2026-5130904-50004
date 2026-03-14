@@ -73,7 +73,7 @@ int main()
           else
           {
             overflow = true;
-            return 1;
+            break;
           }
         }
       }

@@ -20,9 +20,12 @@ CLIter<T> CLIter<T>::end()
 template <class T>
 bool CLIter<T>::hasNext()
 {
-  if (list->next)
+  if (list)
   {
-    return true;
+    if (list->next)
+    {
+      return true;
+    }
   }
   return false;
 }
