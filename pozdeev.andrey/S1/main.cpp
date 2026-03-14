@@ -40,4 +40,23 @@ int main()
     std::cout << "0\n";
     return 0;
   }
+
+  bool isFirstWord = true;
+  pozdeev::LCIter<std::string> nameIt = listNames.cbegin();
+  while (nameIt != listNames.cend()) {
+    if (isFirstWord == false) {
+      std::cout << " ";
+    }
+    std::cout << *nameIt;
+    isFirstWord = false;
+    ++nameIt;
+  }
+  std::cout << "\n";
+
+  pozdeev::BiList<pozdeev::LIter<int>> iterators;
+  pozdeev::LIter<pozdeev::BiList<int>> setupIt = listValues.begin();
+  while (setupIt != listValues.end()) {
+    iterators.pushBack((*setupIt).begin());
+    ++setupIt;
+  }
 }
