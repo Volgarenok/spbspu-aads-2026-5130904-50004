@@ -40,6 +40,15 @@ public:
     tail = head;
     sz = 0;
   }
+
+  void push_front(const T& value) {
+    Elem* nw = new Elem(value, head->next);
+    head->next = nw;
+    if (tail == head) {
+      tail = nw;
+    }
+    sz++;
+  }
 };
 
 }
