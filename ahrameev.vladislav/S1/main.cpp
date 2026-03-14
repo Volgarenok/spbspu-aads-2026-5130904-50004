@@ -1,33 +1,40 @@
 #include "BiList.h"
+
 #include <iostream>
 #include <string>
+#include <limits>
 
 using namespace akhrameev;
 
 struct Pair
 {
   std::string first;
-  BiList<int> second;
+  BiList<unsigned long long> second;
 };
 
 int main()
 {
   BiList<Pair> sequences;
-
   std::string name;
 
   while (std::cin >> name)
   {
     Pair p;
-
     p.first = name;
 
     while (std::cin.peek() == ' ')
     {
-      int value;
+      unsigned long long value;
 
       if (!(std::cin >> value))
+      {
+        if (std::cin.fail())
+        {
+          std::cerr << "overflow\n";
+          return 1;
+        }
         break;
+      }
 
       p.second.push_back(value);
     }
@@ -41,34 +48,47 @@ int main()
     return 0;
   }
 
+  bool firstName = true;
   for (auto it = sequences.begin(); it != sequences.end(); ++it)
   {
-    std::cout << (*it).first << " ";
+    if (!firstName)
+    {
+      std::cout << " ";
+    }
+    std::cout << (*it).first;
+    firstName = false;
   }
-
   std::cout << "\n";
 
   bool more = true;
+  bool printedNumbers = false;
 
-  BiList<int> sums;
+  BiList<unsigned long long> sums;
 
   while (more)
   {
     more = false;
+    unsigned long long sum = 0;
 
-    int sum = 0;
+    bool firstNum = true;
 
     for (auto it = sequences.begin(); it != sequences.end(); ++it)
     {
-      BiList<int>& numbers = (*it).second;
+      BiList<unsigned long long>& numbers = (*it).second;
 
       if (!numbers.empty())
       {
         more = true;
 
-        int value = numbers.front();
+        unsigned long long value = numbers.front();
 
-        std::cout << value << " ";
+        if (!firstNum)
+        {
+          std::cout << " ";
+        }
+
+        std::cout << value;
+        firstNum = false;
 
         sum += value;
 
@@ -78,14 +98,28 @@ int main()
 
     if (more)
     {
+      printedNumbers = true;
       std::cout << "\n";
       sums.push_back(sum);
     }
   }
 
+  if (!printedNumbers)
+  {
+    std::cout << "0\n";
+    return 0;
+  }
+
+  bool firstSum = true;
   for (auto it = sums.begin(); it != sums.end(); ++it)
   {
-    std::cout << *it << " ";
+    if (!firstSum)
+    {
+      std::cout << " ";
+    }
+
+    std::cout << *it;
+    firstSum = false;
   }
 
   std::cout << "\n";
