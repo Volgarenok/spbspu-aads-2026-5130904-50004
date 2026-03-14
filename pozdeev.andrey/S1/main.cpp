@@ -13,7 +13,6 @@ int main()
 
   while (std::cin >> currentName) {
     pozdeev::BiList<int> numbers;
-
     int ch = std::cin.get();
     while (ch != std::char_traits<char>::eof() && ch != '\n') {
       if (std::isspace(ch)) {
@@ -22,29 +21,32 @@ int main()
       }
       std::cin.unget();
 
-      int num = 0;
-      std::cin >> num;
-      if (std::cin.fail()) {
+      long long num = 0;
+      if (!(std::cin >> num)) {
         std::cerr << "Input error\n";
         return 1;
       }
-      numbers.pushBack(num);
+
+      if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min()) {
+         std::cerr << "Overflow detected\n";
+         return 1;
+      }
+
+      numbers.pushBack(static_cast<int>(num));
       ch = std::cin.get();
     }
-
     listNames.pushBack(currentName);
     listValues.pushBack(std::move(numbers));
   }
 
   if (listNames.isEmpty()) {
-    std::cout << "0\n";
     return 0;
   }
 
   bool isFirstWord = true;
-  pozdeev::LCIter<std::string> nameIt = listNames.cbegin();
+  auto nameIt = listNames.cbegin();
   while (nameIt != listNames.cend()) {
-    if (isFirstWord == false) {
+    if (!isFirstWord) {
       std::cout << " ";
     }
     std::cout << *nameIt;
@@ -53,8 +55,23 @@ int main()
   }
   std::cout << "\n";
 
+  bool hasAnyNumbers = false;
+  auto checkIt = listValues.begin();
+  while (checkIt != listValues.end()) {
+    if (!(*checkIt).isEmpty()) {
+      hasAnyNumbers = true;
+      break;
+    }
+    ++checkIt;
+  }
+
+  if (!hasAnyNumbers) {
+    std::cout << "0\n";
+    return 0;
+  }
+
   pozdeev::BiList<pozdeev::LIter<int>> iterators;
-  pozdeev::LIter<pozdeev::BiList<int>> setupIt = listValues.begin();
+  auto setupIt = listValues.begin();
   while (setupIt != listValues.end()) {
     iterators.pushBack((*setupIt).begin());
     ++setupIt;
@@ -68,8 +85,8 @@ int main()
     long long currentSum = 0;
     pozdeev::BiList<int> currentLine;
 
-    pozdeev::LIter<pozdeev::BiList<int>> seqIt = listValues.begin();
-    pozdeev::LIter<pozdeev::LIter<int>> iterIt = iterators.begin();
+    auto seqIt = listValues.begin();
+    auto iterIt = iterators.begin();
 
     while (seqIt != listValues.end()) {
       if (*iterIt != (*seqIt).end()) {
@@ -77,43 +94,40 @@ int main()
         int val = *(*iterIt);
         currentLine.pushBack(val);
 
-        if (currentSum > (std::numeric_limits<long long>::max() - val)) {
-          std::cerr << "Sum is too big\n";
-          return 2;
+        if (val > 0 && currentSum > (std::numeric_limits<long long>::max() - val)) {
+          std::cerr << "Sum overflow\n";
+          return 1;
         }
-        currentSum = currentSum + val;
+        if (val < 0 && currentSum < (std::numeric_limits<long long>::min() - val)) {
+          std::cerr << "Sum overflow\n";
+          return 1;
+        }
 
+        currentSum += val;
         ++(*iterIt);
       }
       ++seqIt;
       ++iterIt;
     }
 
-    if (hasElements == false) {
-      break;
-    }
+    if (!hasElements) break;
 
-  bool isFirstNum = true;
-    pozdeev::LCIter<int> printIt = currentLine.cbegin();
+    bool isFirstNum = true;
+    auto printIt = currentLine.cbegin();
     while (printIt != currentLine.cend()) {
-      if (isFirstNum == false) {
-        std::cout << " ";
-      }
+      if (!isFirstNum) std::cout << " ";
       std::cout << *printIt;
       isFirstNum = false;
       ++printIt;
     }
     std::cout << "\n";
-
     allSums.pushBack(currentSum);
   }
 
   bool isFirstSum = true;
-  pozdeev::LCIter<long long> sumIt = allSums.cbegin();
+  auto sumIt = allSums.cbegin();
   while (sumIt != allSums.cend()) {
-    if (isFirstSum == false) {
-      std::cout << " ";
-    }
+    if (!isFirstSum) std::cout << " ";
     std::cout << *sumIt;
     isFirstSum = false;
     ++sumIt;
