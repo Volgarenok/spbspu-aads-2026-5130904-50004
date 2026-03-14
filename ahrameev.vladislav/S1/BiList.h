@@ -67,6 +67,38 @@ public:
     tail = nullptr;
   }
 
+  BiList(const BiList& other)
+  {
+    head = nullptr;
+    tail = nullptr;
+
+    Node* cur = other.head;
+
+    while (cur != nullptr)
+    {
+      push_back(cur->val);
+      cur = cur->next;
+    }
+  }
+
+  BiList& operator=(const BiList& other)
+  {
+    if (this == &other)
+      return *this;
+
+    clear();
+
+    Node* cur = other.head;
+
+    while (cur != nullptr)
+    {
+      push_back(cur->val);
+      cur = cur->next;
+    }
+
+    return *this;
+  }
+
   bool empty() const
   {
     return head == nullptr;
