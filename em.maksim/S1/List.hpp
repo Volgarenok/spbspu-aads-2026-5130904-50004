@@ -25,6 +25,15 @@ public:
     head = new Elem(T());
     tail = head;
   }
+
+  ~List() {
+    while (head->next != nullptr) {
+      Elem* tmp = head->next;
+      head->next = tmp->next;
+      delete tmp;
+    }
+    delete head;
+  }
 };
 
 }
