@@ -46,6 +46,93 @@ public:
   }
 };
 
+template<class T>
+class LIter {
+  friend class BiList<T>;
+
+public:
+  LIter() noexcept :
+    cur_(nullptr),
+    tail_(nullptr)
+  {
+  }
+
+  LIter(const LIter& other) noexcept = default;
+  LIter(LIter&& other) noexcept = default;
+  ~LIter() = default;
+
+  LIter& operator=(const LIter& other) noexcept = default;
+  LIter& operator=(LIter&& other) noexcept = default;
+
+  bool operator==(const LIter& other) const noexcept
+  {
+    return cur_ == other.cur_;
+  }
+
+  bool operator!=(const LIter& other) const noexcept
+  {
+    return cur_ != other.cur_;
+  }
+
+  T& operator*() const
+  {
+    return cur_->val_;
+  }
+
+  T* operator->() const
+  {
+    return &(cur_->val_);
+  }
+
+  LIter& operator++() noexcept
+  {
+    if (cur_ != nullptr) {
+      cur_ = cur_->next_;
+    }
+    return *this;
+  }
+
+  LIter operator++(int) noexcept
+  {
+    LIter tmp(*this);
+    if (cur_ != nullptr) {
+      cur_ = cur_->next_;
+    }
+    return tmp;
+  }
+
+  LIter& operator--() noexcept
+  {
+    if (cur_ == nullptr) {
+      cur_ = tail_;
+    } else {
+      cur_ = cur_->prev_;
+    }
+    return *this;
+  }
+
+  LIter operator--(int) noexcept
+  {
+    LIter tmp(*this);
+    if (cur_ == nullptr) {
+      cur_ = tail_;
+    } else {
+      cur_ = cur_->prev_;
+    }
+    return tmp;
+  }
+
+private:
+  Node<T>* cur_;
+  Node<T>* tail_;
+
+  LIter(Node<T>* node, Node<T>* listTail) noexcept :
+    cur_(node),
+    tail_(listTail)
+  {
+  }
+};
+
 }
 
 #endif
