@@ -2,6 +2,7 @@
 #define LIST_HPP
 
 #include <cstddef>
+#include <stdexcept>
 
 namespace em {
 
@@ -25,6 +26,35 @@ public:
 
   LIter& operator=(const LIter&) noexcept = default;
   LIter& operator=(LIter&&) noexcept = default;
+
+  T& operator*() const {
+    if (ptr == nullptr) {
+      throw std::out_of_range("Dereference null iterator");
+    }
+    return ptr->data;
+  }
+
+  T* operator->() const {
+    if (ptr == nullptr) {
+      throw std::out_of_range("Access null iterator");
+    }
+    return &(ptr->data);
+  }
+
+  LIter& operator++() noexcept {
+    if (ptr != nullptr) {
+      ptr = ptr->next;
+    }
+    return *this;
+  }
+
+  bool operator==(const LIter& other) const noexcept {
+    return ptr == other.ptr;
+  }
+
+  bool operator!=(const LIter& other) const noexcept {
+    return ptr != other.ptr;
+  }
 };
 
 template <class T>
