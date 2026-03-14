@@ -9,7 +9,7 @@ using namespace akhrameev;
 struct Pair
 {
   std::string first;
-  BiList<unsigned long long> second;
+  BiList<int> second;
 };
 
 int main()
@@ -24,19 +24,22 @@ int main()
 
     while (std::cin.peek() == ' ')
     {
-      unsigned long long value;
+      long long value;
 
       if (!(std::cin >> value))
       {
-        if (std::cin.fail())
-        {
-          std::cerr << "overflow\n";
-          return 1;
-        }
-        break;
+        std::cerr << "Formed lists with exit code 1 and error message in standard error because of overflow\n";
+        return 1;
       }
 
-      p.second.push_back(value);
+      if (value > std::numeric_limits<int>::max() ||
+          value < std::numeric_limits<int>::min())
+      {
+        std::cerr << "Formed lists with exit code 1 and error message in standard error because of overflow\n";
+        return 1;
+      }
+
+      p.second.push_back(static_cast<int>(value));
     }
 
     sequences.push_back(p);
@@ -55,32 +58,34 @@ int main()
     {
       std::cout << " ";
     }
+
     std::cout << (*it).first;
     firstName = false;
   }
+
   std::cout << "\n";
 
   bool more = true;
   bool printedNumbers = false;
 
-  BiList<unsigned long long> sums;
+  BiList<int> sums;
 
   while (more)
   {
     more = false;
-    unsigned long long sum = 0;
+    int sum = 0;
 
     bool firstNum = true;
 
     for (auto it = sequences.begin(); it != sequences.end(); ++it)
     {
-      BiList<unsigned long long>& numbers = (*it).second;
+      BiList<int>& numbers = (*it).second;
 
       if (!numbers.empty())
       {
         more = true;
 
-        unsigned long long value = numbers.front();
+        int value = numbers.front();
 
         if (!firstNum)
         {
@@ -88,6 +93,7 @@ int main()
         }
 
         std::cout << value;
+
         firstNum = false;
 
         sum += value;
