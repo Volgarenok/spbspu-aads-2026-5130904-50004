@@ -55,6 +55,28 @@ public:
     }
   }
 
+  void pop_front()
+  {
+    if (empty())
+      return;
+
+    Node* tmp = head;
+
+    head = head->next;
+
+    if (head != nullptr)
+      head->prev = nullptr;
+    else
+      tail = nullptr;
+
+    delete tmp;
+  }
+
+  T& front()
+  {
+    return head->val;
+  }
+
 };
 
 }
