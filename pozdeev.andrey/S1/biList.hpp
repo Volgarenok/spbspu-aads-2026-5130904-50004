@@ -462,6 +462,39 @@ public:
     delete temp;
     size_ = size_ - 1;
   }
+
+  LIter<T> erase(LIter<T> pos)
+  {
+    if (size_ == 0 || pos == end()) {
+      throw std::runtime_error("Can not erase");
+    }
+    if (pos == begin()) {
+      popFront();
+      return begin();
+    }
+    if (pos.cur_ == tail_) {
+      popBack();
+      return end();
+    }
+    Node<T>* nextNode = pos.cur_->next_;
+    pos.cur_->prev_->next_ = pos.cur_->next_;
+    pos.cur_->next_->prev_ = pos.cur_->prev_;
+    delete pos.cur_;
+    size_ = size_ - 1;
+    return LIter<T>(nextNode, tail_);
+  }
+
+  void clear() noexcept
+  {
+    while (size_ > 0) {
+      popFront();
+    }
+  }
+
+private:
+  Node<T>* head_;
+  Node<T>* tail_;
+  size_t size_;
 };
 
 }
