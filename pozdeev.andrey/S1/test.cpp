@@ -20,3 +20,23 @@ BOOST_AUTO_TEST_CASE(getSizeCheck)
   lst.pushBack(2);
   BOOST_CHECK_EQUAL(lst.getSize(), 2);
 }
+
+BOOST_AUTO_TEST_CASE(frontCheck)
+{
+  BiList<int> lst;
+  lst.pushBack(10);
+  lst.pushBack(20);
+  BOOST_CHECK_EQUAL(lst.front(), 10);
+  lst.front() = 100;
+  BOOST_CHECK_EQUAL(lst.front(), 100);
+}
+
+BOOST_AUTO_TEST_CASE(backCheck)
+{
+  BiList<int> lst;
+  lst.pushBack(10);
+  lst.pushBack(20);
+  BOOST_CHECK_EQUAL(lst.back(), 20);
+  lst.back() = 200;
+  BOOST_CHECK_EQUAL(lst.back(), 200);
+}
