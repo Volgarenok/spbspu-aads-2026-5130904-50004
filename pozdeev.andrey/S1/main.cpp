@@ -23,12 +23,12 @@ int main()
 
       long long num = 0;
       if (!(std::cin >> num)) {
-        std::cerr << "Input error\n";
+        std::cerr << "Invalid input\n";
         return 1;
       }
 
       if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min()) {
-         std::cerr << "Overflow detected\n";
+         std::cerr << "Overflow\n";
          return 1;
       }
 
@@ -40,6 +40,7 @@ int main()
   }
 
   if (listNames.isEmpty()) {
+    std::cout << "0\n";
     return 0;
   }
 
