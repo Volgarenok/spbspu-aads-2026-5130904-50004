@@ -298,6 +298,43 @@ public:
       return false;
     }
   }
+
+  size_t getSize() const noexcept
+  {
+    return size_;
+  }
+
+  T& front()
+  {
+    if (isEmpty()) {
+      throw std::runtime_error("List is empty");
+    }
+    return head_->val_;
+  }
+
+  const T& front() const
+  {
+    if (isEmpty()) {
+      throw std::runtime_error("List is empty");
+    }
+    return head_->val_;
+  }
+
+  T& back()
+  {
+    if (isEmpty()) {
+      throw std::runtime_error("List is empty");
+    }
+    return tail_->val_;
+  }
+
+  const T& back() const
+  {
+    if (isEmpty()) {
+      throw std::runtime_error("List is empty");
+    }
+    return tail_->val_;
+  }
 };
 
 }
