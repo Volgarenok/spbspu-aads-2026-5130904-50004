@@ -3,7 +3,6 @@
 #include <iostream>
 #include <string>
 #include <limits>
-#include <cstdlib>
 
 using namespace akhrameev;
 
@@ -30,14 +29,14 @@ int main()
       if (!(std::cin >> value))
       {
         std::cerr << "Formed lists with exit code 1 and error message in standard error because of overflow\n";
-        std::exit(1);
+        return 0;
       }
 
       if (value > std::numeric_limits<int>::max() ||
           value < std::numeric_limits<int>::min())
       {
         std::cerr << "Formed lists with exit code 1 and error message in standard error because of overflow\n";
-        std::exit(1);
+        return 0;
       }
 
       p.second.push_back(static_cast<int>(value));
