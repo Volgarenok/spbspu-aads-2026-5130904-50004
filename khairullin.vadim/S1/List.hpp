@@ -5,15 +5,15 @@ template <class T>
 struct List
 {
   T val;
-  List<T> * next;
-  List<T>(const T& val, List<T> * n);
-  List<T> * add(const T& val, List<T> * n);
-  List<T> * insert(const T& val, List<T> * n);
-  List<T> * cut(List<T> * h);
-  List<T> * erase(List<T> * h);
-  List<T> * clear(List<T> * h);
-  static List<T> * fake(List<T> * h);
-  List<T> * cut_fake(List<T> * fake);
+  List * next;
+  List(const T& val, List * n);
+  List * add(const T& val, List * n);
+  List * insert(const T& val, List * n);
+  List * cut(List * h);
+  List * erase(List * h);
+  List * clear(List * h);
+  static List * fake(List * h);
+  List * cut_fake(List * fake);
 };
 
 #endif
