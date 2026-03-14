@@ -226,6 +226,71 @@ private:
   }
 };
 
+template<class T>
+class BiList {
+public:
+  BiList() noexcept :
+    head_(nullptr),
+    tail_(nullptr),
+    size_(0)
+  {
+  }
+
+  BiList(const BiList& other) :
+    head_(nullptr),
+    tail_(nullptr),
+    size_(0)
+  {
+    LCIter<T> it = other.cbegin();
+    while (it != other.cend()) {
+      pushBack(*it);
+      ++it;
+    }
+  }
+
+  BiList(BiList&& other) noexcept :
+    head_(other.head_),
+    tail_(other.tail_),
+    size_(other.size_)
+  {
+    other.head_ = nullptr;
+    other.tail_ = nullptr;
+    other.size_ = 0;
+  }
+
+  ~BiList()
+  {
+    clear();
+  }
+
+  BiList& operator=(const BiList& other)
+  {
+    if (this != &other) {
+      clear();
+      LCIter<T> it = other.cbegin();
+      while (it != other.cend()) {
+        pushBack(*it);
+        ++it;
+      }
+    }
+    return *this;
+  }
+
+  BiList& operator=(BiList&& other) noexcept
+  {
+    if (this != &other) {
+      clear();
+      head_ = other.head_;
+      tail_ = other.tail_;
+      size_ = other.size_;
+      other.head_ = nullptr;
+      other.tail_ = nullptr;
+      other.size_ = 0;
+    }
+    return *this;
+  }
+};
+
 }
 
 #endif
