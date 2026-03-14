@@ -383,6 +383,34 @@ public:
     }
     size_ = size_ + 1;
   }
+
+  void pushBack(const T& value)
+  {
+    Node<T>* newNode = new Node<T>(value);
+    if (size_ == 0) {
+      head_ = newNode;
+      tail_ = newNode;
+    } else {
+      newNode->prev_ = tail_;
+      tail_->next_ = newNode;
+      tail_ = newNode;
+    }
+    size_ = size_ + 1;
+  }
+
+  void pushBack(T&& value)
+  {
+    Node<T>* newNode = new Node<T>(std::move(value));
+    if (size_ == 0) {
+      head_ = newNode;
+      tail_ = newNode;
+    } else {
+      newNode->prev_ = tail_;
+      tail_->next_ = newNode;
+      tail_ = newNode;
+    }
+    size_ = size_ + 1;
+  }
 };
 
 }
