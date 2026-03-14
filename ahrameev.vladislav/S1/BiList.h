@@ -5,6 +5,40 @@ namespace akhrameev
 {
 
 template<class T>
+class BiList;
+
+template<class T>
+class LIter
+{
+  typename BiList<T>::Node* node;
+
+public:
+
+  LIter(typename BiList<T>::Node* n = nullptr)
+  {
+    node = n;
+  }
+
+  T& operator*()
+  {
+    return node->val;
+  }
+
+  LIter& operator++()
+  {
+    node = node->next;
+    return *this;
+  }
+
+  bool operator!=(const LIter& other) const
+  {
+    return node != other.node;
+  }
+
+  friend class BiList<T>;
+};
+
+template<class T>
 class BiList
 {
 
@@ -86,6 +120,16 @@ public:
   ~BiList()
   {
     clear();
+  }
+
+  LIter<T> begin()
+  {
+    return LIter<T>(head);
+  }
+
+  LIter<T> end()
+  {
+    return LIter<T>(nullptr);
   }
 
 };
