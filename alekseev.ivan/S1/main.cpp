@@ -2,18 +2,18 @@
 #include "ListIterators.h"
 
 namespace alekseev {
-  using PStrI = std::pair< std::string, List< int > * >;
-  void destroy_matter_iter(LIter< PStrI > matter_iter);
+  using PStr_ull = std::pair< std::string, List< size_t > * >;
+  void destroy_matter_iter(LIter< PStr_ull > matter_iter);
 }
 
 int main()
 {
-  alekseev::List< alekseev::PStrI > * matter_list = alekseev::fake< alekseev::PStrI >();
-  alekseev::LIter< alekseev::PStrI > matter_iter = alekseev::before_begin(matter_list);
+  alekseev::List< alekseev::PStr_ull > * matter_list = alekseev::fake< alekseev::PStr_ull >();
+  alekseev::LIter< alekseev::PStr_ull > matter_iter = alekseev::before_begin(matter_list);
   size_t matter_size = 0;
   alekseev::List< size_t > * sizes = nullptr;
   try {
-    sizes = alekseev::fake< size_t >(); //
+    sizes = alekseev::fake< size_t >();
   } catch (const std::bad_alloc & e) {
     alekseev::rmfake(matter_list);
   }
@@ -29,7 +29,7 @@ int main()
     }
     alekseev::List< int > * some_list = nullptr;
     try {
-      some_list = alekseev::fake< int >(); //
+      some_list = alekseev::fake< int >();
     } catch (const std::bad_alloc & e) {
       alekseev::destroy_matter_iter(matter_iter);
       alekseev::destroy(++sizes_iter);
@@ -56,13 +56,13 @@ int main()
           std::cerr << "bad input\n";
           return 1;
         }
-        some_iter = alekseev::insert_after(some_iter, number); //
+        some_iter = alekseev::insert_after(some_iter, number);
         ++current_size;
       }
-      alekseev::PStrI tmp(name, some_list);
-      alekseev::insert_after< alekseev::PStrI >(matter_iter, tmp); //
+      alekseev::PStr_ull tmp(name, some_list);
+      alekseev::insert_after< alekseev::PStr_ull >(matter_iter, tmp);
       ++matter_size;
-      alekseev::insert_after(sizes_iter, current_size); //
+      alekseev::insert_after(sizes_iter, current_size);
     } catch (const std::bad_alloc & e) {
       alekseev::destroy_matter_iter(matter_iter);
       alekseev::destroy(++sizes_iter);
@@ -90,9 +90,9 @@ int main()
   }
   std::cout << "\n";
 
-  alekseev::List< int64_t > * sums = nullptr;
+  alekseev::List< size_t > * sums = nullptr;
   try {
-    sums = alekseev::fake< int64_t >();
+    sums = alekseev::fake< size_t >();
   } catch (const std::bad_alloc & e) {
     alekseev::destroy_matter_iter(matter_iter);
     delete[] iterators;
@@ -100,10 +100,10 @@ int main()
     std::cerr << e.what() << "\n";
     return 1;
   }
-  alekseev::LIter< int64_t > sums_iter = alekseev::before_begin(sums);
+  alekseev::LIter< size_t > sums_iter = alekseev::before_begin(sums);
 
   size_t j = 0;
-  int64_t zero = 0ll;
+  size_t zero = 0ll;
   bool is_smth_printed = true;
   try {
     while (is_smth_printed) {
@@ -150,9 +150,9 @@ int main()
   alekseev::destroy(++sums_iter);
 }
 
-void alekseev::destroy_matter_iter(LIter< PStrI > matter_iter)
+void alekseev::destroy_matter_iter(LIter< PStr_ull > matter_iter)
 {
-  LIter< PStrI > start = ++matter_iter;
+  LIter< PStr_ull > start = ++matter_iter;
   while (++start != matter_iter) {
     List< int > * li = start->second;
     clear(li->next, li);
