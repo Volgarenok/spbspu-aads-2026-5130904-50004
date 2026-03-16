@@ -77,8 +77,6 @@ int main()
       alekseev::insert_after< alekseev::PStrI >(matter_iter, tmp); //
       ++matter_size;
       alekseev::insert_after(sizes_iter, current_size); //
-
-      //alekseev::print(std::cout, *matter_iter);
     } catch (const std::bad_alloc & e) {
       alekseev::destroy_matter_iter(matter_iter);
       alekseev::destroy(++sizes_iter);
@@ -97,29 +95,47 @@ int main()
   }
   std::cout << "\n";
 
-  alekseev::List< int64_t > * sums = alekseev::fake< int64_t >();
+  alekseev::List< int64_t > * sums = nullptr;
+  try {
+    sums = alekseev::fake< int64_t >();
+  } catch (const std::bad_alloc & e) {
+    alekseev::destroy_matter_iter(matter_iter);
+    delete[] iterators;
+    alekseev::destroy(++sizes_iter);
+    std::cerr << e.what() << "\n";
+    return 1;
+  }
   alekseev::LIter< int64_t > sums_iter = alekseev::before_begin(sums);
+
   size_t j = 0;
   int64_t zero = 0ll;
-  while (true) {
-    bool flag = false;
+  bool is_smth_printed = true;
+  try {
+    while (is_smth_printed) {
+      is_smth_printed = false;
 
-    ++sizes_iter;
-    alekseev::insert_after(sums_iter, zero);
-    for (size_t i = 0; i < matter_size; ++i) {
-      if (j < *(++sizes_iter)) {
-        int n = *(++iterators[i]);
-        std::cout << n << " ";
-        *sums_iter += n;
-        flag = true;
+      ++sizes_iter;
+      alekseev::insert_after(sums_iter, zero);
+      for (size_t i = 0; i < matter_size; ++i) {
+        if (j < *(++sizes_iter)) {
+          int n = *(++iterators[i]);
+          std::cout << n << " ";
+          *sums_iter += n;
+          is_smth_printed = true;
+        }
+      }
+      if (is_smth_printed) {
+        ++j;
+        std::cout << "\n";
       }
     }
-
-    if (!flag) {
-      break;
-    }
-    ++j;
-    std::cout << "\n";
+  } catch (const std::bad_alloc & e) {
+    alekseev::destroy_matter_iter(matter_iter);
+    delete[] iterators;
+    alekseev::destroy(++sizes_iter);
+    alekseev::destroy(++sums_iter);
+    std::cerr << e.what() << "\n";
+    return 1;
   }
 
   ++sums_iter;
@@ -127,6 +143,11 @@ int main()
     std::cout << *(++sums_iter) << " ";
   }
   std::cout << "\n";
+
+  alekseev::destroy_matter_iter(matter_iter);
+  delete[] iterators;
+  alekseev::destroy(++sizes_iter);
+  alekseev::destroy(++sums_iter);
 }
 
 void alekseev::destroy_matter_iter(LIter< PStrI > matter_iter)
