@@ -71,12 +71,21 @@ int main()
       return 1;
     }
   }
+  if (matter_size == 0) {
+    std::cout << "0\n";
+    alekseev::destroy_matter_iter(matter_iter);
+    alekseev::destroy(++sizes_iter);
+    return 0;
+  }
 
   ++matter_iter;
   alekseev::LCIter< int > * iterators = new alekseev::LCIter< int >[matter_size];
   for (size_t i = 0; i < matter_size; ++i) {
     ++matter_iter;
-    std::cout << matter_iter->first << " ";
+    std::cout << matter_iter->first;
+	if (i < matter_size - 1) {
+      std::cout << " ";
+	}
     iterators[i] = alekseev::before_begin(matter_iter->second);
   }
   std::cout << "\n";
@@ -124,11 +133,16 @@ int main()
     return 1;
   }
 
-  ++sums_iter;
-  for (size_t i = 0; i < j; ++i) {
-    std::cout << *(++sums_iter) << " ";
+  if (!j) {
+    std::cout << "0\n";
+  } else {
+    ++sums_iter;
+    std::cout << *(++sums_iter);
+    for (size_t i = 1; i < j; ++i) {
+      std::cout << " " << *(++sums_iter);
+    }
+    std::cout << "\n";
   }
-  std::cout << "\n";
 
   alekseev::destroy_matter_iter(matter_iter);
   delete[] iterators;
