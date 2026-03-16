@@ -69,15 +69,6 @@ namespace alekseev {
   }
 
   template< class T >
-  struct LIter;
-  template< class T >
-  LIter< T > insert_after(LIter< T > & element, T & value);
-  template< class T >
-  LIter< T > erase_after(LIter< T > & element);
-  template< class T >
-  LIter< T > clear(LIter< T > & start, LIter< T > & end);
-
-  template< class T >
   struct LIter: ListIteratorBase< T, LIter< T > > {
     using ListIteratorBase< T, LIter< T > >::ListIteratorBase;
 
@@ -85,10 +76,6 @@ namespace alekseev {
 
     T & operator*() const;
     T * operator->() const;
-
-    friend LIter< T > insert_after< T >(LIter< T > & element, T & value);
-    friend LIter< T > erase_after< T >(LIter< T > & element);
-    friend LIter< T > clear< T >(LIter< T > & start, LIter & end);
   };
 
   template< class T >
@@ -205,6 +192,14 @@ namespace alekseev {
   Iter next(Iter it)
   {
     return ++it;
+  }
+
+  template< class Iter >
+  void destroy(Iter iterator_on_fake)
+  {
+    rmfake(iterator_on_fake.node_);
+    Iter end = iterator_on_fake;
+    clear(++iterator_on_fake, end);
   }
 }
 
