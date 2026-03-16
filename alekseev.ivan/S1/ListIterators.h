@@ -47,9 +47,9 @@ namespace alekseev {
   template< class T, class Derived >
   Derived ListIteratorBase< T, Derived >::operator++(int)
   {
-    ListIteratorBase< T, Derived > tmp = *this;
+    Derived tmp = static_cast< Derived & >(*this);
     ++(*this);
-    return static_cast< Derived & >(tmp);
+    return tmp;
   }
 
   template< class T, class Derived >

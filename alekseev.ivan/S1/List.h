@@ -33,7 +33,12 @@ namespace alekseev {
   List< T > * insert_after(List< T > * element, T & value)
   {
     List< T > * new_node = new List< T >();
-    new_node->data = value;
+    try {
+      new_node->data = value;
+    } catch (...) {
+      delete new_node;
+      throw;
+    }
     new_node->next = element->next;
     element->next = new_node;
     return new_node;
