@@ -85,7 +85,6 @@ int main()
   for (size_t i = 0; i < matter_size; ++i) {
     iterators[i] = alekseev::before_begin((++matter_iter)->second);
   }
-  std::cout << "\n";
 
   alekseev::List< size_t > * sums = nullptr;
   try {
@@ -142,20 +141,25 @@ int main()
   } else {
     ++matter_iter;
     std::cout << (++matter_iter)->first;
-    for (size_t i = 0; i < matter_size; ++i) {
+    for (size_t i = 1; i < matter_size; ++i) {
       std::cout << " " << (++matter_iter)->first;
     }
+    std::cout << "\n";
 
+    for (size_t i = 0; i < matter_size; ++i) {
+      ++iterators[i];
+    }
     for (size_t i = 0; i < j; ++i) {
       ++sizes_iter;
-      if (j < *(++sizes_iter)) {
-        std::cout << *(++iterators[i]);
+      if (i < *(++sizes_iter)) {
+        std::cout << *(++iterators[0]);
       }
       for (size_t k = 1; k < matter_size; ++k) {
-        if (j < *(++sizes_iter)) {
-          std::cout << " " << *(++iterators[i]);
+        if (i < *(++sizes_iter)) {
+          std::cout << " " << *(++iterators[k]);
         }
       }
+      std::cout << "\n";
     }
 
     ++sums_iter;
