@@ -4,6 +4,8 @@
 namespace alekseev {
   using PStrI = std::pair< std::string, List< int > * >;
 
+  void destroy_matter_iter(LIter< PStrI > matter_iter);
+
   std::ostream & print(std::ostream & out, PStrI p)
   {
     out << p.first << "\n";
@@ -22,34 +24,68 @@ int main()
   alekseev::List< alekseev::PStrI > * matter_list = alekseev::fake< alekseev::PStrI >();
   alekseev::LIter< alekseev::PStrI > matter_iter = alekseev::before_begin(matter_list);
   size_t matter_size = 0;
-  alekseev::List< size_t > * sizes = alekseev::fake< size_t >();
+  alekseev::List< size_t > * sizes = nullptr;
+  try {
+    sizes = alekseev::fake< size_t >(); //
+  } catch (const std::bad_alloc & e) {
+    alekseev::rmfake(matter_list);
+  }
   alekseev::LIter< size_t > sizes_iter = alekseev::before_begin(sizes);
 
   std::string name;
   size_t counter_for_eof = 0;
   while (++counter_for_eof < 5 && std::cin >> name && !std::cin.eof()) {
-    alekseev::List< int > * some_list = alekseev::fake< int >();
+    if (std::cin.fail()) {
+      alekseev::destroy_matter_iter(matter_iter);
+      alekseev::destroy(++sizes_iter);
+      std::cerr << "bad input\n";
+      return 1;
+    }
+    alekseev::List< int > * some_list = nullptr;
+    try {
+      some_list = alekseev::fake< int >(); //
+    } catch (const std::bad_alloc & e) {
+      alekseev::destroy_matter_iter(matter_iter);
+      alekseev::destroy(++sizes_iter);
+      std::cerr << e.what() << "\n";
+      return 1;
+    }
     alekseev::LIter< int > some_iter = alekseev::before_begin(some_list);
 
-    int number = 0;
-    size_t current_size = 0;
-    while (true) {
-      while (std::cin.peek() == ' ') {
-        std::cin.ignore();
+    try {
+      int number = 0;
+      size_t current_size = 0;
+      while (true) {
+        while (std::cin.peek() == ' ') {
+          std::cin.ignore();
+        }
+        if (std::cin.peek() == '\n' || std::cin.peek() == EOF) {
+          break;
+        }
+        std::cin >> number;
+        if (std::cin.fail()) {
+          alekseev::destroy_matter_iter(matter_iter);
+          alekseev::destroy(++sizes_iter);
+          alekseev::destroy(++some_iter);
+          std::cerr << "bad input\n";
+          return 1;
+        }
+        some_iter = alekseev::insert_after(some_iter, number); //
+        ++current_size;
       }
-      if (std::cin.peek() == '\n' || std::cin.peek() == EOF) {
-        break;
-      }
-      std::cin >> number;
-      some_iter = alekseev::insert_after(some_iter, number);
-      ++current_size;
-    }
-    alekseev::PStrI tmp(name, some_list);
-    alekseev::insert_after< alekseev::PStrI >(matter_iter, tmp);
-    ++matter_size;
-    alekseev::insert_after(sizes_iter, current_size);
+      alekseev::PStrI tmp(name, some_list);
+      alekseev::insert_after< alekseev::PStrI >(matter_iter, tmp); //
+      ++matter_size;
+      alekseev::insert_after(sizes_iter, current_size); //
 
-    //alekseev::print(std::cout, *matter_iter);
+      //alekseev::print(std::cout, *matter_iter);
+    } catch (const std::bad_alloc & e) {
+      alekseev::destroy_matter_iter(matter_iter);
+      alekseev::destroy(++sizes_iter);
+      alekseev::destroy(++some_iter);
+      std::cerr << e.what() << "\n";
+      return 1;
+    }
   }
 
   ++matter_iter;
@@ -91,4 +127,15 @@ int main()
     std::cout << *(++sums_iter) << " ";
   }
   std::cout << "\n";
+}
+
+void alekseev::destroy_matter_iter(LIter< PStrI > matter_iter)
+{
+  LIter< PStrI > start = ++matter_iter;
+  while (++start != matter_iter) {
+    List< int > * li = start->second;
+    clear(li->next, li);
+    rmfake(li);
+  }
+  destroy(matter_iter);
 }
