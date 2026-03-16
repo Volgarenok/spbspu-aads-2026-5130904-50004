@@ -1,8 +1,10 @@
 #include <iostream>
+#include <limits>
 #include "ListIterators.h"
 
 namespace alekseev {
   using PStr_ull = std::pair< std::string, List< size_t > * >;
+  const size_t MAX_SIZE_T = std::numeric_limits< size_t >::max();
   void destroy_matter_iter(LIter< PStr_ull > matter_iter);
 }
 
@@ -27,19 +29,19 @@ int main()
       std::cerr << "bad input\n";
       return 1;
     }
-    alekseev::List< int > * some_list = nullptr;
+    alekseev::List< size_t > * some_list = nullptr;
     try {
-      some_list = alekseev::fake< int >();
+      some_list = alekseev::fake< size_t >();
     } catch (const std::bad_alloc & e) {
       alekseev::destroy_matter_iter(matter_iter);
       alekseev::destroy(++sizes_iter);
       std::cerr << e.what() << "\n";
       return 1;
     }
-    alekseev::LIter< int > some_iter = alekseev::before_begin(some_list);
+    alekseev::LIter< size_t > some_iter = alekseev::before_begin(some_list);
 
     try {
-      int number = 0;
+      size_t number = 0;
       size_t current_size = 0;
       while (true) {
         while (std::cin.peek() == ' ') {
@@ -79,7 +81,7 @@ int main()
   }
 
   ++matter_iter;
-  alekseev::LCIter< int > * iterators = new alekseev::LCIter< int >[matter_size];
+  alekseev::LCIter< size_t > * iterators = new alekseev::LCIter< size_t >[matter_size];
   for (size_t i = 0; i < matter_size; ++i) {
     ++matter_iter;
     std::cout << matter_iter->first;
@@ -113,9 +115,18 @@ int main()
       alekseev::insert_after(sums_iter, zero);
       for (size_t i = 0; i < matter_size; ++i) {
         if (j < *(++sizes_iter)) {
-          int n = *(++iterators[i]);
+          size_t n = *(++iterators[i]);
+          if (alekseev::MAX_SIZE_T - n > *sums_iter) {
+            *sums_iter += n;
+          } else {
+            alekseev::destroy_matter_iter(matter_iter);
+            delete[] iterators;
+            alekseev::destroy(++sizes_iter);
+            alekseev::destroy(++sums_iter);
+            std::cerr << "cannot count sum. size_t overflow!\n";
+            return 1;
+          }
           std::cout << n << " ";
-          *sums_iter += n;
           is_smth_printed = true;
         }
       }
@@ -154,7 +165,7 @@ void alekseev::destroy_matter_iter(LIter< PStr_ull > matter_iter)
 {
   LIter< PStr_ull > start = ++matter_iter;
   while (++start != matter_iter) {
-    List< int > * li = start->second;
+    List< size_t > * li = start->second;
     clear(li->next, li);
     rmfake(li);
   }
