@@ -137,6 +137,7 @@ int main()
   }
 
   if (!j) {
+    std::cout << matter_list->next->data.first << "\n";
     std::cout << "0\n";
   } else {
     ++matter_iter;
