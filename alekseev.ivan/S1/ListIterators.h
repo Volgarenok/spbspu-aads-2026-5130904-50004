@@ -197,7 +197,6 @@ namespace alekseev {
   template< class Iter >
   void destroy(Iter iterator_on_fake)
   {
-
     Iter end = iterator_on_fake;
     clear(++iterator_on_fake, end);
     rmfake(end.node_);

@@ -3,20 +3,7 @@
 
 namespace alekseev {
   using PStrI = std::pair< std::string, List< int > * >;
-
   void destroy_matter_iter(LIter< PStrI > matter_iter);
-
-  std::ostream & print(std::ostream & out, PStrI p)
-  {
-    out << p.first << "\n";
-    LIter< int > start = begin(p.second);
-    LIter< int > end = alekseev::end(p.second);
-    while (start != end) {
-      std::cout << *(start++) << " ";
-    }
-    std::cout << "\n";
-    return out;
-  }
 }
 
 int main()
@@ -33,8 +20,7 @@ int main()
   alekseev::LIter< size_t > sizes_iter = alekseev::before_begin(sizes);
 
   std::string name;
-  size_t counter_for_eof = 0;
-  while (++counter_for_eof < 5 && std::cin >> name && !std::cin.eof()) {
+  while (std::cin >> name && !std::cin.eof()) {
     if (std::cin.fail()) {
       alekseev::destroy_matter_iter(matter_iter);
       alekseev::destroy(++sizes_iter);
