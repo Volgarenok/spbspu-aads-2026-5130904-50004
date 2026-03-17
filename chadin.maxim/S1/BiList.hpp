@@ -71,6 +71,29 @@ namespace chadin
       return tmp;
     }
 
+    LIter& operator--()
+    {
+      if (node_ == nullptr)
+      {
+        if (head_)
+        {
+          node_ = head_->prev;
+        }
+      }
+      else
+      {
+        if (node_ == head_)
+        {
+          node_ = nullptr;
+        }
+        else
+        {
+          node_ = node_->prev;
+        }
+      }
+      return *this;
+    }
+
     bool operator==(const LIter& other) const
     {
       return node_ == other.node_;
@@ -125,6 +148,29 @@ namespace chadin
         if (node_ == head_)
         {
           node_ = nullptr;
+        }
+      }
+      return *this;
+    }
+
+    LCIter& operator--()
+    {
+      if (node_ == nullptr)
+      {
+        if (head_)
+        {
+          node_ = head_->prev;
+        }
+      }
+      else
+      {
+        if (node_ == head_)
+        {
+          node_ = nullptr;
+        }
+        else
+        {
+          node_ = node_->prev;
         }
       }
       return *this;
@@ -212,6 +258,26 @@ namespace chadin
     size_t getSize() const
     {
       return size_;
+    }
+
+    T& front()
+    {
+      return head_->val;
+    }
+
+    const T& front() const
+    {
+      return head_->val;
+    }
+
+    T& back()
+    {
+      return head_->prev->val;
+    }
+
+    const T& back() const
+    {
+      return head_->prev->val;
     }
 
     LIter< T > begin()
