@@ -22,7 +22,8 @@ int main()
   alekseev::LIter< size_t > sizes_iter = alekseev::before_begin(sizes);
 
   std::string name;
-  while (std::cin >> name && !std::cin.eof()) {
+  size_t eof_count = 3;
+  while (--eof_count && std::cin >> name && !std::cin.eof()) {
     if (std::cin.fail()) {
       alekseev::destroy_matter_iter(matter_iter);
       alekseev::destroy(++sizes_iter);
@@ -81,13 +82,17 @@ int main()
   }
 
   ++matter_iter;
-  alekseev::LCIter< size_t > * iterators = new alekseev::LCIter< size_t >[matter_size];
-  for (size_t i = 0; i < matter_size; ++i) {
-    iterators[i] = alekseev::before_begin((++matter_iter)->second);
-  }
-
+  alekseev::LCIter< size_t > * iterators = nullptr;
   alekseev::List< size_t > * sums = nullptr;
   try {
+    iterators = new alekseev::LCIter< size_t >[matter_size];
+    for (size_t i = 0; i < matter_size; ++i) {
+      ++matter_iter;
+      std::cout << matter_iter->first << " ";
+      iterators[i] = alekseev::before_begin(matter_iter->second);
+    }
+    std::cout << "\n";
+
     sums = alekseev::fake< size_t >();
   } catch (const std::bad_alloc & e) {
     alekseev::destroy_matter_iter(matter_iter);
@@ -100,34 +105,42 @@ int main()
 
   size_t j = 0;
   size_t zero = 0ll;
-  bool is_smth_was = true;
+  bool is_smth_printed = true;
+  bool sums_error = false;
   try {
-    while (is_smth_was) {
-      is_smth_was = false;
+    while (is_smth_printed) {
+      is_smth_printed = false;
 
       ++sizes_iter;
       alekseev::insert_after(sums_iter, zero);
+      bool first = true;
       for (size_t i = 0; i < matter_size; ++i) {
         if (j < *(++sizes_iter)) {
           size_t n = *(++iterators[i]);
-          if (alekseev::MAX_SIZE_T - n > *sums_iter) {
+          if (first) {
+            first = false;
+          } else {
+            std::cout << " ";
+          }
+          std::cout << n;
+
+          if (!sums_error && alekseev::MAX_SIZE_T - n > *sums_iter) {
             *sums_iter += n;
           } else {
-            alekseev::destroy_matter_iter(matter_iter);
-            delete[] iterators;
-            alekseev::destroy(++sizes_iter);
-            alekseev::destroy(++sums_iter);
-            std::cerr << "cannot count sum. size_t overflow!\n";
-            return 1;
+            sums_error = true;
           }
-          is_smth_was = true;
+          is_smth_printed = true;
         }
       }
-      if (is_smth_was) {
+      if (is_smth_printed) {
         ++j;
+        std::cout << "\n";
       }
     }
-  } catch (const std::bad_alloc & e) {
+    if (sums_error) {
+      throw std::overflow_error("error while counting sums");
+    }
+  } catch (const std::exception & e) {
     alekseev::destroy_matter_iter(matter_iter);
     delete[] iterators;
     alekseev::destroy(++sizes_iter);
@@ -137,35 +150,8 @@ int main()
   }
 
   if (!j) {
-    std::cout << matter_list->next->data.first << "\n";
     std::cout << "0\n";
   } else {
-    ++matter_iter;
-    std::cout << (++matter_iter)->first;
-    for (size_t i = 1; i < matter_size; ++i) {
-      std::cout << " " << (++matter_iter)->first;
-    }
-    std::cout << "\n";
-
-    for (size_t i = 0; i < matter_size; ++i) {
-      ++iterators[i];
-    }
-    for (size_t i = 0; i < j; ++i) {
-      ++sizes_iter;
-      bool first = true;
-      for (size_t k = 0; k < matter_size; ++k) {
-        if (first) {
-          first = false;
-        } else {
-          std::cout << " ";
-        }
-        if (i < *(++sizes_iter)) {
-          std::cout << *(++iterators[k]);
-        }
-      }
-      std::cout << "\n";
-    }
-
     ++sums_iter;
     std::cout << *(++sums_iter);
     for (size_t i = 1; i < j; ++i) {
@@ -173,7 +159,6 @@ int main()
     }
     std::cout << "\n";
   }
-
   alekseev::destroy_matter_iter(matter_iter);
   delete[] iterators;
   alekseev::destroy(++sizes_iter);
