@@ -202,7 +202,7 @@ namespace chadin
     {}
   };
 
-template< class T >
+  template< class T >
   class BiList
   {
   public:
