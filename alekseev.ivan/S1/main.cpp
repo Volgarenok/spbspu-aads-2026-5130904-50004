@@ -22,8 +22,7 @@ int main()
   alekseev::LIter< size_t > sizes_iter = alekseev::before_begin(sizes);
 
   std::string name;
-  size_t eof_count = 3;
-  while (--eof_count && std::cin >> name && !std::cin.eof()) {
+  while (std::cin >> name && !std::cin.eof()) {
     if (std::cin.fail()) {
       alekseev::destroy_matter_iter(matter_iter);
       alekseev::destroy(++sizes_iter);
