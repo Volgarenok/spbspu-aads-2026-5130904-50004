@@ -35,6 +35,7 @@ int main()
 
     if (data.isEmpty())
     {
+      std::cout << "0\n";
       return 0;
     }
 
@@ -59,6 +60,8 @@ int main()
     }
 
     BiList< unsigned long long > sums;
+    bool overflowOccurred = false;
+
     for (size_t i = 0; i < maxLen; ++i)
     {
       unsigned long long rowSum = 0;
@@ -80,15 +83,26 @@ int main()
           std::cout << *numIt;
           isFirstInRow = false;
 
-          if (std::numeric_limits< unsigned long long >::max() - rowSum < *numIt)
+          if (!overflowOccurred)
           {
-            throw std::overflow_error("Sum overflow");
+            if (std::numeric_limits< unsigned long long >::max() - rowSum < *numIt)
+            {
+              overflowOccurred = true;
+            }
+            else
+            {
+              rowSum += *numIt;
+            }
           }
-          rowSum += *numIt;
         }
       }
       std::cout << "\n";
       sums.pushBack(rowSum);
+    }
+
+    if (overflowOccurred)
+    {
+      throw std::overflow_error("Sum overflow");
     }
 
     size_t sumCount = 0;
