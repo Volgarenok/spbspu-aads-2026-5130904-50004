@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <utility>
+#include <cstddef>
 
 namespace chadin
 {
@@ -13,13 +14,13 @@ namespace chadin
     Node* prev;
     Node* next;
 
-    Node(const T& value) :
+    Node(const T& value):
       val(value),
       prev(nullptr),
       next(nullptr)
     {}
 
-    Node(T&& value) :
+    Node(T&& value):
       val(std::move(value)),
       prev(nullptr),
       next(nullptr)
@@ -35,7 +36,7 @@ namespace chadin
   public:
     friend class BiList< T >;
 
-    LIter() noexcept :
+    LIter():
       node_(nullptr),
       head_(nullptr)
     {}
@@ -50,7 +51,7 @@ namespace chadin
       return &(node_->val);
     }
 
-    LIter& operator++() noexcept
+    LIter& operator++()
     {
       if (node_)
       {
@@ -63,42 +64,19 @@ namespace chadin
       return *this;
     }
 
-    LIter operator++(int) noexcept
+    LIter operator++(int)
     {
       LIter tmp(*this);
       ++(*this);
       return tmp;
     }
 
-    LIter& operator--() noexcept
-    {
-      if (node_ == nullptr)
-      {
-        if (head_)
-        {
-          node_ = head_->prev;
-        }
-      }
-      else
-      {
-        if (node_ == head_)
-        {
-          node_ = nullptr;
-        }
-        else
-        {
-          node_ = node_->prev;
-        }
-      }
-      return *this;
-    }
-
-    bool operator==(const LIter& other) const noexcept
+    bool operator==(const LIter& other) const
     {
       return node_ == other.node_;
     }
 
-    bool operator!=(const LIter& other) const noexcept
+    bool operator!=(const LIter& other) const
     {
       return !(*this == other);
     }
@@ -107,7 +85,7 @@ namespace chadin
     Node< T >* node_;
     Node< T >* head_;
 
-    LIter(Node< T >* node, Node< T >* head) noexcept :
+    LIter(Node< T >* node, Node< T >* head):
       node_(node),
       head_(head)
     {}
@@ -119,12 +97,12 @@ namespace chadin
   public:
     friend class BiList< T >;
 
-    LCIter() noexcept :
+    LCIter():
       node_(nullptr),
       head_(nullptr)
     {}
 
-    LCIter(const LIter< T >& other) noexcept :
+    LCIter(const LIter< T >& other):
       node_(other.node_),
       head_(other.head_)
     {}
@@ -139,7 +117,7 @@ namespace chadin
       return &(node_->val);
     }
 
-    LCIter& operator++() noexcept
+    LCIter& operator++()
     {
       if (node_)
       {
@@ -152,42 +130,12 @@ namespace chadin
       return *this;
     }
 
-    LCIter operator++(int) noexcept
-    {
-      LCIter tmp(*this);
-      ++(*this);
-      return tmp;
-    }
-
-    LCIter& operator--() noexcept
-    {
-      if (node_ == nullptr)
-      {
-        if (head_)
-        {
-          node_ = head_->prev;
-        }
-      }
-      else
-      {
-        if (node_ == head_)
-        {
-          node_ = nullptr;
-        }
-        else
-        {
-          node_ = node_->prev;
-        }
-      }
-      return *this;
-    }
-
-    bool operator==(const LCIter& other) const noexcept
+    bool operator==(const LCIter& other) const
     {
       return node_ == other.node_;
     }
 
-    bool operator!=(const LCIter& other) const noexcept
+    bool operator!=(const LCIter& other) const
     {
       return !(*this == other);
     }
@@ -196,7 +144,7 @@ namespace chadin
     const Node< T >* node_;
     const Node< T >* head_;
 
-    LCIter(const Node< T >* node, const Node< T >* head) noexcept :
+    LCIter(const Node< T >* node, const Node< T >* head):
       node_(node),
       head_(head)
     {}
@@ -206,12 +154,12 @@ namespace chadin
   class BiList
   {
   public:
-    BiList() noexcept :
+    BiList():
       head_(nullptr),
       size_(0)
     {}
 
-    BiList(const BiList& other) :
+    BiList(const BiList& other):
       head_(nullptr),
       size_(0)
     {
@@ -227,7 +175,7 @@ namespace chadin
       }
     }
 
-    BiList(BiList&& other) noexcept :
+    BiList(BiList&& other):
       head_(other.head_),
       size_(other.size_)
     {
@@ -250,87 +198,38 @@ namespace chadin
       return *this;
     }
 
-    BiList& operator=(BiList&& other) noexcept
-    {
-      if (this != &other)
-      {
-        clear();
-        head_ = other.head_;
-        size_ = other.size_;
-        other.head_ = nullptr;
-        other.size_ = 0;
-      }
-      return *this;
-    }
-
-    void swap(BiList& other) noexcept
+    void swap(BiList& other)
     {
       std::swap(head_, other.head_);
       std::swap(size_, other.size_);
     }
 
-    bool isEmpty() const noexcept
+    bool isEmpty() const
     {
       return size_ == 0;
     }
 
-    size_t getSize() const noexcept
+    size_t getSize() const
     {
       return size_;
     }
 
-    T& front()
-    {
-      if (isEmpty())
-      {
-        throw std::out_of_range("List is empty");
-      }
-      return head_->val;
-    }
-
-    const T& front() const
-    {
-      if (isEmpty())
-      {
-        throw std::out_of_range("List is empty");
-      }
-      return head_->val;
-    }
-
-    T& back()
-    {
-      if (isEmpty())
-      {
-        throw std::out_of_range("List is empty");
-      }
-      return head_->prev->val;
-    }
-
-    const T& back() const
-    {
-      if (isEmpty())
-      {
-        throw std::out_of_range("List is empty");
-      }
-      return head_->prev->val;
-    }
-
-    LIter< T > begin() noexcept
+    LIter< T > begin()
     {
       return LIter< T >(head_, head_);
     }
 
-    LIter< T > end() noexcept
+    LIter< T > end()
     {
       return LIter< T >(nullptr, head_);
     }
 
-    LCIter< T > cbegin() const noexcept
+    LCIter< T > cbegin() const
     {
       return LCIter< T >(head_, head_);
     }
 
-    LCIter< T > cend() const noexcept
+    LCIter< T > cend() const
     {
       return LCIter< T >(nullptr, head_);
     }
@@ -340,9 +239,9 @@ namespace chadin
       Node< T >* newNode = new Node< T >(value);
       if (isEmpty())
       {
+        newNode->next = newNode;
+        newNode->prev = newNode;
         head_ = newNode;
-        head_->next = head_;
-        head_->prev = head_;
       }
       else
       {
@@ -385,55 +284,12 @@ namespace chadin
       --size_;
     }
 
-    void popBack()
-    {
-      if (isEmpty())
-      {
-        return;
-      }
-      if (size_ == 1)
-      {
-        popFront();
-      }
-      else
-      {
-        Node< T >* tail = head_->prev;
-        tail->prev->next = head_;
-        head_->prev = tail->prev;
-        delete tail;
-        --size_;
-      }
-    }
-
-    void clear() noexcept
+    void clear()
     {
       while (!isEmpty())
       {
         popFront();
       }
-    }
-
-    LIter< T > insert(LIter< T > pos, const T& value)
-    {
-      if (pos == begin())
-      {
-        pushFront(value);
-        return begin();
-      }
-      if (pos == end())
-      {
-        pushBack(value);
-        LIter< T > res = end();
-        return --res;
-      }
-      Node< T >* curr = pos.node_;
-      Node< T >* newNode = new Node< T >(value);
-      newNode->prev = curr->prev;
-      newNode->next = curr;
-      curr->prev->next = newNode;
-      curr->prev = newNode;
-      ++size_;
-      return LIter< T >(newNode, head_);
     }
 
   private:
