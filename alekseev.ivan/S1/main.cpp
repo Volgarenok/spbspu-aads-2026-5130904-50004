@@ -152,12 +152,14 @@ int main()
     }
     for (size_t i = 0; i < j; ++i) {
       ++sizes_iter;
-      if (i < *(++sizes_iter)) {
-        std::cout << *(++iterators[0]);
-      }
-      for (size_t k = 1; k < matter_size; ++k) {
+      bool first = true;
+      for (size_t k = 0; k < matter_size; ++k) {
+        if (!first) {
+          std::cout << " ";
+          first = false;
+        }
         if (i < *(++sizes_iter)) {
-          std::cout << " " << *(++iterators[k]);
+          std::cout << *(++iterators[k]);
         }
       }
       std::cout << "\n";
