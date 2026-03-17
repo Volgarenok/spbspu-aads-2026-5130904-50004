@@ -87,7 +87,10 @@ int main()
     iterators = new alekseev::LCIter< size_t >[matter_size];
     for (size_t i = 0; i < matter_size; ++i) {
       ++matter_iter;
-      std::cout << matter_iter->first << " ";
+      if (i) {
+        std::cout << " ";
+      }
+      std::cout << matter_iter->first;
       iterators[i] = alekseev::before_begin(matter_iter->second);
     }
     std::cout << "\n";
