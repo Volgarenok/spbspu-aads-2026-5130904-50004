@@ -38,53 +38,67 @@ int main()
       return 0;
     }
 
+    size_t nameCount = 0;
     for (auto it = data.cbegin(); it != data.cend(); ++it)
     {
-      std::cout << it->first << (std::next(it) == data.cend() ? "" : " ");
+      std::cout << it->first;
+      if (++nameCount < data.getSize())
+      {
+        std::cout << " ";
+      }
     }
     std::cout << "\n";
 
-    size_t max_len = 0;
+    size_t maxLen = 0;
     for (auto it = data.cbegin(); it != data.cend(); ++it)
     {
-      if (it->second.getSize() > max_len)
+      if (it->second.getSize() > maxLen)
       {
-        max_len = it->second.getSize();
+        maxLen = it->second.getSize();
       }
     }
 
     BiList< unsigned long long > sums;
-    for (size_t i = 0; i < max_len; ++i)
+    for (size_t i = 0; i < maxLen; ++i)
     {
-      unsigned long long row_sum = 0;
-      bool first = true;
+      unsigned long long rowSum = 0;
+      bool isFirstInRow = true;
       for (auto it = data.cbegin(); it != data.cend(); ++it)
       {
         if (i < it->second.getSize())
         {
-          auto num_it = it->second.cbegin();
+          auto numIt = it->second.cbegin();
           for (size_t j = 0; j < i; ++j)
           {
-            ++num_it;
+            ++numIt;
           }
 
-          std::cout << (first ? "" : " ") << *num_it;
-          first = false;
+          if (!isFirstInRow)
+          {
+            std::cout << " ";
+          }
+          std::cout << *numIt;
+          isFirstInRow = false;
 
-          if (std::numeric_limits< unsigned long long >::max() - row_sum < *num_it)
+          if (std::numeric_limits< unsigned long long >::max() - rowSum < *numIt)
           {
             throw std::overflow_error("Sum overflow");
           }
-          row_sum += *num_it;
+          rowSum += *numIt;
         }
       }
       std::cout << "\n";
-      sums.pushBack(row_sum);
+      sums.pushBack(rowSum);
     }
 
+    size_t sumCount = 0;
     for (auto it = sums.cbegin(); it != sums.cend(); ++it)
     {
-      std::cout << *it << (std::next(it) == sums.cend() ? "" : " ");
+      std::cout << *it;
+      if (++sumCount < sums.getSize())
+      {
+        std::cout << " ";
+      }
     }
     std::cout << "\n";
   }
