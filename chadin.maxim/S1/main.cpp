@@ -59,6 +59,12 @@ int main()
       }
     }
 
+    if (maxLen == 0)
+    {
+      std::cout << "0\n";
+      return 0;
+    }
+
     BiList< unsigned long long > sums;
     bool overflowOccurred = false;
 
