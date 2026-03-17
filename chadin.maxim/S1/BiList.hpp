@@ -113,6 +113,94 @@ namespace chadin
     {}
   };
 
+  template< class T >
+  class LCIter
+  {
+  public:
+    friend class BiList< T >;
+
+    LCIter() noexcept :
+      node_(nullptr),
+      head_(nullptr)
+    {}
+
+    LCIter(const LIter< T >& other) noexcept :
+      node_(other.node_),
+      head_(other.head_)
+    {}
+
+    const T& operator*() const
+    {
+      return node_->val;
+    }
+
+    const T* operator->() const
+    {
+      return &(node_->val);
+    }
+
+    LCIter& operator++() noexcept
+    {
+      if (node_)
+      {
+        node_ = node_->next;
+        if (node_ == head_)
+        {
+          node_ = nullptr;
+        }
+      }
+      return *this;
+    }
+
+    LCIter operator++(int) noexcept
+    {
+      LCIter tmp(*this);
+      ++(*this);
+      return tmp;
+    }
+
+    LCIter& operator--() noexcept
+    {
+      if (node_ == nullptr)
+      {
+        if (head_)
+        {
+          node_ = head_->prev;
+        }
+      }
+      else
+      {
+        if (node_ == head_)
+        {
+          node_ = nullptr;
+        }
+        else
+        {
+          node_ = node_->prev;
+        }
+      }
+      return *this;
+    }
+
+    bool operator==(const LCIter& other) const noexcept
+    {
+      return node_ == other.node_;
+    }
+
+    bool operator!=(const LCIter& other) const noexcept
+    {
+      return !(*this == other);
+    }
+
+  private:
+    const Node< T >* node_;
+    const Node< T >* head_;
+
+    LCIter(const Node< T >* node, const Node< T >* head) noexcept :
+      node_(node),
+      head_(head)
+    {}
+  };
 }
 
 #endif
