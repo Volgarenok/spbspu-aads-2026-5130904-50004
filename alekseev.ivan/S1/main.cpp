@@ -154,9 +154,10 @@ int main()
       ++sizes_iter;
       bool first = true;
       for (size_t k = 0; k < matter_size; ++k) {
-        if (!first) {
-          std::cout << " ";
+        if (first) {
           first = false;
+        } else {
+          std::cout << " ";
         }
         if (i < *(++sizes_iter)) {
           std::cout << *(++iterators[k]);
