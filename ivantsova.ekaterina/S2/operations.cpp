@@ -95,6 +95,7 @@ ivantsova::Queue< std::string > ivantsova::convertToPostfix(const std::string& l
       if (operators.empty()) {
         throw std::runtime_error("Mismatched parentheses");
       }
+      operators.pop();
     }
     else if (isOperator(tok)) {
       while (!operators.empty() && operators.top() != "(" && getPriority(operators.top()) >= getPriority(tok)) {
