@@ -3,7 +3,7 @@
 
 #include "../common/list.hpp"
 
-namespace ivantsova{
+namespace ivantsova {
 
   template < class T >
   class Stack {
