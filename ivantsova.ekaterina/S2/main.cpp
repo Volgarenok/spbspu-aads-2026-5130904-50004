@@ -24,9 +24,7 @@ int main(int argc, char* argv[])
       }
       results[count++] = ivantsova::calculateExpression(line);
     }
-    if (count == 0) {
-      std::cout << "0" << "\n";
-    } else {
+    if (count > 0) {
       for (int i = count - 1; i >= 0; --i) {
         if (i != count -1) {
           std::cout << " ";

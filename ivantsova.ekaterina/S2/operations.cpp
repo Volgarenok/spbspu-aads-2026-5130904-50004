@@ -1,5 +1,6 @@
 #include "operations.hpp"
 #include <sstream>
+#include <limits>
 
 int ivantsova::getPriority(const std::string& op) {
   if (op == "+" || op == "-") {
@@ -39,12 +40,32 @@ bool ivantsova::isNumber(const std::string& token) {
 
 long long ivantsova::useOperation(long long a, long long b, const std::string& op) {
   if (op == "+") {
+    if (b > 0 && a > std::numeric_limits< long long >::max() - b) {
+      throw std::overflow_error("Addition overflow");
+    }
+    if (b < a && a < std::numeric_limits< long long >::min() - b) {
+      throw std::underflow_error("Addition underflow");
+    }
     return a + b;
   }
   if (op == "-") {
+    if (b < 0 && a > std::numeric_limits< long long >::max() + b) {
+      throw std::overflow_error("Substraction overflow");
+    }
+    if (b > a && a < std::numeric_limits< long long >::min() + b) {
+      throw std::underflow_error("Substraction underflow");
+    }
     return a - b;
   }
   if (op == "*") {
+    if (a != 0 && b != 0) {
+      if ((a > 0 && b > 0 && a > std::numeric_limits< long long >::max() / b) || (a < 0 && b < 0 && a < std::numeric_limits< long long >::max() / b)) {
+        throw std::overflow_error("Multiplication overflow");
+      }
+      if ((a > 0 && b < 0 && b < std::numeric_limits< long long >::min() / a) || (a < 0 && b > 0 && a < std::numeric_limits< long long >::min() / b)) {
+        throw std::underflow_error("Multiplication underflow");
+      }
+    }
     return a * b;
   }
   if (op == "/") {
@@ -57,11 +78,21 @@ long long ivantsova::useOperation(long long a, long long b, const std::string& o
     if (b == 0) {
       throw std::runtime_error("Division by zero");
     }
+    if (a % b < 0) {
+      if (b > 0) {
+        return a % b + b;
+      } else {
+        return a % b - b;
+      }
+    }
     return a % b;
   }
   if (op == "<<") {
     if (b < 0) {
       throw std::runtime_error("Shift by negative number");
+    }
+    if (b >= static_cast< int >(sizeof(long long) * 8)) {
+      throw std::overflow_error("Shift number too large");
     }
     return a << b;
   }
