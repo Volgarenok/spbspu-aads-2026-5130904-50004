@@ -1,5 +1,6 @@
 #include "operations.hpp"
 #include <sstream>
+#include <cctype>
 #include <limits>
 
 int ivantsova::getPriority(const std::string& op) {

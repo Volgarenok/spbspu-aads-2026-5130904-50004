@@ -63,7 +63,7 @@ namespace ivantsova {
 
   template < class T >
   void Queue<T>::clear() {
-    return data_.clear();
+    data_.clear();
   }
 }
 
