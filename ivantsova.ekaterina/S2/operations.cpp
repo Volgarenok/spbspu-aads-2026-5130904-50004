@@ -59,10 +59,12 @@ long long ivantsova::useOperation(long long a, long long b, const std::string& o
   }
   if (op == "*") {
     if (a != 0 && b != 0) {
-      if ((a > 0 && b > 0 && a > std::numeric_limits< long long >::max() / b) || (a < 0 && b < 0 && a < std::numeric_limits< long long >::max() / b)) {
+      if ((a > 0 && b > 0 && a > std::numeric_limits< long long >::max() / b) \
+       || (a < 0 && b < 0 && a < std::numeric_limits< long long >::max() / b)) {
         throw std::overflow_error("Multiplication overflow");
       }
-      if ((a > 0 && b < 0 && b < std::numeric_limits< long long >::min() / a) || (a < 0 && b > 0 && a < std::numeric_limits< long long >::min() / b)) {
+      if ((a > 0 && b < 0 && b < std::numeric_limits< long long >::min() / a) \
+      || (a < 0 && b > 0 && a < std::numeric_limits< long long >::min() / b)) {
         throw std::underflow_error("Multiplication underflow");
       }
     }
