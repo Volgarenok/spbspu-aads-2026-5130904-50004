@@ -22,16 +22,19 @@ bool ivantsova::isNumber(const std::string& token) {
   if (token.empty()) {
     return false;
   }
-  size_t start = (token[0] == '-') ? 1 : 0;
-  if (start >= token.size()) {
-    return false;
+  size_t start = 0;
+  if (token[0] == '-') {
+    if (token.size() == 1) {
+      return false;
+    }
+    start = 1;
   }
   for (size_t i = start; i < token.size(); ++i) {
     if (!std::isdigit(token[i])) {
         return false;
     }
-    return true;
   }
+  return true;
 }
 
 long long ivantsova::useOperation(long long a, long long b, const std::string& op) {
