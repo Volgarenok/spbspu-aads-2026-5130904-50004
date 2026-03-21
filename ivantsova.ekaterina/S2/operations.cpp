@@ -43,7 +43,7 @@ long long ivantsova::useOperation(long long a, long long b, const std::string& o
     if (b > 0 && a > std::numeric_limits< long long >::max() - b) {
       throw std::overflow_error("Addition overflow");
     }
-    if (b < a && a < std::numeric_limits< long long >::min() - b) {
+    if (b < 0 && a < std::numeric_limits< long long >::min() - b) {
       throw std::underflow_error("Addition underflow");
     }
     return a + b;

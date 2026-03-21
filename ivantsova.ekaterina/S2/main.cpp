@@ -33,6 +33,7 @@ int main(int argc, char* argv[])
       }
       std::cout << "\n";
     }
+    std::cout << "\n";
     return 0;
   } catch (const std::exception& e) {
     std::cerr << e.what() << "\n";
