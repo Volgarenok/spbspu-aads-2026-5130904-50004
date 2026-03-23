@@ -80,6 +80,32 @@ namespace zinoviev
 
             operands.push(calculate(first, oper, second));
           }
+
+          if (!operators.empty() && operators.top() == '(')
+            operators.pop();
+          else
+            throw std::logic_error("Error with operators");
+        }
+        else if (priority(token[0]) == 1 || priority(token[0]) == 2)
+        {
+          while (!operators.empty() && operators.top() != '(' &&
+                 priority(operators.top()) >= priority(token[0]))
+          {
+            if (operands.size() < 2)
+              throw std::logic_error("Not enough operands");
+
+            char oper = operators.top();
+            operators.pop();
+
+            long long second = operands.top();
+            operands.pop();
+            long long first = operands.top();
+            operands.pop();
+
+            operands.push(calculate(first, oper, second));
+          }
+          operators.push(token[0]);
+        }
       }
       else
       {
