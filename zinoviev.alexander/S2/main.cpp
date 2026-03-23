@@ -1,4 +1,5 @@
 #include "evaluate.hpp"
+#include "Stack.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
