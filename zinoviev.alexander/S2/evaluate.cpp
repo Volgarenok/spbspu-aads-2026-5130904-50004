@@ -3,6 +3,42 @@
 
 namespace zinoviev
 {
+  int priority(char oper)
+  {
+    if (oper == '+' || oper == '-')
+      return 1;
+    else if (oper == '/' || oper == '*' || oper == '%')
+      return 2;
+    else
+      throw std::logic_error("Bad operator");
+  }
+
+  long long calculate(long long first, char oper, long long second)
+  {
+    if (oper == '/')
+    {
+      if (second == 0)
+        throw std::logic_error("Dividing by 0");
+      return first / second;
+    }
+    else if (oper == '%')
+    {
+      if (second == 0)
+        throw std::logic_error("Dividing by 0");
+      return first % second;
+    }
+    else if (oper == '+')
+      return first + second;
+    else if (oper == '-')
+      return first - second;
+    else if (oper == '*')
+      return first * second;
+    else if (oper == 'l')
+      return lcm(first, second);
+    else
+      throw std::logic_error("Unknown operation");
+  }
+
   long long evaluate(std::string& expression)
   {
     Stack<long long> operands;
