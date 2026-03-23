@@ -7,7 +7,7 @@ namespace zinoviev
   {
     if (oper == '+' || oper == '-')
       return 1;
-    else if (oper == '/' || oper == '*' || oper == '%')
+    else if (oper == '/' || oper == '*' || oper == '%' || oper == 'l')
       return 2;
     else
       throw std::logic_error("Bad operator");
@@ -59,7 +59,28 @@ namespace zinoviev
       }
 
       if (is_oper)
-      {}
+      {
+        if (token[0] == '(')
+          operators.push(token[0]);
+
+        else if (token[0] == ')')
+        {
+          while (!operators.empty() && operators.top() != '(')
+          {
+            if (operands.size() < 2)
+              throw std::logic_error("Not enough operands");
+
+            char oper = operators.top();
+            operators.pop();
+
+            long long second = operands.top();
+            operands.pop();
+            long long first = operands.top();
+            operands.pop();
+
+            operands.push(calculate(first, oper, second));
+          }
+      }
       else
       {
         operands.push(std::stoll(token));
