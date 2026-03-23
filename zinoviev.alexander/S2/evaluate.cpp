@@ -1,10 +1,10 @@
 #include "evaluate.hpp"
 #include "Stack.hpp"
 #include <cctype>
-#include <string>
 #include <sstream>
 #include <stdexcept>
 #include <cstdlib>
+#include <limits>
 
 namespace zinoviev
 {
@@ -23,7 +23,8 @@ namespace zinoviev
   {
     a = std::llabs(a);
     b = std::llabs(b);
-    return (a * b) / gcd(a, b);
+    long long g = gcd(a, b);
+    return g ? (a / g) * b : 0;
   }
 
   int priority(char oper)
@@ -41,23 +42,52 @@ namespace zinoviev
     if (oper == '/')
     {
       if (second == 0)
-        throw std::logic_error("Dividing by 0");
+        throw std::logic_error("Division by zero");
       return first / second;
     }
     else if (oper == '%')
     {
       if (second == 0)
-        throw std::logic_error("Dividing by 0");
-      return first % second;
+        throw std::logic_error("Division by zero");
+      long long rem = first % second;
+      if (rem < 0)
+        rem += std::llabs(second);
+
+      return rem;
     }
     else if (oper == '+')
+    {
+      if ((first > 0 && second > 0 && first > std::numeric_limits<long long>::max() - second) ||
+          (first < 0 && second < 0 && first < std::numeric_limits<long long>::min() - second))
+        throw std::logic_error("Overflow");
+
       return first + second;
+    }
     else if (oper == '-')
+    {
+      if ((first > 0 && second < 0 && first > std::numeric_limits<long long>::max() + second) ||
+          (first < 0 && second > 0 && first < std::numeric_limits<long long>::min() + second))
+        throw std::logic_error("Overflow");
+
       return first - second;
+    }
     else if (oper == '*')
+    {
+      if (first != 0 && second != 0)
+      {
+        if ((first > 0 && second > 0 && first > std::numeric_limits<long long>::max() / second) ||
+            (first > 0 && second < 0 && second < std::numeric_limits<long long>::min() / first) ||
+            (first < 0 && second > 0 && first < std::numeric_limits<long long>::min() / second) ||
+            (first < 0 && second < 0 && first < std::numeric_limits<long long>::max() / second))
+          throw std::logic_error("Overflow");
+      }
+
       return first * second;
+    }
     else if (oper == 'l')
+    {
       return lcm(first, second);
+    }
     else
       throw std::logic_error("Unknown operation");
   }
@@ -77,9 +107,7 @@ namespace zinoviev
       if (!isdigit(token[0]) && token.size() == 1)
         is_oper = true;
       else if (token == "lcm")
-      {
         is_oper = true;
-      }
 
       if (is_oper)
       {

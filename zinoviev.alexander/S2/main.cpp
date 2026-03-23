@@ -46,18 +46,15 @@ int main(int argc, char* argv[])
     }
   }
 
-  bool need_n = false;
   if (!results.empty())
   {
     std::cout << results.top();
     results.pop();
-    need_n = true;
+    while (!results.empty())
+    {
+      std::cout << ' ' << results.top();
+      results.pop();
+    }
   }
-  while (!results.empty())
-  {
-    std::cout << " " << results.top();
-    results.pop();
-  }
-  if (need_n)
-    std::cout << '\n';
+  std::cout << '\n';
 }
