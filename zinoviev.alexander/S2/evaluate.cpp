@@ -1,8 +1,31 @@
 #include "evaluate.hpp"
 #include "Stack.hpp"
+#include <cctype>
+#include <string>
+#include <sstream>
+#include <stdexcept>
+#include <cstdlib>
 
 namespace zinoviev
 {
+  long long gcd(long long a, long long b)
+  {
+    while (b != 0)
+    {
+      long long temp = b;
+      b = a % b;
+      a = temp;
+    }
+    return a;
+  }
+
+  long long lcm(long long a, long long b)
+  {
+    a = std::llabs(a);
+    b = std::llabs(b);
+    return (a * b) / gcd(a, b);
+  }
+
   int priority(char oper)
   {
     if (oper == '+' || oper == '-')
@@ -112,5 +135,30 @@ namespace zinoviev
         operands.push(std::stoll(token));
       }
     }
+
+    while (!operators.empty())
+    {
+      if (operators.top() == '(')
+        throw std::logic_error("Mismatched parentheses");
+
+      if (operands.size() < 2)
+        throw std::logic_error("Not enough operands");
+
+      char oper = operators.top();
+      operators.pop();
+      long long second = operands.top();
+      operands.pop();
+      long long first = operands.top();
+      operands.pop();
+
+      operands.push(calculate(first, oper, second));
+    }
+
+    if (operands.size() != 1)
+      throw std::logic_error("Bad expression");
+
+    long long res = operands.top();
+    operands.pop();
+    return res;
   }
 }
