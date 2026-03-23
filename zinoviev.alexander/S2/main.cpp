@@ -20,4 +20,28 @@ int main(int argc, char* argv[])
     }
     in = &input;
   }
+  else if (argc > 2)
+  {
+    std::cerr << "Usage: " << argv[0] << " [filename]\n";
+    return 1;
+  }
+
+  Stack<long long> results;
+  std::string line;
+
+  while (std::getline(*in, line))
+  {
+    if (!line.empty())
+    {
+      try
+      {
+        results.push(evaluate(line));
+      }
+      catch (const std::exception& e)
+      {
+        std::cerr << "Error: " << e.what() << '\n';
+        return 1;
+      }
+    }
+  }
 }
