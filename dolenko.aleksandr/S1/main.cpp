@@ -57,6 +57,22 @@ namespace
 int main()
 {
 	auto sequences = readSequences(std::cin);
-	(void)sequences;
+	if (sequences.empty())
+	{
+		std::cout << 0 << '\n';
+		return 0;
+	}
+
+	bool first = true;
+	for (auto it = sequences.begin(); it != sequences.end(); ++it)
+	{
+		if (!first)
+		{
+			std::cout << ' ';
+		}
+		first = false;
+		std::cout << (*it).first;
+	}
+	std::cout << '\n';
 	return 0;
 }
