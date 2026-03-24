@@ -99,7 +99,7 @@ namespace alekseev {
   template< class T, class U >
   LIter< T > insert_after(LIter< T > & element, U && value)
   {
-    element.node_ = insert_after(element.node_, std::forward<U>(value));
+    element.node_ = insert_after(element.node_, std::forward< U >(value));
     return element;
   }
 
