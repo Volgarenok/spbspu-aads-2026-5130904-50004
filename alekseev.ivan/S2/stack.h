@@ -1,7 +1,8 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include "../common/ListIterators.h"
+#include "../common/List.h"
+#include "cstddef"
 
 namespace alekseev {
   template< class T >
