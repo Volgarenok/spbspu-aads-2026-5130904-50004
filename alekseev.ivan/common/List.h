@@ -36,7 +36,7 @@ namespace alekseev {
   {
     List< T > * new_node = new List< T >();
     try {
-      new_node->data = std::forward<U>(value);
+      new_node->data = std::forward< U >(value);
     } catch (...) {
       delete new_node;
       throw;
