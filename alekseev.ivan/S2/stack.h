@@ -53,7 +53,7 @@ namespace alekseev {
         rmfake(data_);
         throw;
       }
-      current = current->next_;
+      current = current->next;
     }
   }
 
@@ -69,7 +69,7 @@ namespace alekseev {
     for (size_t i = 0; i < rhs.size(); ++i) {
       try {
         lhs_current = insert_after(lhs_current, rhs_current->data);
-        rhs_current = rhs_current->next_;
+        rhs_current = rhs_current->next;
       } catch (...) {
         clear(lhs_fake_node->next, lhs_fake_node);
         rmfake(lhs_fake_node);
