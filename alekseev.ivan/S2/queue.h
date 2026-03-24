@@ -49,7 +49,7 @@ namespace alekseev {
   {
     tail_ = fake_node_;
     List< T > * rhs_current = rhs.fake_node_;
-    for (size_t i = 0; i < rhs.size_; ++i) {
+    for (size_t i = 0; i < rhs.size(); ++i) {
       rhs_current = rhs_current->next;
       tail_ = insert_after(tail_, rhs_current->data);
       ++size_;
@@ -65,7 +65,7 @@ namespace alekseev {
     List< T > * lhs_fake_node = fake< T >();
     List< T > * lhs_tail = lhs_fake_node;
     List< T > * rhs_current = rhs.fake_node_;
-    for (size_t i = 0; i < rhs.size_; ++i) {
+    for (size_t i = 0; i < rhs.size(); ++i) {
       try {
         rhs_current = rhs_current->next;
         lhs_tail = insert_after(lhs_tail, rhs_current->data);
@@ -79,7 +79,7 @@ namespace alekseev {
     rmfake(fake_node_);
     fake_node_ = lhs_fake_node;
     tail_ = lhs_tail;
-    size_ = rhs.size_;
+    size_ = rhs.size();
     return *this;
   }
 
@@ -87,7 +87,7 @@ namespace alekseev {
   Queue< T >::Queue(Queue && rhs) noexcept:
     fake_node_(rhs.fake_node_),
     tail_(rhs.tail_),
-    size_(rhs.size_)
+    size_(rhs.size())
   {
     rhs.fake_node_ = nullptr;
     rhs.tail_ = nullptr;
@@ -105,6 +105,46 @@ namespace alekseev {
     rhs.tail_ = nullptr;
     rhs.size_ = 0;
     return *this;
+  }
+
+  template< class T >
+  template< class U >
+  void Queue< T >::push(U && value)
+  {
+    insert_after(tail_, std::forward< U >(value));
+    tail_ = tail_->next;
+    ++size_;
+  }
+
+  template< class T >
+  void Queue<T>::pop()
+  {
+    erase_after(fake_node_);
+    --size_;
+  }
+
+  template< class T >
+  T & Queue<T>::front()
+  {
+    return fake_node_->next->data;
+  }
+
+  template< class T >
+  T & Queue<T>::back()
+  {
+    return tail_->data;
+  }
+
+  template< class T >
+  bool Queue<T>::empty() const
+  {
+    return size() == 0;
+  }
+
+  template< class T >
+  size_t Queue<T>::size() const
+  {
+    return size_;
   }
 }
 
