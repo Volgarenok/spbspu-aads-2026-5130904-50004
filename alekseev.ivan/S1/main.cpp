@@ -106,7 +106,6 @@ int main()
   alekseev::LIter< size_t > sums_iter = alekseev::before_begin(sums);
 
   size_t j = 0;
-  size_t zero = 0ll;
   bool is_smth_printed = true;
   bool sums_error = false;
   try {
@@ -114,7 +113,7 @@ int main()
       is_smth_printed = false;
 
       ++sizes_iter;
-      alekseev::insert_after(sums_iter, zero);
+      alekseev::insert_after(sums_iter, 0);
       bool first = true;
       for (size_t i = 0; i < matter_size; ++i) {
         if (j < *(++sizes_iter)) {
