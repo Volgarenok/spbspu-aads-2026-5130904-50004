@@ -6,10 +6,14 @@
 namespace alekseev {
   template< class T >
   struct Stack {
-    List< T > fake_node;
+    List< T > fake_node_;
+    size_t size_;
 
     void push(T & rhs);
-    T pop();
+    void pop();
+    T & top();
+    bool empty();
+    size_t size();
   };
 }
 
