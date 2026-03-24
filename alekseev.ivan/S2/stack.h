@@ -118,7 +118,7 @@ namespace alekseev {
   void Stack< T >::pop()
   {
     assert(!empty());
-    erase_after(data_->next);
+    erase_after(data_);
     --size_;
   }
 
