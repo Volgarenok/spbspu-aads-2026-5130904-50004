@@ -69,8 +69,14 @@ public:
 	}
 
 	
-	bool empty() const noexcept;
-	std::size_t size() const noexcept;
+	bool empty() const noexcept
+	{
+		return size_ == 0;
+	}
+	std::size_t size() const noexcept
+	{
+		return size_;
+	}
 	LIter< T > begin() noexcept
 	{
 		return LIter< T >(head_);
