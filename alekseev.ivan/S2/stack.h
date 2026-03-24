@@ -19,8 +19,8 @@ namespace alekseev {
     void push(T & t);
     void pop();
     T & top();
-    bool empty();
-    size_t size();
+    bool empty() const;
+    size_t size() const;
   };
 
   template< class T >
@@ -42,7 +42,7 @@ namespace alekseev {
     data_(fake< T >()),
     size_(0)
   {
-    List< T > * current = rhs->data_->next;
+    List< T > * current = rhs.data_->next;
     for (size_t i = 0; i < rhs.size(); ++i) {
       try {
         push(current->data);
@@ -63,7 +63,7 @@ namespace alekseev {
     }
     List< T > * lhs_fake_node = fake< T >();
     List< T > * lhs_current = lhs_fake_node;
-    List< T > * rhs_current = rhs->data_->next;
+    List< T > * rhs_current = rhs.data_->next;
     for (size_t i = 0; i < rhs.size(); ++i) {
       try {
         lhs_current = insert_after(lhs_current, rhs_current->data);
@@ -82,15 +82,15 @@ namespace alekseev {
   }
 
   template< class T >
-  Stack< T >::Stack(Stack && rhs) noexcept
+  Stack< T >::Stack(Stack && rhs) noexcept:
+    data_(rhs.data_),
+    size_(rhs.size())
   {
-    data_ = rhs.data_;
-    size_ = rhs.size();
     rhs.data_ = nullptr;
   }
 
   template< class T >
-  Stack<T> & Stack<T>::operator=(Stack && rhs) noexcept
+  Stack< T > & Stack< T >::operator=(Stack && rhs) noexcept
   {
     clear(data_->next, data_);
     rmfake(data_);
@@ -101,33 +101,33 @@ namespace alekseev {
   }
 
   template< class T >
-  void Stack<T>::push(T & t)
+  void Stack< T >::push(T & t)
   {
     insert_after(data_, t);
     ++size_;
   }
 
   template< class T >
-  void Stack<T>::pop()
+  void Stack< T >::pop()
   {
     erase_after(data_->next);
     --size_;
   }
 
   template< class T >
-  T & Stack<T>::top()
+  T & Stack< T >::top()
   {
     return data_->next->data;
   }
 
   template< class T >
-  bool Stack<T>::empty()
+  bool Stack< T >::empty() const
   {
     return size_ == 0;
   }
 
   template< class T >
-  size_t Stack<T>::size()
+  size_t Stack< T >::size() const
   {
     return size_;
   }
