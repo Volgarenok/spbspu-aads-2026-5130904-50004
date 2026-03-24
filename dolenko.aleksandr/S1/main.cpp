@@ -1,5 +1,6 @@
 #include <cctype>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <utility>
 
@@ -15,6 +16,20 @@ namespace
 		NumIter it;
 		NumIter end;
 	};
+
+	bool safeAdd(long long a, long long b, long long& result) noexcept
+	{
+		if ((b > 0) && (a > (std::numeric_limits< long long >::max() - b)))
+		{
+			return false;
+		}
+		if ((b < 0) && (a < (std::numeric_limits< long long >::min() - b)))
+		{
+			return false;
+		}
+		result = a + b;
+		return true;
+	}
 
 	dolenko::BiList< Sequence > readSequences(std::istream& in)
 	{
@@ -75,7 +90,8 @@ namespace
 		std::cout << '\n';
 	}
 
-	void printTransposed(const dolenko::BiList< Sequence >& sequences)
+	bool printTransposedAndCollectSums(const dolenko::BiList< Sequence >& sequences,
+		dolenko::BiList< long long >& sums)
 	{
 		dolenko::BiList< Cursor > cursors;
 		for (auto it = sequences.begin(); it != sequences.end(); ++it)
@@ -88,17 +104,24 @@ namespace
 		{
 			bool anyPrinted = false;
 			bool firstInRow = true;
+			long long rowSum = 0;
 			for (auto cur = cursors.begin(); cur != cursors.end(); ++cur)
 			{
 				if ((*cur).it != (*cur).end)
 				{
+					const long long value = *(*cur).it;
+					if (!safeAdd(rowSum, value, rowSum))
+					{
+						return false;
+					}
+
 					if (!firstInRow)
 					{
 						std::cout << ' ';
 					}
 					firstInRow = false;
 					anyPrinted = true;
-					std::cout << *(*cur).it;
+					std::cout << value;
 					++(*cur).it;
 				}
 			}
@@ -107,7 +130,24 @@ namespace
 				break;
 			}
 			std::cout << '\n';
+			sums.push_back(rowSum);
 		}
+		return true;
+	}
+
+	void printSums(const dolenko::BiList< long long >& sums)
+	{
+		bool first = true;
+		for (auto it = sums.begin(); it != sums.end(); ++it)
+		{
+			if (!first)
+			{
+				std::cout << ' ';
+			}
+			first = false;
+			std::cout << *it;
+		}
+		std::cout << '\n';
 	}
 }
 
@@ -120,6 +160,12 @@ int main()
 		return 0;
 	}
 	printNames(sequences);
-	printTransposed(sequences);
+	dolenko::BiList< long long > sums;
+	if (!printTransposedAndCollectSums(sequences, sums))
+	{
+		std::cerr << "Error\n";
+		return 1;
+	}
+	printSums(sums);
 	return 0;
 }
