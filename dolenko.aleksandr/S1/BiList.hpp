@@ -33,8 +33,36 @@ public:
 	std::size_t size() const noexcept;
 
 	
-	void push_front(const T& value);
-	void push_back(const T& value);
+	void push_front(const T& value)
+	{
+		Node< T >* node = create_node(value);
+		if (!head_)
+		{
+			head_ = node;
+			tail_ = node;
+			size_ = 1;
+			return;
+		}
+		node->next = head_;
+		head_->prev = node;
+		head_ = node;
+		++size_;
+	}
+	void push_back(const T& value)
+	{
+		Node< T >* node = create_node(value);
+		if (!tail_)
+		{
+			head_ = node;
+			tail_ = node;
+			size_ = 1;
+			return;
+		}
+		node->prev = tail_;
+		tail_->next = node;
+		tail_ = node;
+		++size_;
+	}
 	void pop_front();
 	void pop_back();
 	void clear() noexcept
