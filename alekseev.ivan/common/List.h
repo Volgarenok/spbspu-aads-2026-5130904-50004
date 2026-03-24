@@ -1,6 +1,8 @@
 #ifndef LIST_H
 #define LIST_H
 
+#include <utility>
+
 namespace alekseev {
   template< class T >
   struct List {
@@ -29,12 +31,12 @@ namespace alekseev {
     return head;
   }
 
-  template< class T >
-  List< T > * insert_after(List< T > * element, T value)
+  template< class T, class U >
+  List< T > * insert_after(List< T > * element, U && value)
   {
     List< T > * new_node = new List< T >();
     try {
-      new_node->data = value;
+      new_node->data = std::forward<U>(value);
     } catch (...) {
       delete new_node;
       throw;
