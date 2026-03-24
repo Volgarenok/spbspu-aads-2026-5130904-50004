@@ -47,7 +47,7 @@ namespace
 			}
 
 			in >> std::skipws;
-			sequences.push_back(Sequence(name, numbers));
+			sequences.push_back(Sequence(std::move(name), std::move(numbers)));
 		}
 
 		return sequences;
