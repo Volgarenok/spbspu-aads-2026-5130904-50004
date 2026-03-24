@@ -96,10 +96,10 @@ namespace alekseev {
     return std::addressof(this->node_->data);
   }
 
-  template< class T >
-  LIter< T > insert_after(LIter< T > & element, T & value)
+  template< class T, class U >
+  LIter< T > insert_after(LIter< T > & element, U && value)
   {
-    element.node_ = insert_after(element.node_, value);
+    element.node_ = insert_after(element.node_, std::forward<U>(value));
     return element;
   }
 
