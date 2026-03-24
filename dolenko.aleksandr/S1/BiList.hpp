@@ -142,16 +142,6 @@ public:
 		destroy_node(old_tail);
 		--size_;
 	}
-	void clear() noexcept
-	{
-		while (head_)
-		{
-			pop_front();
-		}
-	}
-
-private:
-	
 	void swap(BiList& other) noexcept
 	{
 		Node< T >* h = head_;
@@ -166,7 +156,15 @@ private:
 		size_ = other.size_;
 		other.size_ = s;
 	}
-	
+	void clear() noexcept
+	{
+		while (head_)
+		{
+			pop_front();
+		}
+	}
+
+private:
 	Node< T >* create_node(const T& value)
 	{
 		return new Node< T >(value, nullptr, nullptr);
@@ -176,6 +174,12 @@ private:
 		delete node;
 	}
 };
+
+template< class T >
+void swap(BiList< T >& a, BiList< T >& b) noexcept
+{
+	a.swap(b);
+}
 
 }
 
