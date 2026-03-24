@@ -1,9 +1,8 @@
-#define BOOST_TEST_MODULE QueueTests
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 #include "queue.h"
 
-BOOST_AUTO_TEST_CASE(check_size_and_empty)
+BOOST_AUTO_TEST_CASE(queue_check_size_and_empty)
 {
   alekseev::Queue<int> q;
   BOOST_CHECK(q.empty());
@@ -12,7 +11,7 @@ BOOST_AUTO_TEST_CASE(check_size_and_empty)
   BOOST_CHECK(!q.empty());
   BOOST_CHECK_EQUAL(q.size(), 1);
 
-  for (int i = 1; i <= 10; ++i) {
+  for (int i = 1; i < 10; ++i) {
     q.push(i);
     BOOST_CHECK_EQUAL(q.size(), i + 1);
   }
@@ -23,7 +22,7 @@ BOOST_AUTO_TEST_CASE(check_size_and_empty)
   }
 }
 
-BOOST_AUTO_TEST_CASE(check_push_pop_front_back)
+BOOST_AUTO_TEST_CASE(queue_check_push_pop_front_back)
 {
   alekseev::Queue<int> q;
   q.push(10);

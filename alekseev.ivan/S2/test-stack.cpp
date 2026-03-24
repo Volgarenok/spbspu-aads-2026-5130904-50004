@@ -1,9 +1,8 @@
-#define BOOST_TEST_MODULE StackTests
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 #include "stack.h"
 
-BOOST_AUTO_TEST_CASE(check_size_and_empty)
+BOOST_AUTO_TEST_CASE(satck_check_size_and_empty)
 {
   alekseev::Stack<int> s;
   BOOST_CHECK(s.empty());
@@ -23,7 +22,7 @@ BOOST_AUTO_TEST_CASE(check_size_and_empty)
   }
 }
 
-BOOST_AUTO_TEST_CASE(check_push_pop_top)
+BOOST_AUTO_TEST_CASE(satck_check_push_pop_top)
 {
   alekseev::Stack<int> s;
   s.push(10);
