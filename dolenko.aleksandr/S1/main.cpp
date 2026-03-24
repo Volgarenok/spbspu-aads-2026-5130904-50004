@@ -8,6 +8,13 @@
 namespace
 {
 	using Sequence = std::pair< std::string, dolenko::BiList< long long > >;
+	using NumIter = dolenko::LCIter< long long >;
+
+	struct Cursor
+	{
+		NumIter it;
+		NumIter end;
+	};
 
 	dolenko::BiList< Sequence > readSequences(std::istream& in)
 	{
@@ -52,6 +59,56 @@ namespace
 
 		return sequences;
 	}
+
+	void printNames(const dolenko::BiList< Sequence >& sequences)
+	{
+		bool first = true;
+		for (auto it = sequences.begin(); it != sequences.end(); ++it)
+		{
+			if (!first)
+			{
+				std::cout << ' ';
+			}
+			first = false;
+			std::cout << (*it).first;
+		}
+		std::cout << '\n';
+	}
+
+	void printTransposed(const dolenko::BiList< Sequence >& sequences)
+	{
+		dolenko::BiList< Cursor > cursors;
+		for (auto it = sequences.begin(); it != sequences.end(); ++it)
+		{
+			const auto& nums = (*it).second;
+			cursors.push_back(Cursor{ nums.begin(), nums.end() });
+		}
+
+		while (true)
+		{
+			bool anyPrinted = false;
+			bool firstInRow = true;
+			for (auto cur = cursors.begin(); cur != cursors.end(); ++cur)
+			{
+				if ((*cur).it != (*cur).end)
+				{
+					if (!firstInRow)
+					{
+						std::cout << ' ';
+					}
+					firstInRow = false;
+					anyPrinted = true;
+					std::cout << *(*cur).it;
+					++(*cur).it;
+				}
+			}
+			if (!anyPrinted)
+			{
+				break;
+			}
+			std::cout << '\n';
+		}
+	}
 }
 
 int main()
@@ -62,17 +119,7 @@ int main()
 		std::cout << 0 << '\n';
 		return 0;
 	}
-
-	bool first = true;
-	for (auto it = sequences.begin(); it != sequences.end(); ++it)
-	{
-		if (!first)
-		{
-			std::cout << ' ';
-		}
-		first = false;
-		std::cout << (*it).first;
-	}
-	std::cout << '\n';
+	printNames(sequences);
+	printTransposed(sequences);
 	return 0;
 }
