@@ -18,7 +18,15 @@ public:
 
 
 	BiList() noexcept = default;
-	BiList(const BiList& other);
+	BiList(const BiList& other)
+	{
+		BiList tmp;
+		for (Node< T >* cur = other.head_; cur; cur = cur->next)
+		{
+			tmp.push_back(cur->val);
+		}
+		swap(tmp);
+	}
 	BiList(BiList&& other) noexcept:
 		head_(other.head_),
 		tail_(other.tail_),
@@ -33,7 +41,16 @@ public:
 		clear();
 	}
 
-	BiList& operator=(const BiList& other);
+	BiList& operator=(const BiList& other)
+	{
+		if (this == &other)
+		{
+			return *this;
+		}
+		BiList tmp(other);
+		swap(tmp);
+		return *this;
+	}
 	BiList& operator=(BiList&& other) noexcept
 	{
 		if (this == &other)
@@ -134,6 +151,21 @@ public:
 	}
 
 private:
+	
+	void swap(BiList& other) noexcept
+	{
+		Node< T >* h = head_;
+		head_ = other.head_;
+		other.head_ = h;
+
+		Node< T >* t = tail_;
+		tail_ = other.tail_;
+		other.tail_ = t;
+
+		std::size_t s = size_;
+		size_ = other.size_;
+		other.size_ = s;
+	}
 	
 	Node< T >* create_node(const T& value)
 	{
