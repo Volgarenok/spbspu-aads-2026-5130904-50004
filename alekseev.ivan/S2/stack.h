@@ -17,7 +17,8 @@ namespace alekseev {
     Stack(Stack && rhs) noexcept;
     Stack & operator=(Stack && rhs) noexcept;
 
-    void push(T & t);
+    template< class U >
+    void push(U && t);
     void pop();
     T & top();
     bool empty() const;
@@ -102,9 +103,10 @@ namespace alekseev {
   }
 
   template< class T >
-  void Stack< T >::push(T & t)
+  template< class U >
+  void Stack< T >::push(U && t)
   {
-    insert_after(data_, t);
+    insert_after(data_, std::forward< U >(t));
     ++size_;
   }
 
