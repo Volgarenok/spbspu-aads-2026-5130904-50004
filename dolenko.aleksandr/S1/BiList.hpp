@@ -17,10 +17,13 @@ private:
 public:
 
 
-	BiList() noexcept;
+	BiList() noexcept = default;
 	BiList(const BiList& other);
 	BiList(BiList&& other) noexcept;
-	~BiList();
+	~BiList() noexcept
+	{
+		clear();
+	}
 
 	BiList& operator=(const BiList& other);
 	BiList& operator=(BiList&& other) noexcept;
@@ -34,13 +37,24 @@ public:
 	void push_back(const T& value);
 	void pop_front();
 	void pop_back();
-	void clear() noexcept;
+	void clear() noexcept
+	{
+		Node< T >* current = head_;
+		while (current)
+		{
+			Node< T >* next = current->next;
+			destroy_node(current);
+			current = next;
+		}
+		head_ = nullptr;
+		tail_ = nullptr;
+		size_ = 0;
+	}
 
 private:
 	
 	Node< T >* create_node(const T& value)
 	{
-		// Strong exception safety: if construction throws, no node is created.
 		return new Node< T >(value, nullptr, nullptr);
 	}
 	void destroy_node(Node< T >* node) noexcept
