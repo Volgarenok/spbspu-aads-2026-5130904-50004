@@ -63,20 +63,52 @@ public:
 		tail_ = node;
 		++size_;
 	}
-	void pop_front();
-	void pop_back();
+	void pop_front() noexcept
+	{
+		if (!head_)
+		{
+			return;
+		}
+		Node< T >* old_head = head_;
+		Node< T >* new_head = old_head->next;
+		if (new_head)
+		{
+			new_head->prev = nullptr;
+		}
+		head_ = new_head;
+		if (tail_ == old_head)
+		{
+			tail_ = new_head;
+		}
+		destroy_node(old_head);
+		--size_;
+	}
+	void pop_back() noexcept
+	{
+		if (!tail_)
+		{
+			return;
+		}
+		Node< T >* old_tail = tail_;
+		Node< T >* new_tail = old_tail->prev;
+		if (new_tail)
+		{
+			new_tail->next = nullptr;
+		}
+		tail_ = new_tail;
+		if (head_ == old_tail)
+		{
+			head_ = new_tail;
+		}
+		destroy_node(old_tail);
+		--size_;
+	}
 	void clear() noexcept
 	{
-		Node< T >* current = head_;
-		while (current)
+		while (head_)
 		{
-			Node< T >* next = current->next;
-			destroy_node(current);
-			current = next;
+			pop_front();
 		}
-		head_ = nullptr;
-		tail_ = nullptr;
-		size_ = 0;
 	}
 
 private:
