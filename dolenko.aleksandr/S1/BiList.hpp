@@ -19,14 +19,36 @@ public:
 
 	BiList() noexcept = default;
 	BiList(const BiList& other);
-	BiList(BiList&& other) noexcept;
+	BiList(BiList&& other) noexcept:
+		head_(other.head_),
+		tail_(other.tail_),
+		size_(other.size_)
+	{
+		other.head_ = nullptr;
+		other.tail_ = nullptr;
+		other.size_ = 0;
+	}
 	~BiList() noexcept
 	{
 		clear();
 	}
 
 	BiList& operator=(const BiList& other);
-	BiList& operator=(BiList&& other) noexcept;
+	BiList& operator=(BiList&& other) noexcept
+	{
+		if (this == &other)
+		{
+			return *this;
+		}
+		clear();
+		head_ = other.head_;
+		tail_ = other.tail_;
+		size_ = other.size_;
+		other.head_ = nullptr;
+		other.tail_ = nullptr;
+		other.size_ = 0;
+		return *this;
+	}
 
 	
 	bool empty() const noexcept;
