@@ -2,19 +2,16 @@
 #define BILIST_HPP
 
 #include <cstddef>
+#include "Node.hpp"
+
+namespace dolenko
+{
 
 template<class T>
 class BiList {
 private:
-	struct Node {
-		T data;
-		Node* prev = nullptr;
-		Node* next = nullptr;
-			Node(const T& v) : data(v) {}
-	};
-
-	Node* head_ = nullptr;
-	Node* tail_ = nullptr;
+	Node< T >* head_ = nullptr;
+	Node< T >* tail_ = nullptr;
 	std::size_t size_ = 0;
 
 public:
@@ -30,7 +27,7 @@ public:
 
 	
 	bool empty() const noexcept;
-	size_type size() const noexcept;
+	std::size_t size() const noexcept;
 
 	
 	void push_front(const T& value);
@@ -41,9 +38,18 @@ public:
 
 private:
 	
-	Node* create_node(const T& value);
-	void destroy_node(Node* node) noexcept;
+	Node< T >* create_node(const T& value)
+	{
+		// Strong exception safety: if construction throws, no node is created.
+		return new Node< T >(value, nullptr, nullptr);
+	}
+	void destroy_node(Node< T >* node) noexcept
+	{
+		delete node;
+	}
 };
 
-#endif 
+}
+
+#endif
 
