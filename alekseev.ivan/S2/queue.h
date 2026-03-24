@@ -89,8 +89,8 @@ namespace alekseev {
     tail_(rhs.tail_),
     size_(rhs.size())
   {
-    rhs.fake_node_ = nullptr;
-    rhs.tail_ = nullptr;
+    rhs.fake_node_ = fake< T >();
+    rhs.tail_ = rhs.fake_node_;
     rhs.size_ = 0;
   }
 
@@ -100,9 +100,9 @@ namespace alekseev {
     clear(fake_node_->next, fake_node_);
     rmfake(fake_node_);
     fake_node_ = rhs.fake_node_;
-    rhs.fake_node_ = nullptr;
+    rhs.fake_node_ = fake< T >();
     tail_ = rhs.tail_;
-    rhs.tail_ = nullptr;
+    rhs.tail_ = rhs.fake_node_;
     rhs.size_ = 0;
     return *this;
   }
@@ -117,32 +117,32 @@ namespace alekseev {
   }
 
   template< class T >
-  void Queue<T>::pop()
+  void Queue< T >::pop()
   {
     erase_after(fake_node_);
     --size_;
   }
 
   template< class T >
-  T & Queue<T>::front()
+  T & Queue< T >::front()
   {
     return fake_node_->next->data;
   }
 
   template< class T >
-  T & Queue<T>::back()
+  T & Queue< T >::back()
   {
     return tail_->data;
   }
 
   template< class T >
-  bool Queue<T>::empty() const
+  bool Queue< T >::empty() const
   {
     return size() == 0;
   }
 
   template< class T >
-  size_t Queue<T>::size() const
+  size_t Queue< T >::size() const
   {
     return size_;
   }

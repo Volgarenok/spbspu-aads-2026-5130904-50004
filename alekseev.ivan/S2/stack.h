@@ -19,6 +19,7 @@ namespace alekseev {
 
     template< class U >
     void push(U && value);
+    
     void pop();
     T & top();
     bool empty() const;
@@ -88,7 +89,7 @@ namespace alekseev {
     data_(rhs.data_),
     size_(rhs.size())
   {
-    rhs.data_ = nullptr;
+    rhs.data_ = fake< T >();
     rhs.size_ = 0;
   }
 
@@ -99,7 +100,7 @@ namespace alekseev {
     rmfake(data_);
     data_ = rhs.data_;
     size_ = rhs.size();
-    rhs.data_ = nullptr;
+    rhs.data_ = fake< T >();
     rhs.size_ = 0;
     return *this;
   }
