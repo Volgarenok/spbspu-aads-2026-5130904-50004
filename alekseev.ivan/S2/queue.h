@@ -3,6 +3,7 @@
 
 #include "../common/List.h"
 #include <cstddef>
+#include <cassert>
 
 namespace alekseev {
   template< class T >
@@ -119,6 +120,7 @@ namespace alekseev {
   template< class T >
   void Queue< T >::pop()
   {
+    assert(!empty());
     erase_after(fake_node_);
     --size_;
   }
@@ -126,12 +128,14 @@ namespace alekseev {
   template< class T >
   T & Queue< T >::front()
   {
+    assert(!empty());
     return fake_node_->next->data;
   }
 
   template< class T >
   T & Queue< T >::back()
   {
+    assert(!empty());
     return tail_->data;
   }
 

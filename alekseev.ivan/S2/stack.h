@@ -2,7 +2,8 @@
 #define STACK_H
 
 #include "../common/List.h"
-#include "cstddef"
+#include <cstddef>
+#include <cassert>
 
 namespace alekseev {
   template< class T >
@@ -19,7 +20,7 @@ namespace alekseev {
 
     template< class U >
     void push(U && value);
-    
+
     void pop();
     T & top();
     bool empty() const;
@@ -116,6 +117,7 @@ namespace alekseev {
   template< class T >
   void Stack< T >::pop()
   {
+    assert(!empty());
     erase_after(data_->next);
     --size_;
   }
@@ -123,6 +125,7 @@ namespace alekseev {
   template< class T >
   T & Stack< T >::top()
   {
+    assert(!empty());
     return data_->next->data;
   }
 
