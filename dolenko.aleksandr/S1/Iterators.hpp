@@ -1,6 +1,7 @@
 #ifndef LITER_HPP
 #define LITER_HPP
 
+#include <cassert>
 #include <cstddef>
 #include "Node.hpp"
 
@@ -17,10 +18,12 @@ namespace dolenko
         LIter() noexcept = default;
         T& operator*() const
         {
+            assert(node_ && "LIter: dereference of end()/null iterator");
             return node_->val;
         }
         LIter& operator++()
         {
+            assert(node_ && "LIter: increment of end()/null iterator");
             node_ = node_->next;
             return *this;
         }
@@ -32,6 +35,7 @@ namespace dolenko
         }
         LIter& operator--()
         {
+            assert(node_ && "LIter: decrement of end()/null iterator");
             node_ = node_->prev;
             return *this;
         }
@@ -64,10 +68,12 @@ namespace dolenko
         LCIter() noexcept = default;
         const T& operator*() const
         {
+            assert(node_ && "LCIter: dereference of end()/null iterator");
             return node_->val;
         }
         LCIter& operator++()
         {
+            assert(node_ && "LCIter: increment of end()/null iterator");
             node_ = node_->next;
             return *this;
         }
@@ -79,6 +85,7 @@ namespace dolenko
         }
         LCIter& operator--()
         {
+            assert(node_ && "LCIter: decrement of end()/null iterator");
             node_ = node_->prev;
             return *this;
         }
