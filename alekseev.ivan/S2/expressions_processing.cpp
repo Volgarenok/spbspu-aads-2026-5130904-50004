@@ -1,6 +1,7 @@
 #include "expressions_processing.h"
 
 #include "stack.h"
+#include <exception>
 
 alekseev::Queue< alekseev::List< char > * > alekseev::stoq(const std::string & str_expr)
 {
@@ -48,11 +49,14 @@ alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
         while (symbols_stack.top()->next->data != '(') {
           postfix.push(symbols_stack.top());
           symbols_stack.pop();
-          // if symbols_stack.empty() -> error
+          if (symbols_stack.empty()) {
+            throw std::invalid_argument("Invalid expression");
+          }
         }
         symbols_stack.pop();
+      } else {
+        throw std::invalid_argument("Invalid expression");
       }
-      // else error
     } else if (first_char == '#' || first_char == '*' || first_char == '/' || first_char == '%' ||
       first_char == '+' || first_char == '-') {
       if (!symbols_stack.empty()) {
@@ -67,7 +71,9 @@ alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
     }
   }
   while (!symbols_stack.empty()) {
-    // if symbols_stack.top()->next->data == '(' -> error
+    if (symbols_stack.top()->next->data == '(') {
+      throw std::invalid_argument("Invalid expression");
+    }
     postfix.push(symbols_stack.top());
     symbols_stack.pop();
   }
