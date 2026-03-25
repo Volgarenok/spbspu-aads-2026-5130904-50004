@@ -5,7 +5,12 @@
 #include <stdexcept>
 #include <cctype>
 
-alekseev::Queue< alekseev::List< char > * > alekseev::stoq(const std::string & str_expr)
+int alekseev::count_from_string(const std::string & str_expr)
+{
+  return count_postfix(infix_to_postfix(str_to_infix(str_expr)));
+}
+
+alekseev::Queue< alekseev::List< char > * > alekseev::str_to_infix(const std::string & str_expr)
 {
   Queue< List< char > * > res;
   size_t i = 0;
@@ -118,7 +123,7 @@ alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
   return postfix;
 }
 
-int alekseev::count_expr(Queue< List< char > * > postfix)
+int alekseev::count_postfix(Queue< List< char > * > postfix)
 {
   Stack< int > stack;
   while (!postfix.empty()) {

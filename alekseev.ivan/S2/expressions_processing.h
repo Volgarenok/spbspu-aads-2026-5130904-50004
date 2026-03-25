@@ -5,9 +5,10 @@
 #include <string>
 
 namespace alekseev {
-  Queue< List< char > * > stoq(const std::string & str_expr);
+  int count_from_string(const std::string & str_expr);
+  Queue< List< char > * > str_to_infix(const std::string & str_expr);
   Queue< List< char > * > infix_to_postfix(Queue< List< char > * > infix);
-  int count_expr(Queue< List< char > * > postfix);
+  int count_postfix(Queue< List< char > * > postfix);
   short priority_of(char op);
   bool is_operator(char op);
   bool is_number(List< char > * li);
