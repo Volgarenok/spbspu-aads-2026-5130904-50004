@@ -14,8 +14,13 @@ int main(int argc, char ** argv)
   alekseev::Stack< int > res;
   while (!input.eof()) {
     std::string line;
-    std::getline(input, line);
-    res.push(alekseev::count_from_string(line));
+    try {
+      std::getline(input, line);
+      res.push(alekseev::count_from_string(line));
+    } catch (const std::exception & e) {
+      std::cout << e.what() << "\n";
+      return 1;
+    }
   }
 
   std::cout << res.top();
@@ -24,4 +29,5 @@ int main(int argc, char ** argv)
     std::cout << " " << res.top();
     res.pop();
   }
+  std::cout << "\n";
 }
