@@ -8,11 +8,13 @@
 namespace alekseev {
   Queue< List< char > * > stoq(const std::string & str_expr);
   Queue< List< char > * > infix_to_postfix(Queue< List< char > * > infix);
-  int count_expr(Queue< char * > & postfix);
+  int count_expr(Queue< List< char > * > & postfix);
   short priority_of(char op);
   bool is_operator(char op);
   bool is_number(List< char > * li);
   int ltoi(List< char > * li);
+  int flip(int a);
+  int count(int a, int b, char op);
 }
 
 #endif

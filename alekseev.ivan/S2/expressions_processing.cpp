@@ -41,7 +41,7 @@ alekseev::Queue< alekseev::List< char > * > alekseev::stoq(const std::string & s
 alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
     Queue< List< char > * > infix)
 {
-  Stack< List< char > * > symbols_stack;
+  Stack< List< char > * > stack;
   Queue< List< char > * > postfix;
   List< char > * current = nullptr;
   try {
@@ -50,19 +50,19 @@ alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
       infix.pop();
       char first_char = current->next->data;
       if (first_char == '(') {
-        symbols_stack.push(current);
+        stack.push(current);
         current = nullptr;
       } else if (first_char == ')') {
-        if (!symbols_stack.empty()) {
-          while (symbols_stack.top()->next->data != '(') {
-            postfix.push(symbols_stack.top());
-            symbols_stack.pop();
-            if (symbols_stack.empty()) {
+        if (!stack.empty()) {
+          while (stack.top()->next->data != '(') {
+            postfix.push(stack.top());
+            stack.pop();
+            if (stack.empty()) {
               throw std::invalid_argument("Invalid expression");
             }
           }
-          List< char > * tmp = symbols_stack.top();
-          symbols_stack.pop();
+          List< char > * tmp = stack.top();
+          stack.pop();
           clear(tmp->next, tmp);
           rmfake(tmp);
         } else {
@@ -72,33 +72,33 @@ alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
         rmfake(current);
         current = nullptr;
       } else if (is_operator(first_char)) {
-        if (!symbols_stack.empty()) {
-          while (priority_of(symbols_stack.top()->next->data) >= priority_of(first_char)) {
-            postfix.push(symbols_stack.top());
-            symbols_stack.pop();
-            if (symbols_stack.empty()) {
+        if (!stack.empty()) {
+          while (priority_of(stack.top()->next->data) >= priority_of(first_char)) {
+            postfix.push(stack.top());
+            stack.pop();
+            if (stack.empty()) {
               break;
             }
           }
         }
-        symbols_stack.push(current);
+        stack.push(current);
         current = nullptr;
       } else {
         postfix.push(current);
         current = nullptr;
       }
     }
-    while (!symbols_stack.empty()) {
-      if (symbols_stack.top()->next->data == '(') {
+    while (!stack.empty()) {
+      if (stack.top()->next->data == '(') {
         throw std::invalid_argument("Invalid expression");
       }
-      postfix.push(symbols_stack.top());
-      symbols_stack.pop();
+      postfix.push(stack.top());
+      stack.pop();
     }
   } catch (...) {
-    while (!symbols_stack.empty()) {
-      List< char > * tmp = symbols_stack.top();
-      symbols_stack.pop();
+    while (!stack.empty()) {
+      List< char > * tmp = stack.top();
+      stack.pop();
       clear(tmp->next, tmp);
       rmfake(tmp);
     }
@@ -115,6 +115,36 @@ alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
     throw;
   }
   return postfix;
+}
+
+int alekseev::count_expr(Queue< List< char > * > & postfix)
+{
+  Stack< int > stack;
+  while (!postfix.empty()) {
+    List< char > * current = postfix.front();
+    if (is_operator(current->next->data)) {
+      char op = current->next->data;
+      if (op == '#') {
+        if (stack.empty()) {
+          throw std::invalid_argument("Invalid expression");
+        }
+        int n = stack.top();
+        stack.pop();
+        stack.push(flip(n));
+      } else {
+        if (stack.size() < 2) {
+          throw std::invalid_argument("Invalid expression");
+        }
+        int a = stack.top();
+        stack.pop();
+        int b = stack.top();
+        stack.pop();
+        stack.push(count(a, b, op));
+      }
+    } else {
+      stack.push(ltoi(current));
+    }
+  }
 }
 
 short alekseev::priority_of(char op)
@@ -146,7 +176,7 @@ bool alekseev::is_number(List< char > * li)
   return true;
 }
 
-int alekseev::ltoi(List<char> * li)
+int alekseev::ltoi(List< char > * li)
 {
   List< char > * current = li->next;
   std::string res;
