@@ -9,8 +9,15 @@ namespace aydogan
   class Queue
   {
   public:
-    Queue();
+    Queue()
+  data_(),
+  tail_(data_.beforeBegin())
+{}
 
+bool empty() const noexcept
+{
+  return data_.empty();
+}
   private:
     List< T > data_;
     Iterator< T > tail_;
