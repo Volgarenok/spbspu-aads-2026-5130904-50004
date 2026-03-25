@@ -145,3 +145,14 @@ bool alekseev::is_number(List< char > * li)
   }
   return true;
 }
+
+int alekseev::ltoi(List<char> * li)
+{
+  List< char > * current = li->next;
+  std::string res;
+  while (current != li) {
+    res += current->data;
+    current = current->next;
+  }
+  return stoi(res);
+}

@@ -12,6 +12,7 @@ namespace alekseev {
   short priority_of(char op);
   bool is_operator(char op);
   bool is_number(List< char > * li);
+  int ltoi(List< char > * li);
 }
 
 #endif
