@@ -1,6 +1,7 @@
 #include "safety_math.h"
 
 #include <stdexcept>
+#include "queue.h"
 
 int alekseev::sum(int a, int b)
 {
@@ -69,4 +70,19 @@ int alekseev::mod(int a, int b)
     throw std::logic_error("Division by zero");
   }
   return a % b;
+}
+
+int alekseev::flip(int a)
+{
+  Queue< int > tmp;
+  while (a) {
+    tmp.push(a % 10);
+    a /= 10;
+  }
+  int res = 0;
+  while (!tmp.empty()) {
+    res = sum(mul(res, 10), tmp.front());
+    tmp.pop();
+  }
+  return res;
 }
