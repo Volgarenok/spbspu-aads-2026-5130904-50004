@@ -7,8 +7,8 @@
 
 int alekseev::count_from_string(const std::string & str_expr)
 {
-  Queue< List<char> *> infix = str_to_infix(str_expr);
-  Queue< List<char> *> postfix;
+  Queue< List< char > * > infix = str_to_infix(str_expr);
+  Queue< List< char > * > postfix;
   try {
     postfix = infix_to_postfix(infix);
   } catch (...) {
@@ -28,7 +28,7 @@ int alekseev::count_from_string(const std::string & str_expr)
   int res;
   try {
     res = count_postfix(postfix);
-  }catch (...) {
+  } catch (...) {
     while (!postfix.empty()) {
       List< char > * tmp = postfix.front();
       postfix.pop();
@@ -47,7 +47,7 @@ int alekseev::count_from_string(const std::string & str_expr)
 
 alekseev::Queue< alekseev::List< char > * > alekseev::str_to_infix(const std::string & str_expr)
 {
-  Queue< List< char > * > res;
+  QLCh res;
   size_t i = 0;
   while (i < str_expr.size()) {
     char current_char = str_expr[i++];
@@ -79,11 +79,10 @@ alekseev::Queue< alekseev::List< char > * > alekseev::str_to_infix(const std::st
   return res;
 }
 
-alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
-    Queue< List< char > * > infix)
+alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(QLCh infix)
 {
   Stack< List< char > * > stack;
-  Queue< List< char > * > postfix;
+  QLCh postfix;
   List< char > * current = nullptr;
   try {
     while (!infix.empty()) {
@@ -158,7 +157,7 @@ alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
   return postfix;
 }
 
-int alekseev::count_postfix(Queue< List< char > * > postfix)
+int alekseev::count_postfix(QLCh postfix)
 {
   Stack< int > stack;
   while (!postfix.empty()) {
