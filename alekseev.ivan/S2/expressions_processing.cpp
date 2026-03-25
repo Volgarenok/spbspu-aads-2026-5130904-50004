@@ -136,9 +136,9 @@ int alekseev::count_expr(Queue< List< char > * > & postfix)
         if (stack.size() < 2) {
           throw std::invalid_argument("Invalid expression");
         }
-        int a = stack.top();
-        stack.pop();
         int b = stack.top();
+        stack.pop();
+        int a = stack.top();
         stack.pop();
         stack.push(count(a, b, op));
       }
@@ -146,6 +146,10 @@ int alekseev::count_expr(Queue< List< char > * > & postfix)
       stack.push(ltoi(current));
     }
   }
+  if (stack.size() > 1) {
+    throw std::invalid_argument("Invalid expression");
+  }
+  return stack.top();
 }
 
 short alekseev::priority_of(char op)
