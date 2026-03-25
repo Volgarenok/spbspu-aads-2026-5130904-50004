@@ -7,7 +7,42 @@
 
 int alekseev::count_from_string(const std::string & str_expr)
 {
-  return count_postfix(infix_to_postfix(str_to_infix(str_expr)));
+  Queue< List<char> *> infix = str_to_infix(str_expr);
+  Queue< List<char> *> postfix;
+  try {
+    postfix = infix_to_postfix(infix);
+  } catch (...) {
+    while (!infix.empty()) {
+      List< char > * tmp = infix.front();
+      infix.pop();
+      clear(tmp->next, tmp);
+      rmfake(tmp);
+    }
+  }
+  while (!infix.empty()) {
+    List< char > * tmp = infix.front();
+    infix.pop();
+    clear(tmp->next, tmp);
+    rmfake(tmp);
+  }
+  int res;
+  try {
+    res = count_postfix(postfix);
+  }catch (...) {
+    while (!postfix.empty()) {
+      List< char > * tmp = postfix.front();
+      postfix.pop();
+      clear(tmp->next, tmp);
+      rmfake(tmp);
+    }
+  }
+  while (!postfix.empty()) {
+    List< char > * tmp = postfix.front();
+    postfix.pop();
+    clear(tmp->next, tmp);
+    rmfake(tmp);
+  }
+  return res;
 }
 
 alekseev::Queue< alekseev::List< char > * > alekseev::str_to_infix(const std::string & str_expr)
