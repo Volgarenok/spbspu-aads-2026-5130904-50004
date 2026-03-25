@@ -186,3 +186,18 @@ int alekseev::ltoi(List< char > * li)
   }
   return stoi(res);
 }
+
+int alekseev::count(int a, int b, char op)
+{
+  if (op == '*') {
+    return a * b;
+  } else if (op == '/') {
+    return a / b;
+  } else if (op == '%') {
+    return a % b;
+  } else if (op == '+') {
+    return a + b;
+  } else if (op == '-') {
+    return a - b;
+  }
+}
