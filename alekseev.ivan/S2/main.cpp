@@ -8,21 +8,29 @@ int main(int argc, char ** argv)
   std::ifstream file;
   if (argc == 2) {
     file.open(argv[1]);
+    if (!file.is_open()) {
+      std::cerr << "Cannot open file\n";
+      return 1;
+    }
   }
   std::istream & input = argc == 2 ? file : std::cin;
 
   alekseev::Stack< int > res;
-  while (!input.eof()) {
-    std::string line;
+  std::string line;
+  while (std::getline(input, line)) {
     try {
-      std::getline(input, line);
-      res.push(alekseev::count_from_string(line));
+      if (!line.empty()) {
+        res.push(alekseev::count_from_string(line));
+      }
     } catch (const std::exception & e) {
-      std::cout << e.what() << "\n";
+      std::cerr << e.what() << "\n";
       return 1;
     }
   }
 
+  if (res.empty()) {
+    return 0;
+  }
   std::cout << res.top();
   res.pop();
   while (!res.empty()) {
