@@ -104,6 +104,7 @@ namespace alekseev {
     rhs.fake_node_ = fake< T >();
     tail_ = rhs.tail_;
     rhs.tail_ = rhs.fake_node_;
+    size_ = rhs.size();
     rhs.size_ = 0;
     return *this;
   }

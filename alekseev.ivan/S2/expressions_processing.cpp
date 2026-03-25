@@ -59,7 +59,7 @@ alekseev::Queue< alekseev::List< char > * > alekseev::str_to_infix(const std::st
   return res;
 }
 
-alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(QLCh infix)
+alekseev::QLCh alekseev::infix_to_postfix(QLCh infix)
 {
   Stack< List< char > * > stack;
   QLCh postfix;
@@ -161,7 +161,7 @@ int alekseev::count_postfix(QLCh postfix)
       stack.push(ltoi(current));
     }
   }
-  if (stack.size() > 1) {
+  if (stack.size() != 1) {
     throw std::invalid_argument("Invalid expression");
   }
   return stack.top();
