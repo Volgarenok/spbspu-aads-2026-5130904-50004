@@ -6,9 +6,10 @@
 #include <string>
 
 namespace alekseev {
-  Queue< List< char > * > stoq(std::string str_expr);
+  Queue< List< char > * > stoq(const std::string & str_expr);
   Queue< List< char > * > infix_to_postfix(Queue< List< char > * > & infix);
   int count_expr(Queue< char * > & postfix);
+  short priority_of(char op);
 }
 
 #endif
