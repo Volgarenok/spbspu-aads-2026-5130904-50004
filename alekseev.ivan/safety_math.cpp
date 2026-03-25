@@ -62,3 +62,11 @@ int alekseev::div(int a, int b)
   }
   return a / b;
 }
+
+int alekseev::mod(int a, int b)
+{
+  if (!b) {
+    throw std::logic_error("Division by zero");
+  }
+  return a % b;
+}
