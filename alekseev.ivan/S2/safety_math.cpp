@@ -74,6 +74,10 @@ int alekseev::mod(int a, int b)
 
 int alekseev::flip(int a)
 {
+  bool negative = a < 0;
+  if (negative) {
+    a = -a;
+  }
   Queue< int > tmp;
   while (a) {
     tmp.push(a % 10);
@@ -84,5 +88,5 @@ int alekseev::flip(int a)
     res = sum(mul(res, 10), tmp.front());
     tmp.pop();
   }
-  return res;
+  return negative ? -res : res;
 }
