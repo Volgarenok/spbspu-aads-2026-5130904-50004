@@ -34,48 +34,69 @@ alekseev::Queue< alekseev::List< char > * > alekseev::stoq(const std::string & s
 }
 
 alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
-    Queue< List< char > * > & infix)
+    Queue< List< char > * > infix)
 {
   Stack< List< char > * > symbols_stack;
   Queue< List< char > * > postfix;
-  while (!infix.empty()) {
-    List< char > * current = infix.front();
-    infix.pop();
-    char first_char = current->next->data;
-    if (first_char == '(') {
-      symbols_stack.push(current);
-    } else if (first_char == ')') {
-      if (!symbols_stack.empty()) {
-        while (symbols_stack.top()->next->data != '(') {
-          postfix.push(symbols_stack.top());
+  List< char > * current = nullptr;
+  try {
+    while (!infix.empty()) {
+      current = deep_copy(infix.front());
+      infix.pop();
+      char first_char = current->next->data;
+      if (first_char == '(') {
+        symbols_stack.push(current);
+      } else if (first_char == ')') {
+        if (!symbols_stack.empty()) {
+          while (symbols_stack.top()->next->data != '(') {
+            postfix.push(symbols_stack.top());
+            symbols_stack.pop();
+            if (symbols_stack.empty()) {
+              throw std::invalid_argument("Invalid expression");
+            }
+          }
           symbols_stack.pop();
-          if (symbols_stack.empty()) {
-            throw std::invalid_argument("Invalid expression");
+        } else {
+          throw std::invalid_argument("Invalid expression");
+        }
+      } else if (first_char == '#' || first_char == '*' || first_char == '/' || first_char == '%' ||
+        first_char == '+' || first_char == '-') {
+        if (!symbols_stack.empty()) {
+          while (priority_of(first_char) >= priority_of(symbols_stack.top()->next->data)) {
+            postfix.push(symbols_stack.top());
+            symbols_stack.pop();
           }
         }
-        symbols_stack.pop();
+        symbols_stack.push(current);
       } else {
+        postfix.push(current);
+      }
+    }
+    while (!symbols_stack.empty()) {
+      if (symbols_stack.top()->next->data == '(') {
         throw std::invalid_argument("Invalid expression");
       }
-    } else if (first_char == '#' || first_char == '*' || first_char == '/' || first_char == '%' ||
-      first_char == '+' || first_char == '-') {
-      if (!symbols_stack.empty()) {
-        while (priority_of(first_char) >= priority_of(symbols_stack.top()->next->data)) {
-          postfix.push(symbols_stack.top());
-          symbols_stack.pop();
-        }
-      }
-      symbols_stack.push(current);
-    } else {
-      postfix.push(current);
+      postfix.push(symbols_stack.top());
+      symbols_stack.pop();
     }
-  }
-  while (!symbols_stack.empty()) {
-    if (symbols_stack.top()->next->data == '(') {
-      throw std::invalid_argument("Invalid expression");
+  } catch (...) {
+    while (!symbols_stack.empty()) {
+      List< char > * tmp = symbols_stack.top();
+      symbols_stack.pop();
+      clear(tmp->next, tmp);
+      rmfake(tmp);
     }
-    postfix.push(symbols_stack.top());
-    symbols_stack.pop();
+    while (!postfix.empty()) {
+      List< char > * tmp = postfix.front();
+      postfix.pop();
+      clear(tmp->next, tmp);
+      rmfake(tmp);
+    }
+    if (current) {
+      clear(current->next, current);
+      rmfake(current);
+    }
+    throw;
   }
   return postfix;
 }
