@@ -65,6 +65,25 @@ namespace alekseev {
     }
     return start;
   }
+
+  template< class T >
+  List< T > * deep_copy(List< T > * source)
+  {
+    List< T > * new_fake = fake< T >();
+    List< T > * new_current = new_fake;
+    List< T > * current = source->next;
+    while (current != source) {
+      try {
+        new_current = insert_after(new_current, current->data);
+      } catch (...) {
+        clear(new_fake->next, new_fake);
+        rmfake(new_fake);
+        throw;
+      }
+      current = source->next;
+    }
+    return new_fake;
+  }
 }
 
 #endif
