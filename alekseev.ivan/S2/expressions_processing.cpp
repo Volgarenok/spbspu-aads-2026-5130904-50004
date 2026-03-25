@@ -1,9 +1,9 @@
 #include "expressions_processing.h"
 
 #include "stack.h"
-#include <exception>
-#include <cctype>
 #include "safety_math.h"
+#include <stdexcept>
+#include <cctype>
 
 alekseev::Queue< alekseev::List< char > * > alekseev::stoq(const std::string & str_expr)
 {
@@ -118,11 +118,12 @@ alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
   return postfix;
 }
 
-int alekseev::count_expr(Queue< List< char > * > & postfix)
+int alekseev::count_expr(Queue< List< char > * > postfix)
 {
   Stack< int > stack;
   while (!postfix.empty()) {
     List< char > * current = postfix.front();
+    postfix.pop();
     if (is_operator(current->next->data)) {
       char op = current->next->data;
       if (op == '#') {
@@ -205,4 +206,5 @@ int alekseev::count(int a, int b, char op)
   } else if (op == '-') {
     return sub(a, b);
   }
+  throw std::invalid_argument("Invalid operation");
 }
