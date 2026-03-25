@@ -2,6 +2,7 @@
 #define STACK_HPP
 
 #include "list.hpp"
+#include "stdexcept"
 
 namespace aydogan
 {
@@ -39,6 +40,17 @@ const T& top() const
     throw std::out_of_range("Stack is empty");
   }
   return data_.front();
+}
+T drop()
+{
+  if (empty())
+  {
+    throw std::out_of_range("Stack is empty");
+  }
+
+  T value = std::move(data_.front());
+  data_.pop_front();
+  return value;
 }
   private:
     List< T > data_;
