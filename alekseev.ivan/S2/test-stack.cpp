@@ -2,9 +2,9 @@
 
 #include "stack.h"
 
-BOOST_AUTO_TEST_CASE(satck_check_size_and_empty)
+BOOST_AUTO_TEST_CASE (satck_check_size_and_empty)
 {
-  alekseev::Stack<int> s;
+  alekseev::Stack< int > s;
   BOOST_CHECK(s.empty());
   BOOST_CHECK_EQUAL(s.size(), 0);
   s.push(0);
@@ -22,9 +22,9 @@ BOOST_AUTO_TEST_CASE(satck_check_size_and_empty)
   }
 }
 
-BOOST_AUTO_TEST_CASE(satck_check_push_pop_top)
+BOOST_AUTO_TEST_CASE (satck_check_push_pop_top)
 {
-  alekseev::Stack<int> s;
+  alekseev::Stack< int > s;
   s.push(10);
   s.push(20);
   s.push(30);

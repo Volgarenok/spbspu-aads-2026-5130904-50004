@@ -2,9 +2,9 @@
 
 #include "queue.h"
 
-BOOST_AUTO_TEST_CASE(queue_check_size_and_empty)
+BOOST_AUTO_TEST_CASE (queue_check_size_and_empty)
 {
-  alekseev::Queue<int> q;
+  alekseev::Queue< int > q;
   BOOST_CHECK(q.empty());
   BOOST_CHECK_EQUAL(q.size(), 0);
   q.push(0);
@@ -22,9 +22,9 @@ BOOST_AUTO_TEST_CASE(queue_check_size_and_empty)
   }
 }
 
-BOOST_AUTO_TEST_CASE(queue_check_push_pop_front_back)
+BOOST_AUTO_TEST_CASE (queue_check_push_pop_front_back)
 {
-  alekseev::Queue<int> q;
+  alekseev::Queue< int > q;
   q.push(10);
   q.push(20);
   q.push(30);

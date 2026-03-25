@@ -11,8 +11,8 @@ namespace alekseev {
   int mod(int a, int b);
   int flip(int a);
 
-  const int MAX = std::numeric_limits<int>::max();
-  const int MIN = std::numeric_limits<int>::min();
+  const int MAX = std::numeric_limits< int >::max();
+  const int MIN = std::numeric_limits< int >::min();
 }
 
 #endif
