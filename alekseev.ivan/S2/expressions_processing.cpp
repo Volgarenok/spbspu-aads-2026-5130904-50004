@@ -12,36 +12,18 @@ int alekseev::count_from_string(const std::string & str_expr)
   try {
     postfix = infix_to_postfix(infix);
   } catch (...) {
-    while (!infix.empty()) {
-      List< char > * tmp = infix.front();
-      infix.pop();
-      clear(tmp->next, tmp);
-      rmfake(tmp);
-    }
+    clear_QLCh(infix);
+    throw;
   }
-  while (!infix.empty()) {
-    List< char > * tmp = infix.front();
-    infix.pop();
-    clear(tmp->next, tmp);
-    rmfake(tmp);
-  }
-  int res;
+  clear_QLCh(infix);
+  int res = 0;
   try {
     res = count_postfix(postfix);
   } catch (...) {
-    while (!postfix.empty()) {
-      List< char > * tmp = postfix.front();
-      postfix.pop();
-      clear(tmp->next, tmp);
-      rmfake(tmp);
-    }
+    clear_QLCh(postfix);
+    throw;
   }
-  while (!postfix.empty()) {
-    List< char > * tmp = postfix.front();
-    postfix.pop();
-    clear(tmp->next, tmp);
-    rmfake(tmp);
-  }
+  clear_QLCh(postfix);
   return res;
 }
 
@@ -67,12 +49,7 @@ alekseev::Queue< alekseev::List< char > * > alekseev::str_to_infix(const std::st
     } catch (...) {
       clear(cur_fake->next, cur_fake);
       rmfake(cur_fake);
-      while (!res.empty()) {
-        List< char > * tmp = res.front();
-        res.pop();
-        clear(tmp->next, tmp);
-        rmfake(tmp);
-      }
+      clear_QLCh(res);
       throw;
     }
   }
@@ -142,12 +119,7 @@ alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(QLCh infi
       clear(tmp->next, tmp);
       rmfake(tmp);
     }
-    while (!postfix.empty()) {
-      List< char > * tmp = postfix.front();
-      postfix.pop();
-      clear(tmp->next, tmp);
-      rmfake(tmp);
-    }
+    clear_QLCh(postfix);
     if (current) {
       clear(current->next, current);
       rmfake(current);
@@ -246,4 +218,14 @@ int alekseev::count(int a, int b, char op)
     return sub(a, b);
   }
   throw std::invalid_argument("Invalid operation");
+}
+
+void alekseev::clear_QLCh(QLCh & q)
+{
+  while (!q.empty()) {
+    List< char > * tmp = q.front();
+    q.pop();
+    clear(tmp->next, tmp);
+    rmfake(tmp);
+  }
 }

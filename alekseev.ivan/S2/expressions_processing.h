@@ -15,6 +15,7 @@ namespace alekseev {
   bool is_number(List< char > * li);
   int ltoi(List< char > * li);
   int count(int a, int b, char op);
+  void clear_QLCh(QLCh & q);
 }
 
 #endif
