@@ -17,6 +17,10 @@ alekseev::Queue< alekseev::List< char > * > alekseev::stoq(const std::string & s
         cur_tail = insert_after(cur_tail, current_char);
         current_char = str_expr[i++];
       }
+      char cfnd = cur_fake->next->data;
+      if (!is_operator(cfnd) && cfnd != '(' && cfnd != ')' && !is_number(cur_fake)) {
+        throw std::invalid_argument("Bad input: not a number or operator");
+      }
       res.push(cur_fake);
     } catch (...) {
       clear(cur_fake->next, cur_fake);
