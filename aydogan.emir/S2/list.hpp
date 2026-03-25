@@ -10,7 +10,14 @@ namespace aydogan
     List();
   head_(nullptr)
 {}
-
+bool empty() const noexcept
+{
+  return head_ == nullptr;
+}
+void push_front(const T& value)
+{
+  head_ = new Node(value, head_);
+}
   private:
   struct Node
 {
