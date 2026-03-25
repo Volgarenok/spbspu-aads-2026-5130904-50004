@@ -2,6 +2,7 @@
 
 #include "stack.h"
 #include <exception>
+#include <cctype>
 
 alekseev::Queue< alekseev::List< char > * > alekseev::stoq(const std::string & str_expr)
 {
@@ -60,7 +61,10 @@ alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
               throw std::invalid_argument("Invalid expression");
             }
           }
+          List< char > * tmp = symbols_stack.top();
           symbols_stack.pop();
+          clear(tmp->next, tmp);
+          rmfake(tmp);
         } else {
           throw std::invalid_argument("Invalid expression");
         }
@@ -69,10 +73,12 @@ alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
         current = nullptr;
       } else if (is_operator(first_char)) {
         if (!symbols_stack.empty()) {
-          while (priority_of(symbols_stack.top()->next->data) >= priority_of(first_char) && !
-            symbols_stack.empty()) {
+          while (priority_of(symbols_stack.top()->next->data) >= priority_of(first_char)) {
             postfix.push(symbols_stack.top());
             symbols_stack.pop();
+            if (symbols_stack.empty()) {
+              break;
+            }
           }
         }
         symbols_stack.push(current);
@@ -131,9 +137,6 @@ bool alekseev::is_operator(char op)
 bool alekseev::is_number(List< char > * li)
 {
   List< char > * current = li->next;
-  if (current->data == '0') {
-    return false;
-  }
   while (current != li) {
     if (!isdigit(current->data)) {
       return false;
