@@ -3,6 +3,7 @@
 #include "stack.h"
 #include <exception>
 #include <cctype>
+#include "safety_math.h"
 
 alekseev::Queue< alekseev::List< char > * > alekseev::stoq(const std::string & str_expr)
 {
@@ -190,14 +191,14 @@ int alekseev::ltoi(List< char > * li)
 int alekseev::count(int a, int b, char op)
 {
   if (op == '*') {
-    return a * b;
+    return mul(a, b);
   } else if (op == '/') {
-    return a / b;
+    return div(a, b);
   } else if (op == '%') {
-    return a % b;
+    return mod(a, b);
   } else if (op == '+') {
-    return a + b;
+    return sum(a, b);
   } else if (op == '-') {
-    return a - b;
+    return sub(a, b);
   }
 }
