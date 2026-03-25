@@ -3,10 +3,11 @@
 
 #include "queue.h"
 #include <iostream>
+#include <string>
 
 namespace alekseev {
-  Queue< char * > input_expr(std::istream & in);
-  Queue< char * > infix_to_postfix(Queue< char * > & infix);
+  Queue< List< char > * > stoq(std::string str_expr);
+  Queue< List< char > * > infix_to_postfix(Queue< List< char > * > & infix);
   int count_expr(Queue< char * > & postfix);
 }
 
