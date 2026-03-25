@@ -10,7 +10,19 @@ namespace aydogan
   {
   public:
     Stack() = default;
+    bool empty() const noexcept
+{
+  return data_.empty();
+}
 
+void push(const T& rhs)
+{
+    data_.push_front(rhs);
+}
+void push(T&& rhs)
+{
+    data_.push_front(std::move(rhs));
+}
   private:
     List< T > data_;
   };
