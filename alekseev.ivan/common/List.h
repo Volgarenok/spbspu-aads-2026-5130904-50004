@@ -80,7 +80,7 @@ namespace alekseev {
         rmfake(new_fake);
         throw;
       }
-      current = source->next;
+      current = current->next;
     }
     return new_fake;
   }

@@ -46,6 +46,7 @@ alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
       char first_char = current->next->data;
       if (first_char == '(') {
         symbols_stack.push(current);
+        current = nullptr;
       } else if (first_char == ')') {
         if (!symbols_stack.empty()) {
           while (symbols_stack.top()->next->data != '(') {
@@ -59,17 +60,22 @@ alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
         } else {
           throw std::invalid_argument("Invalid expression");
         }
-      } else if (first_char == '#' || first_char == '*' || first_char == '/' || first_char == '%' ||
-        first_char == '+' || first_char == '-') {
+        clear(current->next, current);
+        rmfake(current);
+        current = nullptr;
+      } else if (is_operator(first_char)) {
         if (!symbols_stack.empty()) {
-          while (priority_of(first_char) >= priority_of(symbols_stack.top()->next->data)) {
+          while (priority_of(symbols_stack.top()->next->data) >= priority_of(first_char) && !
+            symbols_stack.empty()) {
             postfix.push(symbols_stack.top());
             symbols_stack.pop();
           }
         }
         symbols_stack.push(current);
+        current = nullptr;
       } else {
         postfix.push(current);
+        current = nullptr;
       }
     }
     while (!symbols_stack.empty()) {
@@ -104,11 +110,31 @@ alekseev::Queue< alekseev::List< char > * > alekseev::infix_to_postfix(
 short alekseev::priority_of(char op)
 {
   if (op == '#') {
-    return 0;
+    return 3;
   } else if (op == '*' || op == '/' || op == '%') {
-    return 1;
-  } else if (op == '+' || op == '-') {
     return 2;
+  } else if (op == '+' || op == '-') {
+    return 1;
   }
-  return -1;
+  return 0;
+}
+
+bool alekseev::is_operator(char op)
+{
+  return op == '#' || op == '*' || op == '/' || op == '%' || op == '+' || op == '-';
+}
+
+bool alekseev::is_number(List< char > * li)
+{
+  List< char > * current = li->next;
+  if (current->data == '0') {
+    return false;
+  }
+  while (current != li) {
+    if (!isdigit(current->data)) {
+      return false;
+    }
+    current = current->next;
+  }
+  return true;
 }
