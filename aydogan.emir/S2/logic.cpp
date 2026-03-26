@@ -332,11 +332,11 @@ long long evaluatePostfix(aydogan::Queue< std::string > postfix)
 
 namespace aydogan
 {
-  long long calculateExpression(const std::string& expression)
-  {
-    (void)expression;
-    return 0;
-  }
+  long long aydogan::calculateExpression(const std::string& expression)
+{
+  Queue< std::string > postfix = toPostfix(expression);
+  return evaluatePostfix(postfix);
+}
 
   int run(std::istream& in, std::ostream& out, std::ostream& err)
   {
