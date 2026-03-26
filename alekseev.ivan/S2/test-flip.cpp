@@ -2,7 +2,7 @@
 
 #include "safety_math.h"
 
-BOOST_AUTO_TEST_CASE(test_flip)
+BOOST_AUTO_TEST_CASE (test_flip)
 {
   BOOST_CHECK_EQUAL(alekseev::flip(0), 0);
   BOOST_CHECK_EQUAL(alekseev::flip(1), 1);
