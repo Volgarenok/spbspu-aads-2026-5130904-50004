@@ -1,7 +1,7 @@
 #include "safety_math.h"
 
 #include <stdexcept>
-#include "queue.h"
+#include "../common/queue.h"
 
 long long alekseev::sum(long long a, long long b)
 {

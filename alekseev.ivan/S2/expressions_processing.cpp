@@ -1,6 +1,6 @@
 #include "expressions_processing.h"
 
-#include "stack.h"
+#include "../common/stack.h"
 #include "safety_math.h"
 #include <stdexcept>
 #include <cctype>

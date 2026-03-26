@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 
-#include "queue.h"
+#include "../common/queue.h"
 
 BOOST_AUTO_TEST_CASE (queue_check_size_and_empty)
 {

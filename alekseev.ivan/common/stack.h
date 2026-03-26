@@ -1,7 +1,7 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include "../common/List.h"
+#include "List.h"
 #include <cstddef>
 #include <cassert>
 

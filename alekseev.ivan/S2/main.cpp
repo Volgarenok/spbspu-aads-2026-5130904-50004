@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "expressions_processing.h"
-#include "stack.h"
+#include "../common/stack.h"
 
 int main(int argc, char ** argv)
 {

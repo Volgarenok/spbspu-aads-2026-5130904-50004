@@ -1,7 +1,7 @@
 #ifndef EXPRESSIONS_PROCESSING_H
 #define EXPRESSIONS_PROCESSING_H
 
-#include "queue.h"
+#include "../common/queue.h"
 #include <string>
 
 namespace alekseev {

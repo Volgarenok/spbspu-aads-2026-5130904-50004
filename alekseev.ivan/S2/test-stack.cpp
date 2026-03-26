@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 
-#include "stack.h"
+#include "../common/stack.h"
 
 BOOST_AUTO_TEST_CASE (satck_check_size_and_empty)
 {
