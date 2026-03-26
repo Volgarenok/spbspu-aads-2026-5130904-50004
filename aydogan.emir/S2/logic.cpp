@@ -205,6 +205,82 @@ long long applyOperator(long long lhs, long long rhs, const std::string& op)
   throw std::runtime_error("Invalid expression");
 }
 
+aydogan::Queue< std::string > toPostfix(const std::string& expression)
+{
+  aydogan::Queue< std::string > output;
+  aydogan::Stack< std::string > operators;
+  std::istringstream input(expression);
+  std::string token;
+
+  while (input >> token)
+  {
+    if (isNumber(token))
+    {
+      output.push(token);
+    }
+    else if (token == "(")
+    {
+      operators.push(token);
+    }
+    else if (token == ")")
+    {
+      while (!operators.empty() && operators.top() != "(")
+      {
+        output.push(operators.drop());
+      }
+
+      if (operators.empty())
+      {
+        throw std::runtime_error("Invalid expression");
+      }
+
+      operators.drop();
+    }
+    else if (isOperator(token))
+    {
+      while (!operators.empty() && isOperator(operators.top()))
+      {
+        const std::string& topOp = operators.top();
+        bool shouldPop = false;
+
+        if (isRightAssociative(token))
+        {
+          shouldPop = precedence(token) < precedence(topOp);
+        }
+        else
+        {
+          shouldPop = precedence(token) <= precedence(topOp);
+        }
+
+        if (!shouldPop)
+        {
+          break;
+        }
+
+        output.push(operators.drop());
+      }
+
+      operators.push(token);
+    }
+    else
+    {
+      throw std::runtime_error("Invalid expression");
+    }
+  }
+
+  while (!operators.empty())
+  {
+    if (operators.top() == "(" || operators.top() == ")")
+    {
+      throw std::runtime_error("Invalid expression");
+    }
+
+    output.push(operators.drop());
+  }
+
+  return output;
+}
+
 namespace aydogan
 {
   long long calculateExpression(const std::string& expression)
