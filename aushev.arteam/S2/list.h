@@ -50,6 +50,9 @@ public:
   size_t size() const;
   void clear();
 
+  void push_front(const T& value);
+  void push_back(const T& value);
+
 private:
   using NodeT = Node< T >;
   NodeT* head_;
@@ -142,6 +145,40 @@ void List< T >::clear()
   }
   tail_ = nullptr;
   size_ = 0;
+}
+
+template< class T >
+void List< T >::push_front(const T& value)
+{
+  NodeT* newNode = new NodeT;
+  newNode->data = value;
+  newNode->next = head_;
+  newNode->prev = nullptr;
+  if (head_) {
+    head_->prev = newNode;
+  }
+  head_ = newNode;
+  if (tail_ == nullptr) {
+    tail_ = newNode;
+  }
+  ++size_;
+}
+
+template< class T >
+void List< T >::push_back(const T& value)
+{
+  NodeT* newNode = new NodeT;
+  newNode->data = value;
+  newNode->next = nullptr;
+  newNode->prev = tail_;
+  if (tail_) {
+    tail_->next = newNode;
+  }
+  tail_ = newNode;
+  if (head_ == nullptr) {
+    head_ = newNode;
+  }
+  ++size_;
 }
 
 }
