@@ -46,6 +46,10 @@ public:
   List(List&& other) noexcept;
   List& operator=(List&& other) noexcept;
 
+  bool empty() const;
+  size_t size() const;
+  void clear();
+
 private:
   using NodeT = Node< T >;
   NodeT* head_;
@@ -114,6 +118,30 @@ List< T >& List< T >::operator=(List&& other) noexcept
     other.size_ = 0;
   }
   return *this;
+}
+
+template< class T >
+bool List< T >::empty() const
+{
+  return size_ == 0;
+}
+
+template< class T >
+size_t List< T >::size() const
+{
+  return size_;
+}
+
+template< class T >
+void List< T >::clear()
+{
+  while (head_ != nullptr) {
+    NodeT* tmp = head_;
+    head_ = head_->next;
+    delete tmp;
+  }
+  tail_ = nullptr;
+  size_ = 0;
 }
 
 }
