@@ -68,6 +68,13 @@ public:
   List(List&& other) noexcept;
   List& operator=(List&& other) noexcept;
 
+  LIter< T > begin();
+  LIter< T > end();
+  LCIter< T > begin() const;
+  LCIter< T > end() const;
+  LCIter< T > cbegin() const;
+  LCIter< T > cend() const;
+
   bool empty() const;
   size_t size() const;
   void clear();
@@ -285,6 +292,54 @@ List< T >& List< T >::operator=(List&& other) noexcept
     other.size_ = 0;
   }
   return *this;
+}
+
+template< class T >
+LIter< T > List< T >::begin()
+{
+  LIter< T > it;
+  it.node_ = head_;
+  it.list_ = this;
+  return it;
+}
+
+template< class T >
+LIter< T > List< T >::end()
+{
+  LIter< T > it;
+  it.node_ = nullptr;
+  it.list_ = this;
+  return it;
+}
+
+template< class T >
+LCIter< T > List< T >::begin() const
+{
+  LCIter< T > it;
+  it.node_ = head_;
+  it.list_ = this;
+  return it;
+}
+
+template< class T >
+LCIter< T > List< T >::end() const
+{
+  LCIter< T > it;
+  it.node_ = nullptr;
+  it.list_ = this;
+  return it;
+}
+
+template< class T >
+LCIter< T > List< T >::cbegin() const
+{
+  return begin();
+}
+
+template< class T >
+LCIter< T > List< T >::cend() const
+{
+  return end();
 }
 
 template< class T >
