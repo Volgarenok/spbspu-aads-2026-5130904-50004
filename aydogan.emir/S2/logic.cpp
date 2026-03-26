@@ -146,6 +146,35 @@ long long checkedMod(long long lhs, long long rhs)
   return lhs % rhs;
 }
 
+long long checkedPow(long long lhs, long long rhs)
+{
+  if (rhs < 0)
+  {
+    throw std::runtime_error("Invalid expression");
+  }
+
+  long long result = 1;
+  long long base = lhs;
+  long long power = rhs;
+
+  while (power > 0)
+  {
+    if (power % 2 == 1)
+    {
+      result = checkedMul(result, base);
+    }
+
+    power /= 2;
+
+    if (power > 0)
+    {
+      base = checkedMul(base, base);
+    }
+  }
+
+  return result;
+}
+
 namespace aydogan
 {
   long long calculateExpression(const std::string& expression)
