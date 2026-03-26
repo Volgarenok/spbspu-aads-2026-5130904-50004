@@ -29,6 +29,7 @@ int main(int argc, char ** argv)
   }
 
   if (res.empty()) {
+    std::cout << "\n";
     return 0;
   }
   std::cout << res.top();
