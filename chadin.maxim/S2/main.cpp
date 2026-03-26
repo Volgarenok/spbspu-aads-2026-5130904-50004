@@ -7,43 +7,55 @@
 int main(int argc, char * argv[])
 {
   std::ifstream file;
+  std::istream * input = &std::cin;
+
   if (argc == 2)
   {
     file.open(argv[1]);
     if (!file.is_open())
     {
-      std::cerr << "Error: File" << std::endl;
+      std::cerr << "Cannot open file\n";
       return 1;
     }
+    input = &file;
+  }
+  else if (argc > 2)
+  {
+    std::cerr << "Too many arguments\n";
+    return 1;
   }
 
-  std::istream & in = (argc == 2) ? file : std::cin;
-  chadin::Stack< long long > results;
+  chadin::Stack< long long > res;
   std::string line = "";
 
   try
   {
-    while (std::getline(in, line))
+    while (std::getline(*input, line))
     {
-      if (line.empty()) continue;
-      results.push(chadin::evaluateInfix(line));
+      if (!line.empty())
+      {
+        res.push(chadin::evaluateInfix(line));
+      }
     }
   }
-  catch (const std::exception & e)
+  catch(const std::exception & e)
   {
-    std::cerr << "Error: " << e.what() << std::endl;
+    std::cerr << e.what() << "\n";
     return 1;
   }
 
-  bool space = false;
-  while (!results.isEmpty())
+  if (!res.isEmpty())
   {
-    if (space) std::cout << " ";
-    std::cout << results.top();
-    results.pop();
-    space = true;
+    std::cout << res.top();
+    res.pop();
+    while(!res.isEmpty())
+    {
+      std::cout << " " << res.top();
+      res.pop();
+    }
   }
-  if (space) std::cout << std::endl;
+
+  std::cout << "\n";
 
   return 0;
 }
