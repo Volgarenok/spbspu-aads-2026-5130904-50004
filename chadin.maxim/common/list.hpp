@@ -20,6 +20,34 @@ namespace chadin
       clear();
     }
 
+    void pushBack(const T & val)
+    {
+      Node< T > * newNode = new Node< T >{val, nullptr, tail_};
+      if (tail_)
+      {
+        tail_->next = newNode;
+      }
+      else
+      {
+        head_ = newNode;
+      }
+      tail_ = newNode;
+    }
+
+    void pushFront(const T & val)
+    {
+      Node< T > * newNode = new Node< T >{val, head_, nullptr};
+      if (head_)
+      {
+        head_->prev = newNode;
+      }
+      else
+      {
+        tail_ = newNode;
+      }
+      head_ = newNode;
+    }
+
     T & getBack() { return tail_->data; }
     T & getFront() { return head_->data; }
     bool isEmpty() const { return head_ == nullptr; }
