@@ -1,4 +1,70 @@
 #include "logic.hpp"
+#include "queue.hpp"
+#include "stack.hpp"
+#include <cctype>
+#include <limits>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+
+namespace
+{
+  bool isOperator(const std::string& token)
+  {
+    return token == "+" || token == "-" || token == "*" ||
+           token == "/" || token == "%" || token == "**";
+  }
+
+  int precedence(const std::string& token)
+  {
+    if (token == "**")
+    {
+      return 3;
+    }
+    if (token == "*" || token == "/" || token == "%")
+    {
+      return 2;
+    }
+    if (token == "+" || token == "-")
+    {
+      return 1;
+    }
+    return 0;
+  }
+
+  bool isRightAssociative(const std::string& token)
+  {
+    return token == "**";
+  }
+
+  bool isNumber(const std::string& token)
+  {
+    if (token.empty())
+    {
+      return false;
+    }
+
+    std::size_t start = 0;
+    if (token[0] == '-')
+    {
+      if (token.size() == 1)
+      {
+        return false;
+      }
+      start = 1;
+    }
+
+    for (std::size_t i = start; i < token.size(); ++i)
+    {
+      if (!std::isdigit(static_cast< unsigned char >(token[i])))
+      {
+        return false;
+      }
+    }
+
+    return true;
+  }
+}
 
 namespace aydogan
 {
