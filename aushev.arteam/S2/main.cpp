@@ -112,6 +112,30 @@ int getPrecedence(const Token& op)
   return 0;
 }
 
+long long applyOperator(long long a, long long b, char op)
+{
+  switch (op) {
+  case '+':
+    return a + b;
+  case '-':
+    return a - b;
+  case '*':
+    return a * b;
+  case '/':
+    if (b == 0) {
+      throw std::logic_error("Division by zero");
+    }
+    return a / b;
+  case '%':
+    if (b == 0) {
+      throw std::logic_error("Modulo by zero");
+    }
+    return a % b;
+  default:
+    throw std::logic_error("Unknown operator");
+  }
+}
+
 List< Token > infixToPostfix(const List< Token >& infix)
 {
   List< Token > postfix;
@@ -152,6 +176,117 @@ List< Token > infixToPostfix(const List< Token >& infix)
   }
 
   return postfix;
+}
+
+long long evaluatePostfix(const List< Token >& postfix)
+{
+  Stack< long long > evalStack;
+
+  for (auto it = postfix.begin(); it != postfix.end(); ++it) {
+    const Token& token = *it;
+
+    if (token.isNumber()) {
+      evalStack.push(token.toNumber());
+    } else if (token.isOperator()) {
+      if (evalStack.size() < 2) {
+        throw std::logic_error("Invalid expression: not enough operands");
+      }
+      long long b = evalStack.drop();
+      long long a = evalStack.drop();
+      long long result = applyOperator(a, b, token.getOperator());
+      evalStack.push(result);
+    } else {
+      throw std::logic_error("Invalid token in postfix");
+    }
+  }
+
+  if (evalStack.size() != 1) {
+    throw std::logic_error("Invalid expression: too many operands");
+  }
+
+  return evalStack.drop();
+}
+
+List< Token > parseLine(std::istream& input, bool& eof)
+{
+  List< Token > tokens;
+  Token token;
+  char c;
+  bool lineHasContent = false;
+
+  while (input.get(c)) {
+    Token t;
+    if (t.isSpace(c)) {
+      if (c == '\n') {
+        if (!token.isEmpty()) {
+          tokens.push_back(token);
+          token.clear();
+        }
+        if (lineHasContent || !tokens.empty()) {
+          return tokens;
+        }
+      } else {
+        if (!token.isEmpty()) {
+          tokens.push_back(token);
+          token.clear();
+        }
+      }
+    } else {
+      lineHasContent = true;
+      token.append(c);
+    }
+  }
+
+  eof = true;
+  if (!token.isEmpty()) {
+    tokens.push_back(token);
+  }
+
+  return tokens;
+}
+
+int processExpressions(std::istream& input)
+{
+  Queue< long long > results;
+  bool eof = false;
+
+  while (!eof) {
+    List< Token > tokens = parseLine(input, eof);
+
+    if (tokens.empty()) {
+      continue;
+    }
+
+    try {
+      List< Token > postfix = infixToPostfix(tokens);
+      long long result = evaluatePostfix(postfix);
+      results.push(result);
+    } catch (const std::exception& e) {
+      std::cerr << "Error: " << e.what() << std::endl;
+      return 1;
+    }
+  }
+
+  if (results.empty()) {
+    return 0;
+  }
+
+  Stack< long long > reversed;
+  while (!results.empty()) {
+    reversed.push(results.drop());
+  }
+
+  bool first = true;
+  while (!reversed.empty()) {
+    if (!first) {
+      std::cout << " ";
+    }
+    std::cout << reversed.drop();
+    first = false;
+  }
+  std::cout << std::endl;
+
+  return 0;
 }
 
 }
