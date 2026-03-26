@@ -56,6 +56,11 @@ public:
   void pop_front();
   void pop_back();
 
+  T& front();
+  T& back();
+  const T& front() const;
+  const T& back() const;
+
 private:
   using NodeT = Node< T >;
   NodeT* head_;
@@ -218,6 +223,30 @@ void List< T >::pop_back()
   delete tail_->next;
   tail_->next = nullptr;
   --size_;
+}
+
+template< class T >
+T& List< T >::front()
+{
+  return head_->data;
+}
+
+template< class T >
+T& List< T >::back()
+{
+  return tail_->data;
+}
+
+template< class T >
+const T& List< T >::front() const
+{
+  return head_->data;
+}
+
+template< class T >
+const T& List< T >::back() const
+{
+  return tail_->data;
 }
 
 }
