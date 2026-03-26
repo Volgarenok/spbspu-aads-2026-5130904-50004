@@ -53,6 +53,9 @@ public:
   void push_front(const T& value);
   void push_back(const T& value);
 
+  void pop_front();
+  void pop_back();
+
 private:
   using NodeT = Node< T >;
   NodeT* head_;
@@ -179,6 +182,42 @@ void List< T >::push_back(const T& value)
     head_ = newNode;
   }
   ++size_;
+}
+
+template< class T >
+void List< T >::pop_front()
+{
+  if (head_ == nullptr) {
+    return;
+  }
+  NodeT* tmp = head_;
+  head_ = head_->next;
+  if (head_) {
+    head_->prev = nullptr;
+  } else {
+    tail_ = nullptr;
+  }
+  delete tmp;
+  --size_;
+}
+
+template< class T >
+void List< T >::pop_back()
+{
+  if (tail_ == nullptr) {
+    return;
+  }
+  if (head_ == tail_) {
+    delete tail_;
+    head_ = nullptr;
+    tail_ = nullptr;
+    --size_;
+    return;
+  }
+  tail_ = tail_->prev;
+  delete tail_->next;
+  tail_->next = nullptr;
+  --size_;
 }
 
 }
