@@ -97,7 +97,65 @@ struct Token {
   }
 };
 
+int getPrecedence(const Token& op)
+{
+  if (op.size != 1) {
+    return 0;
+  }
+  char c = op.data[0];
+  if (c == '+' || c == '-') {
+    return 1;
+  }
+  if (c == '*' || c == '/' || c == '%') {
+    return 2;
+  }
+  return 0;
 }
+
+List< Token > infixToPostfix(const List< Token >& infix)
+{
+  List< Token > postfix;
+  Stack< Token > opStack;
+
+  for (auto it = infix.begin(); it != infix.end(); ++it) {
+    const Token& token = *it;
+
+    if (token.isNumber()) {
+      postfix.push_back(token);
+    } else if (token.isOpenParen()) {
+      opStack.push(token);
+    } else if (token.isCloseParen()) {
+      while (!opStack.empty() && !opStack.top().isOpenParen()) {
+        postfix.push_back(opStack.drop());
+      }
+      if (opStack.empty()) {
+        throw std::logic_error("Mismatched parentheses");
+      }
+      opStack.drop();
+    } else if (token.isOperator()) {
+      while (!opStack.empty() && !opStack.top().isOpenParen() &&
+             getPrecedence(opStack.top()) >= getPrecedence(token)) {
+        postfix.push_back(opStack.drop());
+      }
+      opStack.push(token);
+    } else {
+      throw std::logic_error("Invalid token");
+    }
+  }
+
+  while (!opStack.empty()) {
+    Token op = opStack.drop();
+    if (op.isOpenParen() || op.isCloseParen()) {
+      throw std::logic_error("Mismatched parentheses");
+    }
+    postfix.push_back(op);
+  }
+
+  return postfix;
+}
+
+}
+
 }
 
 int main()
