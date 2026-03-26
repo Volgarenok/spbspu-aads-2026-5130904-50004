@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(power_test)
 
 BOOST_AUTO_TEST_CASE(power_associativity_test)
 {
-  BOOST_CHECK_EQUAL(aydogan::calculateExpression("2  3  2"), 512);
+  BOOST_CHECK_EQUAL(aydogan::calculateExpression("2 ** 3 ** 2"), 512);
 }
 
 BOOST_AUTO_TEST_CASE(invalid_expression_test)
