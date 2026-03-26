@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <cctype>
 
-int alekseev::count_from_string(const std::string & str_expr)
+long long alekseev::count_from_string(const std::string & str_expr)
 {
   Queue< List< char > * > infix = str_to_infix(str_expr);
   Queue< List< char > * > postfix;
@@ -16,7 +16,7 @@ int alekseev::count_from_string(const std::string & str_expr)
     throw;
   }
   clear_QLCh(infix);
-  int res = 0;
+  long long res = 0;
   try {
     res = count_postfix(postfix);
   } catch (...) {
@@ -132,9 +132,9 @@ alekseev::QLCh alekseev::infix_to_postfix(QLCh infix)
   return postfix;
 }
 
-int alekseev::count_postfix(QLCh postfix)
+long long alekseev::count_postfix(QLCh postfix)
 {
-  Stack< int > stack;
+  Stack< long long > stack;
   while (!postfix.empty()) {
     List< char > * current = postfix.front();
     postfix.pop();
@@ -144,21 +144,21 @@ int alekseev::count_postfix(QLCh postfix)
         if (stack.empty()) {
           throw std::invalid_argument("Invalid expression");
         }
-        int n = stack.top();
+        long long n = stack.top();
         stack.pop();
         stack.push(flip(n));
       } else {
         if (stack.size() < 2) {
           throw std::invalid_argument("Invalid expression");
         }
-        int b = stack.top();
+        long long b = stack.top();
         stack.pop();
-        int a = stack.top();
+        long long a = stack.top();
         stack.pop();
         stack.push(count(a, b, op));
       }
     } else {
-      stack.push(ltoi(current));
+      stack.push(ltoll(current));
     }
   }
   if (stack.size() != 1) {
@@ -196,7 +196,7 @@ bool alekseev::is_number(List< char > * li)
   return true;
 }
 
-int alekseev::ltoi(List< char > * li)
+long long alekseev::ltoll(List< char > * li)
 {
   List< char > * current = li->next;
   std::string res;
@@ -204,10 +204,10 @@ int alekseev::ltoi(List< char > * li)
     res += current->data;
     current = current->next;
   }
-  return stoi(res);
+  return stoll(res);
 }
 
-int alekseev::count(int a, int b, char op)
+long long alekseev::count(long long a, long long b, char op)
 {
   if (op == '*') {
     return mul(a, b);

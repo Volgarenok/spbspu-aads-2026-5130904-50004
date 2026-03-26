@@ -15,7 +15,7 @@ int main(int argc, char ** argv)
   }
   std::istream & input = argc == 2 ? file : std::cin;
 
-  alekseev::Stack< int > res;
+  alekseev::Stack< long long > res;
   std::string line;
   while (std::getline(input, line)) {
     try {

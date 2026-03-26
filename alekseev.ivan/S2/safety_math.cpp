@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include "queue.h"
 
-int alekseev::sum(int a, int b)
+long long alekseev::sum(long long a, long long b)
 {
   if (a > 0 && b > 0) {
     if (a > MAX - b) {
@@ -17,7 +17,7 @@ int alekseev::sum(int a, int b)
   return a + b;
 }
 
-int alekseev::sub(int a, int b)
+long long alekseev::sub(long long a, long long b)
 {
   if (a > 0 && b < 0) {
     if (a > MAX + b) {
@@ -31,7 +31,7 @@ int alekseev::sub(int a, int b)
   return a - b;
 }
 
-int alekseev::mul(int a, int b)
+long long alekseev::mul(long long a, long long b)
 {
   if (!a || !b) {
     return 0;
@@ -56,7 +56,7 @@ int alekseev::mul(int a, int b)
   return a * b;
 }
 
-int alekseev::div(int a, int b)
+long long alekseev::div(long long a, long long b)
 {
   if (!b) {
     throw std::logic_error("Division by zero");
@@ -64,7 +64,7 @@ int alekseev::div(int a, int b)
   return a / b;
 }
 
-int alekseev::mod(int a, int b)
+long long alekseev::mod(long long a, long long b)
 {
   if (!b) {
     throw std::logic_error("Division by zero");
@@ -72,18 +72,18 @@ int alekseev::mod(int a, int b)
   return a % b;
 }
 
-int alekseev::flip(int a)
+long long alekseev::flip(long long a)
 {
   bool negative = a < 0;
   if (negative) {
     a = -a;
   }
-  Queue< int > tmp;
+  Queue< long long > tmp;
   while (a) {
     tmp.push(a % 10);
     a /= 10;
   }
-  int res = 0;
+  long long res = 0;
   while (!tmp.empty()) {
     res = sum(mul(res, 10), tmp.front());
     tmp.pop();

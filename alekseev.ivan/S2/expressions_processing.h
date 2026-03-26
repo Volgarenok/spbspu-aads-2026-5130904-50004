@@ -6,15 +6,15 @@
 
 namespace alekseev {
   using QLCh = Queue< List< char > * >;
-  int count_from_string(const std::string & str_expr);
+  long long count_from_string(const std::string & str_expr);
   QLCh str_to_infix(const std::string & str_expr);
   QLCh infix_to_postfix(QLCh infix);
-  int count_postfix(QLCh postfix);
+  long long count_postfix(QLCh postfix);
   short priority_of(char op);
   bool is_operator(char op);
   bool is_number(List< char > * li);
-  int ltoi(List< char > * li);
-  int count(int a, int b, char op);
+  long long ltoll(List< char > * li);
+  long long count(long long a, long long b, char op);
   void clear_QLCh(QLCh & q);
 }
 

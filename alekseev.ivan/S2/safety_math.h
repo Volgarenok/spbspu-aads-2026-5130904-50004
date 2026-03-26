@@ -4,15 +4,15 @@
 #include <limits>
 
 namespace alekseev {
-  int sum(int a, int b);
-  int sub(int a, int b);
-  int mul(int a, int b);
-  int div(int a, int b);
-  int mod(int a, int b);
-  int flip(int a);
+  long long sum(long long a, long long b);
+  long long sub(long long a, long long b);
+  long long mul(long long a, long long b);
+  long long div(long long a, long long b);
+  long long mod(long long a, long long b);
+  long long flip(long long a);
 
-  const int MAX = std::numeric_limits< int >::max();
-  const int MIN = std::numeric_limits< int >::min();
+  const long long MAX = std::numeric_limits< long long >::max();
+  const long long MIN = std::numeric_limits< long long >::min();
 }
 
 #endif
