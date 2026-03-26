@@ -293,7 +293,26 @@ int processExpressions(std::istream& input)
 
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-  return 0;
+  try {
+    if (argc > 2) {
+      std::cerr << "Error: Too many arguments" << std::endl;
+      return 1;
+    }
+
+    if (argc == 2) {
+      std::ifstream file(argv[1]);
+      if (!file.is_open()) {
+        std::cerr << "Error: Cannot open file: " << argv[1] << std::endl;
+        return 1;
+      }
+      return aushev::processExpressions(file);
+    } else {
+      return aushev::processExpressions(std::cin);
+    }
+  } catch (const std::exception& e) {
+    std::cerr << "Error: " << e.what() << std::endl;
+    return 2;
+  }
 }
