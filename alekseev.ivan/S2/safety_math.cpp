@@ -69,7 +69,7 @@ long long alekseev::mod(long long a, long long b)
   if (!b) {
     throw std::logic_error("Division by zero");
   }
-  return a % b;
+  return (a % b + b) % b;
 }
 
 long long alekseev::flip(long long a)
