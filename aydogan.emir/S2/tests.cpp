@@ -57,5 +57,17 @@ BOOST_AUTO_TEST_CASE(power_test)
 
 BOOST_AUTO_TEST_CASE(power_associativity_test)
 {
-  BOOST_CHECK_EQUAL(aydogan::calculateExpression("2 ** 3 ** 2"), 512);
+  BOOST_CHECK_EQUAL(aydogan::calculateExpression("2  3  2"), 512);
+}
+
+BOOST_AUTO_TEST_CASE(invalid_expression_test)
+{
+  BOOST_CHECK_THROW(aydogan::calculateExpression("1 +"), std::runtime_error);
+  BOOST_CHECK_THROW(aydogan::calculateExpression("( 1 + 2"), std::runtime_error);
+}
+
+BOOST_AUTO_TEST_CASE(zero_division_test)
+{
+  BOOST_CHECK_THROW(aydogan::calculateExpression("10 / 0"), std::runtime_error);
+  BOOST_CHECK_THROW(aydogan::calculateExpression("10 % 0"), std::runtime_error);
 }
