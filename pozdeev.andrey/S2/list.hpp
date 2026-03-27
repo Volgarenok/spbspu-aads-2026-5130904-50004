@@ -35,6 +35,70 @@ private:
     std::size_t size_;
 };
 
+template< class T >
+List< T >::Node::Node(T data, Node *next)
+    : data_(data)
+    , next_(next)
+{
+}
+
+template< class T >
+List< T >::List()
+    : head_(nullptr)
+    , tail_(nullptr)
+    , size_(0)
+{
+}
+
+template< class T >
+List< T >::~List()
+{
+    while (head_ != nullptr) {
+        Node *temp = head_;
+        head_ = head_->next_;
+        delete temp;
+    }
+}
+
+template< class T >
+void List< T >::pushBack(T value)
+{
+    Node *newNode = new Node(value, nullptr);
+    if (tail_ == nullptr) {
+        head_ = newNode;
+        tail_ = newNode;
+    } else {
+        tail_->next_ = newNode;
+        tail_ = newNode;
+    }
+    ++size_;
+}
+
+template< class T >
+T List< T >::get(std::size_t index) const
+{
+    if (index >= size_) {
+        throw std::out_of_range("Index out of range");
+    }
+    Node *current = head_;
+    for (std::size_t i = 0; i < index; ++i) {
+        current = current->next_;
+    }
+    return current->data_;
+}
+
+template< class T >
+std::size_t List< T >::size() const
+{
+    return size_;
+}
+
+template< class T >
+bool List< T >::isEmpty() const
+{
+    return size_ == 0;
+}
+
 }
 
 #endif
