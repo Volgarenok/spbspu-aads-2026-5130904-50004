@@ -5,6 +5,7 @@
 #include <fstream>
 #include <cctype>
 #include <cstdlib>
+#include <utility>
 
 int main(int argc, char *argv[])
 {
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
 
             pozdeev::Queue< pozdeev::Token > postfix
                 = pozdeev::infixToPostfix(tokens);
-            long long result = pozdeev::evaluatePostfix(postfix);
+            long long result = pozdeev::evaluatePostfix(std::move(postfix));
             results.push(result);
         }
     } catch (const std::exception &e) {
