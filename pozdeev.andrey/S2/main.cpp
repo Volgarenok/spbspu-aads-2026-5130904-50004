@@ -69,9 +69,7 @@ int main(int argc, char *argv[])
         std::cout << results.drop();
         first = false;
     }
-    if (!first) {
-        std::cout << std::endl;
-    }
+    std::cout << std::endl;
 
     return 0;
 }
