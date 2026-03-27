@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <cstddef>
+#include <utility>
 
 namespace pozdeev {
 
@@ -12,15 +13,16 @@ public:
     List();
     ~List();
 
+    List(const List &) = delete;
+    List &operator=(const List &) = delete;
+
+    List(List &&rhs) noexcept;
+    List &operator=(List &&rhs) noexcept;
+
     void pushBack(T value);
     T get(std::size_t index) const;
     std::size_t size() const;
     bool isEmpty() const;
-
-    List(const List &) = delete;
-    List &operator=(const List &) = delete;
-    List(List &&) = delete;
-    List &operator=(List &&) = delete;
 
 private:
     struct Node {
@@ -58,6 +60,36 @@ List< T >::~List()
         head_ = head_->next_;
         delete temp;
     }
+}
+
+template< class T >
+List< T >::List(List &&rhs) noexcept
+    : head_(rhs.head_)
+    , tail_(rhs.tail_)
+    , size_(rhs.size_)
+{
+    rhs.head_ = nullptr;
+    rhs.tail_ = nullptr;
+    rhs.size_ = 0;
+}
+
+template< class T >
+List< T > &List< T >::operator=(List &&rhs) noexcept
+{
+    if (this != &rhs) {
+        while (head_ != nullptr) {
+            Node *temp = head_;
+            head_ = head_->next_;
+            delete temp;
+        }
+        head_ = rhs.head_;
+        tail_ = rhs.tail_;
+        size_ = rhs.size_;
+        rhs.head_ = nullptr;
+        rhs.tail_ = nullptr;
+        rhs.size_ = 0;
+    }
+    return *this;
 }
 
 template< class T >
