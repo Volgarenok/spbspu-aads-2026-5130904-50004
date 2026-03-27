@@ -35,5 +35,72 @@ private:
     std::size_t size_;
 };
 
+template< class T >
+Stack< T >::Node::Node(T data, Node *next)
+    : data_(data)
+    , next_(next)
+{
 }
+
+template< class T >
+Stack< T >::Stack()
+    : head_(nullptr)
+    , size_(0)
+{
+}
+
+template< class T >
+Stack< T >::~Stack()
+{
+    while (head_ != nullptr) {
+        Node *temp = head_;
+        head_ = head_->next_;
+        delete temp;
+    }
+}
+
+template< class T >
+void Stack< T >::push(T value)
+{
+    head_ = new Node(value, head_);
+    ++size_;
+}
+
+template< class T >
+T Stack< T >::drop()
+{
+    if (isEmpty()) {
+        throw std::runtime_error("Stack underflow");
+    }
+    Node *temp = head_;
+    T value = temp->data_;
+    head_ = head_->next_;
+    delete temp;
+    --size_;
+    return value;
+}
+
+template< class T >
+T Stack< T >::top() const
+{
+    if (isEmpty()) {
+        throw std::runtime_error("Stack is empty");
+    }
+    return head_->data_;
+}
+
+template< class T >
+bool Stack< T >::isEmpty() const
+{
+    return size_ == 0;
+}
+
+template< class T >
+std::size_t Stack< T >::size() const
+{
+    return size_;
+}
+
+}
+
 #endif
