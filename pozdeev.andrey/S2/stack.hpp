@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <cstddef>
+#include <utility>
 
 namespace pozdeev {
 
@@ -12,16 +13,17 @@ public:
     Stack();
     ~Stack();
 
+    Stack(const Stack &) = delete;
+    Stack &operator=(const Stack &) = delete;
+
+    Stack(Stack &&rhs) noexcept;
+    Stack &operator=(Stack &&rhs) noexcept;
+
     void push(T value);
     T drop();
     T top() const;
     bool isEmpty() const;
     std::size_t size() const;
-
-    Stack(const Stack &) = delete;
-    Stack &operator=(const Stack &) = delete;
-    Stack(Stack &&) = delete;
-    Stack &operator=(Stack &&) = delete;
 
 private:
     struct Node {
@@ -57,6 +59,32 @@ Stack< T >::~Stack()
         head_ = head_->next_;
         delete temp;
     }
+}
+
+template< class T >
+Stack< T >::Stack(Stack &&rhs) noexcept
+    : head_(rhs.head_)
+    , size_(rhs.size_)
+{
+    rhs.head_ = nullptr;
+    rhs.size_ = 0;
+}
+
+template< class T >
+Stack< T > &Stack< T >::operator=(Stack &&rhs) noexcept
+{
+    if (this != &rhs) {
+        while (head_ != nullptr) {
+            Node *temp = head_;
+            head_ = head_->next_;
+            delete temp;
+        }
+        head_ = rhs.head_;
+        size_ = rhs.size_;
+        rhs.head_ = nullptr;
+        rhs.size_ = 0;
+    }
+    return *this;
 }
 
 template< class T >
