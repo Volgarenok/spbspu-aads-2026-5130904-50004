@@ -61,13 +61,15 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    bool first = true;
     while (!results.isEmpty()) {
-        std::cout << results.drop();
-        if (!results.isEmpty()) {
+        if (!first) {
             std::cout << " ";
         }
+        std::cout << results.drop();
+        first = false;
     }
-    if (results.size() > 0) {
+    if (!first) {
         std::cout << std::endl;
     }
 
