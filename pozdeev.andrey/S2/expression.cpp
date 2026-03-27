@@ -1,6 +1,8 @@
 #include "expression.hpp"
 
 #include <cstdlib>
+#include <limits>
+#include <string>
 
 pozdeev::Token::Token()
     : type_(TokenType::Number)
@@ -32,17 +34,46 @@ bool pozdeev::isOperator(const std::string &token)
 long long pozdeev::applyOperator(long long left, long long right, const std::string &op)
 {
     if (op == "+") {
+        if ((right > 0 && left > std::numeric_limits< long long >::max() - right) ||
+            (right < 0 && left < std::numeric_limits< long long >::min() - right)) {
+            throw std::runtime_error("Integer overflow");
+        }
         return left + right;
     }
     if (op == "-") {
+        if ((right < 0 && left > std::numeric_limits< long long >::max() + right) ||
+            (right > 0 && left < std::numeric_limits< long long >::min() + right)) {
+            throw std::runtime_error("Integer overflow");
+        }
         return left - right;
     }
     if (op == "*") {
+        if (left != 0 && right != 0) {
+            if (left > 0 && right > 0
+                && left > std::numeric_limits< long long >::max() / right) {
+                throw std::runtime_error("Integer overflow");
+            }
+            if (left < 0 && right < 0
+                && left < std::numeric_limits< long long >::max() / right) {
+                throw std::runtime_error("Integer overflow");
+            }
+            if (left > 0 && right < 0
+                && right < std::numeric_limits< long long >::min() / left) {
+                throw std::runtime_error("Integer overflow");
+            }
+            if (left < 0 && right > 0
+                && left < std::numeric_limits< long long >::min() / right) {
+                throw std::runtime_error("Integer overflow");
+            }
+        }
         return left * right;
     }
     if (op == "/") {
         if (right == 0) {
             throw std::runtime_error("Division by zero");
+        }
+        if (left == std::numeric_limits< long long >::min() && right == -1) {
+            throw std::runtime_error("Integer overflow");
         }
         return left / right;
     }
@@ -50,11 +81,22 @@ long long pozdeev::applyOperator(long long left, long long right, const std::str
         if (right == 0) {
             throw std::runtime_error("Modulo by zero");
         }
-        return left % right;
+        long long result = left % right;
+        if (result < 0 && right > 0) {
+            result += right;
+        }
+        return result;
     }
     if (op == "<<") {
         if (right < 0) {
             throw std::runtime_error("Negative shift count");
+        }
+        if (right >= 64 || left < 0) {
+            throw std::runtime_error("Invalid shift operation");
+        }
+        if (left > 0
+            && left > (std::numeric_limits< long long >::max() >> right)) {
+            throw std::runtime_error("Integer overflow");
         }
         return left << right;
     }
@@ -83,13 +125,14 @@ pozdeev::Token pozdeev::parseToken(const std::string &str)
     return token;
 }
 
-pozdeev::Queue< pozdeev::Token > pozdeev::infixToPostfix(const List< Token > &infix)
+pozdeev::Queue< pozdeev::Token > pozdeev::infixToPostfix(
+    const List< Token > &infix)
 {
     Queue< Token > postfix;
     Stack< Token > opStack;
 
     for (std::size_t i = 0; i < infix.size(); ++i) {
-        const Token &token = infix.get(i);
+	const Token &token = infix.get(i);
         if (token.type_ == TokenType::Number) {
             postfix.push(token);
         } else if (token.type_ == TokenType::LeftParen) {
