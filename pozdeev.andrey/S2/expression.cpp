@@ -2,16 +2,14 @@
 
 #include <cstdlib>
 
-namespace pozdeev {
-
-Token::Token()
+pozdeev::Token::Token()
     : type_(TokenType::Number)
     , value_()
     , numberValue_(0)
 {
 }
 
-int getPriority(const std::string &op)
+int pozdeev::getPriority(const std::string &op)
 {
     if (op == "*" || op == "/" || op == "%") {
         return 3;
@@ -25,13 +23,13 @@ int getPriority(const std::string &op)
     return 0;
 }
 
-bool isOperator(const std::string &token)
+bool pozdeev::isOperator(const std::string &token)
 {
     return token == "+" || token == "-" || token == "*" || token == "/"
         || token == "%" || token == "<<";
 }
 
-long long applyOperator(long long left, long long right, const std::string &op)
+long long pozdeev::applyOperator(long long left, long long right, const std::string &op)
 {
     if (op == "+") {
         return left + right;
@@ -63,7 +61,7 @@ long long applyOperator(long long left, long long right, const std::string &op)
     throw std::runtime_error("Unknown operator");
 }
 
-Token parseToken(const std::string &str)
+pozdeev::Token pozdeev::parseToken(const std::string &str)
 {
     Token token;
     token.value_ = str;
@@ -85,7 +83,7 @@ Token parseToken(const std::string &str)
     return token;
 }
 
-Queue< Token > pozdeev::infixToPostfix(const List< Token > &infix)
+pozdeev::Queue< pozdeev::Token > pozdeev::infixToPostfix(const List< Token > &infix)
 {
     Queue< Token > postfix;
     Stack< Token > opStack;
@@ -156,7 +154,7 @@ long long pozdeev::evaluatePostfix(Queue< Token > postfix)
     return evalStack.drop();
 }
 
-List< Token > pozdeev::tokenizeLine(const std::string &line)
+pozdeev::List< pozdeev::Token > pozdeev::tokenizeLine(const std::string &line)
 {
     List< Token > tokens;
     std::string currentToken;
@@ -177,6 +175,4 @@ List< Token > pozdeev::tokenizeLine(const std::string &line)
     }
 
     return tokens;
-}
-
 }
