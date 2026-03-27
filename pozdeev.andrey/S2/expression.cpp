@@ -85,4 +85,98 @@ Token parseToken(const std::string &str)
     return token;
 }
 
+Queue< Token > pozdeev::infixToPostfix(const List< Token > &infix)
+{
+    Queue< Token > postfix;
+    Stack< Token > opStack;
+
+    for (std::size_t i = 0; i < infix.size(); ++i) {
+        const Token &token = infix.get(i);
+        if (token.type_ == TokenType::Number) {
+            postfix.push(token);
+        } else if (token.type_ == TokenType::LeftParen) {
+            opStack.push(token);
+        } else if (token.type_ == TokenType::RightParen) {
+            while (!opStack.isEmpty()
+                && opStack.top().type_ != TokenType::LeftParen) {
+                postfix.push(opStack.drop());
+            }
+            if (opStack.isEmpty()) {
+                throw std::runtime_error("Mismatched parentheses");
+            }
+            opStack.drop();
+        } else if (token.type_ == TokenType::Operator) {
+            while (!opStack.isEmpty()
+                && opStack.top().type_ == TokenType::Operator) {
+                if (getPriority(opStack.top().value_)
+                    >= getPriority(token.value_)) {
+                    postfix.push(opStack.drop());
+                } else {
+                    break;
+                }
+            }
+            opStack.push(token);
+        }
+    }
+
+    while (!opStack.isEmpty()) {
+        if (opStack.top().type_ == TokenType::LeftParen) {
+            throw std::runtime_error("Mismatched parentheses");
+        }
+        postfix.push(opStack.drop());
+    }
+
+    return postfix;
+}
+
+long long pozdeev::evaluatePostfix(Queue< Token > postfix)
+{
+    Stack< long long > evalStack;
+
+    while (!postfix.isEmpty()) {
+        const Token &token = postfix.front();
+        postfix.drop();
+        if (token.type_ == TokenType::Number) {
+            evalStack.push(token.numberValue_);
+        } else if (token.type_ == TokenType::Operator) {
+            if (evalStack.size() < 2) {
+                throw std::runtime_error("Invalid expression structure");
+            }
+            long long right = evalStack.drop();
+            long long left = evalStack.drop();
+            long long result = applyOperator(left, right, token.value_);
+            evalStack.push(result);
+        }
+    }
+
+    if (evalStack.size() != 1) {
+        throw std::runtime_error("Invalid expression structure");
+    }
+
+    return evalStack.drop();
+}
+
+List< Token > pozdeev::tokenizeLine(const std::string &line)
+{
+    List< Token > tokens;
+    std::string currentToken;
+
+    for (std::size_t i = 0; i < line.length(); ++i) {
+        char c = line[i];
+        if (c == ' ') {
+            if (!currentToken.empty()) {
+                tokens.pushBack(parseToken(currentToken));
+                currentToken.clear();
+            }
+        } else {
+            currentToken += c;
+        }
+    }
+    if (!currentToken.empty()) {
+        tokens.pushBack(parseToken(currentToken));
+    }
+
+    return tokens;
+}
+
 }
