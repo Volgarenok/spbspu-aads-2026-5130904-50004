@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <cstddef>
+#include <utility>
 
 namespace pozdeev {
 
@@ -12,16 +13,17 @@ public:
     Queue();
     ~Queue();
 
+    Queue(const Queue &) = delete;
+    Queue &operator=(const Queue &) = delete;
+
+    Queue(Queue &&rhs) noexcept;
+    Queue &operator=(Queue &&rhs) noexcept;
+
     void push(T value);
     T drop();
     T front() const;
     bool isEmpty() const;
     std::size_t size() const;
-
-    Queue(const Queue &) = delete;
-    Queue &operator=(const Queue &) = delete;
-    Queue(Queue &&) = delete;
-    Queue &operator=(Queue &&) = delete;
 
 private:
     struct Node {
@@ -59,6 +61,36 @@ Queue< T >::~Queue()
         head_ = head_->next_;
         delete temp;
     }
+}
+
+template< class T >
+Queue< T >::Queue(Queue &&rhs) noexcept
+    : head_(rhs.head_)
+    , tail_(rhs.tail_)
+    , size_(rhs.size_)
+{
+    rhs.head_ = nullptr;
+    rhs.tail_ = nullptr;
+    rhs.size_ = 0;
+}
+
+template< class T >
+Queue< T > &Queue< T >::operator=(Queue &&rhs) noexcept
+{
+    if (this != &rhs) {
+        while (head_ != nullptr) {
+            Node *temp = head_;
+            head_ = head_->next_;
+            delete temp;
+        }
+        head_ = rhs.head_;
+        tail_ = rhs.tail_;
+        size_ = rhs.size_;
+        rhs.head_ = nullptr;
+        rhs.tail_ = nullptr;
+        rhs.size_ = 0;
+    }
+    return *this;
 }
 
 template< class T >
