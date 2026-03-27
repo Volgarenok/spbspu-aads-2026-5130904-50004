@@ -132,7 +132,7 @@ pozdeev::Queue< pozdeev::Token > pozdeev::infixToPostfix(
     Stack< Token > opStack;
 
     for (std::size_t i = 0; i < infix.size(); ++i) {
-	const Token &token = infix.get(i);
+        const Token &token = infix.get(i);
         if (token.type_ == TokenType::Number) {
             postfix.push(token);
         } else if (token.type_ == TokenType::LeftParen) {
