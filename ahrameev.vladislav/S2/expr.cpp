@@ -74,7 +74,7 @@ long long calc_postfix(Queue<std::string>& post) {
       if (t == "!") {
         if (nums.empty()) throw std::runtime_error("Неверное выражение");
         long long a = nums.drop();
-        nums.push(~a); // Побитовое НЕ
+        nums.push(~a);
       } else {
         if (nums.empty()) throw std::runtime_error("Неверное выражение");
         long long b = nums.drop();
@@ -84,8 +84,13 @@ long long calc_postfix(Queue<std::string>& post) {
         if (t == "+") nums.push(a + b);
         else if (t == "-") nums.push(a - b);
         else if (t == "*") nums.push(a * b);
-        else if (t == "/") nums.push(a / b);
-        else if (t == "%") nums.push(a % b);
+        else if (t == "/") {
+          if (b == 0) throw std::runtime_error("Деление на ноль");
+          nums.push(a / b);
+        } else if (t == "%") {
+          if (b == 0) throw std::runtime_error("Остаток от деления на ноль");
+          nums.push(a % b);
+        }
       }
     } else {
       nums.push(std::stoll(t));
@@ -101,7 +106,7 @@ int run(int argc, char* argv[]) {
   if (argc > 1) {
     file.open(argv[1]);
     if (!file.is_open()) {
-      std::cerr << "Ошибка: не удалось открыть файл " << argv[1] << std::endl;
+      std::cerr << "Ошибка: не удалось открыть файл " << argv[1] << "\n";
       return 1;
     }
     input = &file;
@@ -116,7 +121,7 @@ int run(int argc, char* argv[]) {
     long long res = calc_postfix(postfix);
     std::cout << res << " ";
   }
-  std::cout << std::endl;
+  std::cout << "\n";
   return 0;
 }
 
