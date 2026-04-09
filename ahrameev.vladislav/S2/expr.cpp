@@ -8,6 +8,21 @@
 
 namespace akhrameev {
 
+bool is_operator(const std::string& s) {
+    return s == "+" || s == "-" || s == "*" || s == "/" || s == "%" || s == "!";
+}
+
+int get_priority(const std::string& op) {
+    if (op == "!") return 4;                     
+    if (op == "*" || op == "/" || op == "%") return 3;
+    if (op == "+" || op == "-") return 2;
+    return 1;                                   
+}
+
+bool is_left_assoc(const std::string& op) {
+    return op != "!";                           
+}
+
 void tokenize(const std::string& line, Queue<std::string>& out) {
     size_t i = 0;
     while (i < line.size()) {
@@ -30,9 +45,21 @@ void to_postfix(Queue<std::string>& tokens, Queue<std::string>& out) {
                 out.push(ops.drop());
             }
             if (ops.empty()) throw std::runtime_error("Ошибка в скобках");
-            ops.drop(); 
+            ops.drop();
+        } else if (is_operator(t)) {
+            int p1 = get_priority(t);
+
+            while (!ops.empty() && ops.top() != "(") {
+                int p2 = get_priority(ops.top());
+                if (p2 > p1 || (p2 == p1 && is_left_assoc(t))) {
+                    out.push(ops.drop());
+                } else {
+                    break;
+                }
+            }
+            ops.push(t);
         } else {
-            out.push(t);
+            out.push(t); 
         }
     }
     while (!ops.empty()) {
@@ -62,10 +89,11 @@ int run(int argc, char* argv[]) {
         Queue<std::string> postfix;
         to_postfix(tokens, postfix);
 
-        
         std::cout << "Postfix: ";
         while (!postfix.empty()) std::cout << postfix.drop() << " ";
-        std::cout << "\n";
+        std::cout << std::endl;
     }
-  }
+    return 0;
 }
+
+} 
