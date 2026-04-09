@@ -106,23 +106,30 @@ int run(int argc, char* argv[]) {
   if (argc > 1) {
     file.open(argv[1]);
     if (!file.is_open()) {
-      std::cerr << "Ошибка: не удалось открыть файл " << argv[1] << "\n";
+      std::cerr << "Ошибка: не удалось открыть файл " << argv[1] << "/n";
       return 1;
     }
     input = &file;
   }
 
+  Stack<long long> results;
   std::string line;
   while (std::getline(*input, line)) {
     Queue<std::string> tokens;
     tokenize(line, tokens);
     Queue<std::string> postfix;
     to_postfix(tokens, postfix);
-    long long res = calc_postfix(postfix);
-    std::cout << res << " ";
+    results.push(calc_postfix(postfix));
+  }
+
+  bool first = true;
+  while (!results.empty()) {
+    if (!first) std::cout << " ";
+    std::cout << results.drop();
+    first = false;
   }
   std::cout << "\n";
   return 0;
 }
 
-} 
+}
