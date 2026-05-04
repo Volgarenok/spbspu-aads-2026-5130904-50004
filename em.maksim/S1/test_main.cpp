@@ -1,4 +1,4 @@
-#define BOOST_TEST_NO_MAIN
+#define BOOST_TEST_MODULE ListTests
 #include <boost/test/included/unit_test.hpp>
 #include "List.hpp"
 
@@ -79,8 +79,4 @@ BOOST_AUTO_TEST_CASE(empty_list_access) {
   List<int> list;
   BOOST_CHECK_THROW(list.front(), std::out_of_range);
   BOOST_CHECK_THROW(list.back(), std::out_of_range);
-}
-
-int main(int argc, char* argv[]) {
-  return boost::unit_test::unit_test_main(&init_unit_test, argc, argv);
 }
