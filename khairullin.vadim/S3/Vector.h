@@ -2,6 +2,7 @@
 #define VECTOR_H
 #include <stdexcept>
 #include <utility>
+#include <vector>
 
 namespace khairullin
 {
@@ -69,6 +70,10 @@ namespace khairullin
     ~Iterator() = default;
     void operator+=(size_t i);
     void operator-=(size_t i);
+    Iterator operator++();
+    Iterator operator++(int);
+    Iterator operator--();
+    Iterator operator--(int);
     void write(const T & value);
     void cut();
     T & operator*() const noexcept;
@@ -85,6 +90,10 @@ namespace khairullin
     ~CIterator() = default;
     void operator+=(size_t i);
     void operator-=(size_t i);
+    CIterator operator++();
+    CIterator operator++(int);
+    CIterator operator--();
+    CIterator operator--(int);
     T & read();
     T & operator*() const noexcept;
     bool operator==(const CIterator< T > & rhs) const noexcept;
@@ -530,6 +539,44 @@ void khairullin::Iterator<T>::operator-=(size_t i) {
   id -= i;
 }
 
+template< class T >
+khairullin::Iterator< T > khairullin::Iterator< T >::operator++() {
+  if (id + 1 >= vector.getSize()) {
+    throw std::out_of_range("Iterator is out of bound");
+  }
+  id++;
+  return *this;
+}
+
+template< class T >
+khairullin::Iterator< T > khairullin::Iterator< T >::operator++(int) {
+  if (id + 1 >= vector.getSize()) {
+    throw std::out_of_range("Iterator is out of bound");
+  }
+  auto copy = *this;
+  id++;
+  return copy;
+}
+
+template<class T>
+khairullin::Iterator<T> khairullin::Iterator<T>::operator--() {
+  if (id - 1 < 0) {
+    throw std::out_of_range("Iterator is out of bound");
+  }
+  id--;
+  return *this;
+}
+
+template<class T>
+khairullin::Iterator<T> khairullin::Iterator<T>::operator--(int) {
+  if (id - 1 < 0) {
+    throw std::out_of_range("Iterator is out of bound");
+  }
+  Iterator< T > copy = *this;
+  id--;
+  return copy;
+}
+
 template<class T>
 void khairullin::Iterator<T>::write(const T &value) {
   vector[id] = value;
@@ -578,6 +625,34 @@ void khairullin::CIterator<T>::operator-=(size_t i) {
   id -= i;
 }
 
+template< class T >
+khairullin::CIterator< T > khairullin::CIterator<T>::operator++() {
+  if (id + 1 >= vector.getSize()) {
+    throw std::out_of_range("Iterator is out of bound");
+  }
+  id++;
+  return *this;
+}
+
+template< class T >
+khairullin::CIterator< T > khairullin::CIterator<T>::operator++(int) {
+  if (id + 1 >= vector.getSize()) {
+    throw std::out_of_range("Iterator is out of bound");
+  }
+  auto copy = *this;
+  id++;
+  return copy;
+}
+
+template< class T >
+khairullin::CIterator< T > khairullin::CIterator<T>::operator--(int) {
+  if (id - 1 < 0) {
+    throw std::out_of_range("Iterator is out of bound");
+  }
+  auto copy = *this;
+  id--;
+  return copy;
+}
 template<class T>
 T & khairullin::CIterator<T>::read() {
   return vector[id];

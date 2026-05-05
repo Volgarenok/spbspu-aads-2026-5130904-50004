@@ -4,7 +4,6 @@
 #include "Vector.h"
 #include "Equal.h"
 #include "Hash.h"
-#include "Key.h"
 
 namespace khairullin {
     template< class T, class Key, class Hash, class Equal >
@@ -66,7 +65,7 @@ T khairullin::HashTable< T, Key, Hash, Equal >::drop(const Key & key) {
         throw std::logic_error("This element doesn't exist");
     }
     else {
-        while (slot->value.second != key.getKey()) {
+        while (slot->value.second != key) {
             slot = slot->next;
         }
     }
@@ -77,7 +76,7 @@ template< class T, class Key, class Hash, class Equal >
 bool khairullin::HashTable< T, Key, Hash, Equal >::has(const Key & key) {
     size_t index = hasher(key) % size;
     auto slot = table[index];
-    while (slot->value.second != key.getKey()) {
+    while (slot->value.second != key) {
         slot = slot->next;
     }
     return slot;
@@ -111,7 +110,7 @@ void khairullin::HashTable< T, Key, Hash, Equal >::rehash(size_t new_size) {
         }
     }
     try {
-        table = new_table;
+        swap(table,new_table);
         size = new_size;
     }
     catch (...) {
