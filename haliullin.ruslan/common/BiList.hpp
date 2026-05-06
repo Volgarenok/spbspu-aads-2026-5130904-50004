@@ -1,7 +1,7 @@
 #ifndef BILIST_HPP
 #define BILIST_HPP
 
-#include "BiList-iterators.hpp"
+#include "../common/BiList-iterators.hpp"
 #include <iostream>
 #include <utility>
 

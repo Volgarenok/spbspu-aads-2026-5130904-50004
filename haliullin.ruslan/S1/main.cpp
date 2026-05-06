@@ -1,4 +1,4 @@
-#include "BiList.hpp"
+#include "../common/BiList.hpp"
 #include <iostream>
 #include <string>
 #include <utility>
