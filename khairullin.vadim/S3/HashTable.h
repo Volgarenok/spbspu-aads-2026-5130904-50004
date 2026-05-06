@@ -13,6 +13,7 @@ namespace khairullin {
         Hash hasher;
 
         void add(const Key & key, const T & value);
+        size_t findIndex(const Key & key);
         T drop(const Key & key);
         bool has(const Key & key);
         void rehash(size_t new_size);
@@ -22,14 +23,14 @@ namespace khairullin {
         ~HashTable() = default;
 
     private:
-        size_t size = 11;
+        size_t size = 20;
         size_t count = 0;
     };
 }
 
 template< class T, class Key, class Hash, class Equal >
 khairullin::HashTable< T, Key, Hash, Equal >::HashTable():
-table(Vector< List< std::pair<T, Key> > * >(11, nullptr)),
+table(Vector< List< std::pair<T, Key> > * >(20, nullptr)),
 equal(Equal()),
 hasher(Hash())
 {}
@@ -45,7 +46,7 @@ template< class T, class Key, class Hash, class Equal >
 void khairullin::HashTable< T, Key, Hash, Equal >::add(const Key & key, const T & value) {
     size_t index = hasher(key) % size;
     if (table[index] == nullptr) {
-        table[index] = new List< T >(value, nullptr);
+        table[index] = new List< std::pair< T, Key> >(std::make_pair(value, key), nullptr);
     }
     else {
         auto tail = table[index];
@@ -65,7 +66,7 @@ T khairullin::HashTable< T, Key, Hash, Equal >::drop(const Key & key) {
         throw std::logic_error("This element doesn't exist");
     }
     else {
-        while (slot->value.second != key) {
+        while (slot && slot->value.second != key) {
             slot = slot->next;
         }
     }
@@ -76,7 +77,7 @@ template< class T, class Key, class Hash, class Equal >
 bool khairullin::HashTable< T, Key, Hash, Equal >::has(const Key & key) {
     size_t index = hasher(key) % size;
     auto slot = table[index];
-    while (slot->value.second != key) {
+    while (slot && slot->value.second != key) {
         slot = slot->next;
     }
     return slot;
@@ -110,12 +111,18 @@ void khairullin::HashTable< T, Key, Hash, Equal >::rehash(size_t new_size) {
         }
     }
     try {
-        swap(table,new_table);
+        table.swap(new_table);
         size = new_size;
     }
     catch (...) {
         throw std::bad_alloc();
     }
+}
+
+template< class T, class Key, class Hash, class Equal >
+size_t khairullin::HashTable< T, Key, Hash, Equal >::findIndex(const Key & key) {
+    size_t index = hasher(key) % size;
+    return index;
 }
 
 #endif

@@ -1,16 +1,16 @@
 #ifndef HASH_H
 #define HASH_H
-#include "Key.h"
-
 namespace khairullin {
+    template <class Key >
     struct Hash {
         Hash() = default;
-        size_t operator()(Key & key) const;
+        size_t operator()(const Key & key);
     };
 }
 
-size_t khairullin::Hash::operator()(Key & key) const {
-    return (key.getKey()).length();
+template <class Key >
+size_t khairullin::Hash< Key >::operator()(const Key & key) {
+    return key.length();
 }
 
 
