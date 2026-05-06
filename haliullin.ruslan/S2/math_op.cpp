@@ -42,7 +42,7 @@ long long haliullin::multiply(long long a, long long b)
     {
       throw std::overflow_error("multiplication overflow");
     }
-    else if (b < 0 && b < haliullin::MIN / b)
+    else if (b < 0 && a < haliullin::MIN / b)
     {
       throw std::overflow_error("multiplication overflow");
     }

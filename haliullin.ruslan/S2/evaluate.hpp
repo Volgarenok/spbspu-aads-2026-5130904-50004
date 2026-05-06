@@ -6,13 +6,13 @@
 
 namespace haliullin
 {
-  int get_priority(const std::string & oper);
-  long long calculate(long long a, long long b, const std::string & oper);
+  int get_priority(const std::string& oper);
+  long long calculate(long long a, long long b, const std::string& oper);
 
-  bool isOperator(const std::string & token);
-  bool isNumber(const std::string & token);
+  bool isOperator(const std::string& token);
+  bool isNumber(const std::string& token);
 
-  Queue< std::string > infixToPostfix(const std::string & expression);
+  Queue< std::string > infixToPostfix(const std::string& expression);
   long long evaluate(Queue< std::string > postfix);
 }
 

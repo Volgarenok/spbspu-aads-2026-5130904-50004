@@ -6,14 +6,14 @@
 
 namespace haliullin
 {
-  template < class T >
+  template< class T >
   class Queue
   {
   public:
-    void push(const T & rhs);
+    void push(const T& rhs);
     T drop();
-    T & front();
-    const T & front() const;
+    T& front();
+    const T& front() const;
     bool is_empty() const noexcept;
     size_t get_size() const noexcept;
     void clear();
@@ -23,13 +23,13 @@ namespace haliullin
   };
 }
 
-template < class T >
-void haliullin::Queue< T >::push(const T & rhs)
+template< class T >
+void haliullin::Queue< T >::push(const T& rhs)
 {
   data_.push_back(rhs);
 }
 
-template < class T >
+template< class T >
 T haliullin::Queue< T >::drop()
 {
   if (data_.is_empty())
@@ -41,8 +41,8 @@ T haliullin::Queue< T >::drop()
   return val;
 }
 
-template < class T >
-T & haliullin::Queue< T >::front()
+template< class T >
+T& haliullin::Queue< T >::front()
 {
   if (data_.is_empty())
   {
@@ -51,8 +51,8 @@ T & haliullin::Queue< T >::front()
   return data_.front();
 }
 
-template < class T >
-const T & haliullin::Queue< T >::front() const
+template< class T >
+const T& haliullin::Queue< T >::front() const
 {
   if (data_.is_empty())
   {
@@ -61,19 +61,19 @@ const T & haliullin::Queue< T >::front() const
   return data_.front();
 }
 
-template < class T >
+template< class T >
 bool haliullin::Queue< T >::is_empty() const noexcept
 {
   return data_.is_empty();
 }
 
-template < class T >
+template< class T >
 size_t haliullin::Queue< T >::get_size() const noexcept
 {
   return data_.get_size();
 }
 
-template < class T >
+template< class T >
 void haliullin::Queue< T >::clear()
 {
   data_.clear();
