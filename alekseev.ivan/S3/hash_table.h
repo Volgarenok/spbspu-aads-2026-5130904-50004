@@ -16,6 +16,11 @@ namespace alekseev {
 
     void swap(HashTable & rhs) noexcept;
     void clear();
+    void add(const Key & key, const Value & value);
+    void remove(const Key & key);
+    bool contains(const Key & key) const;
+    unsigned short load_factor() const;
+    void refactor();
 
     private:
       size_t capacity;
@@ -87,7 +92,7 @@ namespace alekseev {
   }
 
   template< class Key, class Value, class Hash, class Equal >
-  void HashTable<Key, Value, Hash, Equal>::clear()
+  void HashTable< Key, Value, Hash, Equal >::clear()
   {
     for (size_t i = 0; i < capacity; ++i) {
       if (slots[i]) {
@@ -95,6 +100,29 @@ namespace alekseev {
         rmfake(slots[i]);
       }
     }
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  void HashTable< Key, Value, Hash, Equal >::add(const Key & key, const Value & value)
+  {
+    Hash hash = count_hash(key);
+    size_t index = hash % capacity;
+    List<Pair> ** tail = nullptr;
+    if (slots[index]) {
+      List< Pair > * fake = slots[index];
+      List< Pair > * current = fake;
+      while (current->next != fake) {
+        current = current->next;
+        if (is_equal(current->data.first, key)) {
+          return;
+        }
+      }
+      tail = current;
+    } else {
+      slots[index] = fake< Pair >();
+      tail = slots[index];
+    }
+    insert_after(tail, std::pair< Key, Value >(key, value));
   }
 }
 #endif
