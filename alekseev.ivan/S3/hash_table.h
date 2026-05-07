@@ -10,10 +10,10 @@ namespace alekseev {
     ~HashTable();
     HashTable(const HashTable & rhs);
     HashTable & operator=(const HashTable & rhs);
-    HashTable(HashTable && rhs);
-    HashTable & operator=(HashTable && rhs);
+    HashTable(HashTable && rhs) noexcept;
+    HashTable & operator=(HashTable && rhs) noexcept;
 
-    void swap(HashTable & rhs);
+    void swap(HashTable & rhs) noexcept;
 
     private:
       size_t capacity;
@@ -53,10 +53,28 @@ namespace alekseev {
   {
     HashTable< T, Hash, Equal > temp(rhs);
     swap(temp);
+    return *this;
   }
 
   template< class T, class Hash, class Equal >
-  void HashTable<T, Hash, Equal>::swap(HashTable & rhs)
+  HashTable< T, Hash, Equal >::HashTable(HashTable && rhs) noexcept:
+    capacity(rhs.capacity),
+    is_equal(rhs.is_equal),
+    count_hash(rhs.count_hash),
+    slots(rhs.slots)
+  {
+    rhs.slots = nullptr;
+  }
+
+  template< class T, class Hash, class Equal >
+  HashTable<T, Hash, Equal> & HashTable<T, Hash, Equal>::operator=(HashTable && rhs) noexcept
+  {
+    swap(rhs);
+    return *this;
+  }
+
+  template< class T, class Hash, class Equal >
+  void HashTable< T, Hash, Equal >::swap(HashTable & rhs) noexcept
   {
     std::swap(capacity, rhs.capacity);
     std::swap(is_equal, rhs.is_equal);
