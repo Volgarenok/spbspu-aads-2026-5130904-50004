@@ -23,34 +23,35 @@ namespace alekseev {
     void refactor();
 
     private:
-      size_t capacity_, size;
-      List< Pair > ** slots;
-      Hash count_hash;
-      Equal is_equal;
+      size_t capacity_, size_;
+      List< Pair > ** slots_;
+      Hash count_hash_;
+      Equal is_equal_;
   };
 
   template< class Key, class Value, class Hash, class Equal >
   HashTable< Key, Value, Hash, Equal >::~HashTable()
   {
-    for (size_t i = 0; i < capacity; ++i) {
-      if (slots[i]) {
-        clear(slots[i]->next, slots[i]);
-        rmfake(slots[i]);
+    for (size_t i = 0; i < capacity_; ++i) {
+      if (slots_[i]) {
+        clear(slots_[i]->next, slots_[i]);
+        rmfake(slots_[i]);
       }
     }
-    delete[] slots;
+    delete[] slots_;
   }
 
   template< class Key, class Value, class Hash, class Equal >
   HashTable< Key, Value, Hash, Equal >::HashTable(const HashTable & rhs):
-    capacity(rhs.capacity),
-    is_equal(rhs.is_equal),
-    count_hash(rhs.count_hash)
+    capacity_(rhs.capacity_),
+    size_(rhs.size_),
+    is_equal_(rhs.is_equal_),
+    count_hash_(rhs.count_hash_)
   {
-    slots = new List< Pair > *[capacity]{nullptr};
-    for (size_t i = 0; i < rhs.capacity; ++i) {
-      if (rhs.slots[i]) {
-        slots[i] = deep_copy(rhs.slots[i]);
+    slots_ = new List< Pair > *[capacity_]{nullptr};
+    for (size_t i = 0; i < rhs.capacity_; ++i) {
+      if (rhs.slots_[i]) {
+        slots_[i] = deep_copy(rhs.slots_[i]);
       }
     }
   }
@@ -66,12 +67,13 @@ namespace alekseev {
 
   template< class Key, class Value, class Hash, class Equal >
   HashTable< Key, Value, Hash, Equal >::HashTable(HashTable && rhs) noexcept:
-    capacity(rhs.capacity),
-    is_equal(rhs.is_equal),
-    count_hash(rhs.count_hash),
-    slots(rhs.slots)
+    capacity_(rhs.capacity_),
+    size_(rhs.size_),
+    is_equal_(rhs.is_equal_),
+    count_hash_(rhs.count_hash_),
+    slots_(rhs.slots_)
   {
-    rhs.slots = nullptr;
+    rhs.slots_ = nullptr;
   }
 
   template< class Key, class Value, class Hash, class Equal >
@@ -85,19 +87,20 @@ namespace alekseev {
   template< class Key, class Value, class Hash, class Equal >
   void HashTable< Key, Value, Hash, Equal >::swap(HashTable & rhs) noexcept
   {
-    std::swap(capacity, rhs.capacity);
-    std::swap(is_equal, rhs.is_equal);
-    std::swap(count_hash, rhs.count_hash);
-    std::swap(slots, rhs.slots);
+    std::swap(capacity_, rhs.capacity_);
+    std::swap(size_, rhs.size_);
+    std::swap(is_equal_, rhs.is_equal_);
+    std::swap(count_hash_, rhs.count_hash_);
+    std::swap(slots_, rhs.slots_);
   }
 
   template< class Key, class Value, class Hash, class Equal >
   void HashTable< Key, Value, Hash, Equal >::clear()
   {
-    for (size_t i = 0; i < capacity; ++i) {
-      if (slots[i]) {
-        clear(slots[i]->next, slots[i]);
-        rmfake(slots[i]);
+    for (size_t i = 0; i < capacity_; ++i) {
+      if (slots_[i]) {
+        clear(slots_[i]->next, slots_[i]);
+        rmfake(slots_[i]);
       }
     }
   }
@@ -106,10 +109,10 @@ namespace alekseev {
   void HashTable< Key, Value, Hash, Equal >::add(const Key & key, const Value & value)
   {
     Hash hash = count_hash(key);
-    size_t index = hash % capacity;
+    size_t index = hash % capacity_;
     List< Pair > ** tail = nullptr;
-    if (slots[index]) {
-      List< Pair > * fake = slots[index];
+    if (slots_[index]) {
+      List< Pair > * fake = slots_[index];
       List< Pair > * current = fake;
       while (current->next != fake) {
         current = current->next;
@@ -119,33 +122,34 @@ namespace alekseev {
       }
       tail = current;
     } else {
-      slots[index] = fake< Pair >();
-      tail = slots[index];
+      slots_[index] = fake< Pair >();
+      tail = slots_[index];
     }
     insert_after(tail, std::pair< Key, Value >(key, value));
-    ++size;
+    ++size_;
   }
 
   template< class Key, class Value, class Hash, class Equal >
   void HashTable< Key, Value, Hash, Equal >::remove(const Key & key)
   {
     Hash hash = count_hash(key);
-    size_t index = hash % capacity;
-    if (!slots[index]) {
+    size_t index = hash % capacity_;
+    if (!slots_[index]) {
       return;
     }
-    List< Pair > * fake = slots[index];
+    List< Pair > * fake = slots_[index];
     List< Pair > * current = fake;
     while (current->next != fake) {
       if (is_equal(current->next->data.first, key)) {
         erase_after(current->next);
+        --size_;
         break;
       }
       current = current->next;
     }
     if (fake->next == fake) {
-      rmfake(slots[index]);
-      slots[index] = nullptr;
+      rmfake(slots_[index]);
+      slots_[index] = nullptr;
     }
   }
 
@@ -153,9 +157,9 @@ namespace alekseev {
   bool HashTable< Key, Value, Hash, Equal >::contains(const Key & key) const
   {
     Hash hash = count_hash(key);
-    size_t index = hash % capacity;
-    if (slots[index]) {
-      List< Pair > * fake = slots[index];
+    size_t index = hash % capacity_;
+    if (slots_[index]) {
+      List< Pair > * fake = slots_[index];
       List< Pair > * current = fake;
       while (current != fake) {
         if (is_equal(current->data.first, key)) {
@@ -170,8 +174,8 @@ namespace alekseev {
   template< class Key, class Value, class Hash, class Equal >
   double HashTable< Key, Value, Hash, Equal >::load_factor() const
   {
-    double s = size;
-    return s / capacity;
+    double s = size_;
+    return s / capacity_;
   }
 }
 #endif
