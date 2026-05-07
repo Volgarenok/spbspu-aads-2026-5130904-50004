@@ -193,6 +193,23 @@ namespace alekseev {
   }
 
   template< class Key, class Value, class Hash, class Equal >
+  void HashTable< Key, Value, Hash, Equal >::refactor(size_t new_capacity)
+  {
+    HashTable< Key, Value, Hash, Equal > temp(count_hash_, is_equal_, new_capacity);
+    for (size_t i = 0; i < capacity_; ++i) {
+      if (slots_[i]) {
+        List< Pair > * fake = slots_[i];
+        List< Pair > * current = fake->next;
+        while (current != fake) {
+          temp.add(current->data.first, current->data.second);
+          current = current->next;
+        }
+      }
+    }
+    swap(temp);
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
   size_t HashTable< Key, Value, Hash, Equal >::capacity() const
   {
     return capacity_;
