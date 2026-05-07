@@ -144,7 +144,26 @@ namespace alekseev {
     }
     if (fake->next == fake) {
       rmfake(slots[index]);
+      slots[index] = nullptr;
     }
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  bool HashTable< Key, Value, Hash, Equal >::contains(const Key & key) const
+  {
+    Hash hash = count_hash(key);
+    size_t index = hash % capacity;
+    if (slots[index]) {
+      List< Pair > * fake = slots[index];
+      List< Pair > * current = fake;
+      while (current != fake) {
+        if (is_equal(current->data.first, key)) {
+          return true;
+        }
+        current = current->next;
+      }
+    }
+    return false;
   }
 }
 #endif
