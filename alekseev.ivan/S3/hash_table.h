@@ -21,6 +21,8 @@ namespace alekseev {
     bool contains(const Key & key) const;
     double load_factor() const;
     void refactor();
+    size_t capacity() const;
+    size_t size() const;
 
     private:
       size_t capacity_, size_;
@@ -176,6 +178,18 @@ namespace alekseev {
   {
     double s = size_;
     return s / capacity_;
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  size_t HashTable< Key, Value, Hash, Equal >::capacity() const
+  {
+    return capacity_;
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  size_t HashTable< Key, Value, Hash, Equal >::size() const
+  {
+    return size_;
   }
 }
 #endif
