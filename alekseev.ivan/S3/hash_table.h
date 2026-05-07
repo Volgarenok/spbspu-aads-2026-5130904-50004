@@ -15,6 +15,7 @@ namespace alekseev {
     HashTable & operator=(HashTable && rhs) noexcept;
 
     void swap(HashTable & rhs) noexcept;
+    void clear();
 
     private:
       size_t capacity;
@@ -83,6 +84,17 @@ namespace alekseev {
     std::swap(is_equal, rhs.is_equal);
     std::swap(count_hash, rhs.count_hash);
     std::swap(slots, rhs.slots);
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  void HashTable<Key, Value, Hash, Equal>::clear()
+  {
+    for (size_t i = 0; i < capacity; ++i) {
+      if (slots[i]) {
+        clear(slots[i]->next, slots[i]);
+        rmfake(slots[i]);
+      }
+    }
   }
 }
 #endif
