@@ -66,7 +66,22 @@ void khairullin::GraphSystem::outbound(std::string & line) {
         throw std::logic_error("<INVALID COMMAND>");
     }
     Graph graph = vectorOfGraphs[index.second];
-
+    auto infoVert = graph.hasVertex(vertex);
+    if (!infoVert.first) {
+        throw std::logic_error("<INVALID COMMAND>");
+    }
+    List< size_t > * head = graph.connection[infoVert.second];
+    Vector< std::pair< std::string, size_t > > vertices;
+    while (head) {
+        std::string temp = graph.vertexes[head->value];
+        size_t weight = graph.edges.drop(vertex + temp);
+        vertices.push_back(std::make_pair(temp, weight));
+        head = head->next;
+    }
+    sortPair(vertices);
+    for (size_t i = 0; i < vertices.getSize(); i++) {
+        std::cout << vertices[i].first << " " << vertices[i].second << "\n";
+    }
 }
 
 #endif
