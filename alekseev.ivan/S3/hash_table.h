@@ -107,7 +107,7 @@ namespace alekseev {
   {
     Hash hash = count_hash(key);
     size_t index = hash % capacity;
-    List<Pair> ** tail = nullptr;
+    List< Pair > ** tail = nullptr;
     if (slots[index]) {
       List< Pair > * fake = slots[index];
       List< Pair > * current = fake;
@@ -123,6 +123,28 @@ namespace alekseev {
       tail = slots[index];
     }
     insert_after(tail, std::pair< Key, Value >(key, value));
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  void HashTable< Key, Value, Hash, Equal >::remove(const Key & key)
+  {
+    Hash hash = count_hash(key);
+    size_t index = hash % capacity;
+    if (!slots[index]) {
+      return;
+    }
+    List< Pair > * fake = slots[index];
+    List< Pair > * current = fake;
+    while (current->next != fake) {
+      if (is_equal(current->next->data.first, key)) {
+        erase_after(current->next);
+        break;
+      }
+      current = current->next;
+    }
+    if (fake->next == fake) {
+      rmfake(slots[index]);
+    }
   }
 }
 #endif
