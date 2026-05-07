@@ -14,13 +14,15 @@ namespace alekseev {
     HashTable(HashTable && rhs) noexcept;
     HashTable & operator=(HashTable && rhs) noexcept;
 
+    HashTable(Hash count_hash, Equal is_equal, size_t capacity);
+
     void swap(HashTable & rhs) noexcept;
     void clear();
     void add(const Key & key, const Value & value);
     void remove(const Key & key);
     bool contains(const Key & key) const;
     double load_factor() const;
-    void refactor();
+    void refactor(size_t new_capacity);
     size_t capacity() const;
     size_t size() const;
 
@@ -84,6 +86,16 @@ namespace alekseev {
   {
     swap(rhs);
     return *this;
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  HashTable< Key, Value, Hash, Equal >::HashTable(Hash count_hash, Equal is_equal, size_t capacity):
+    capacity_(capacity),
+    size_(0),
+    is_equal_(is_equal),
+    count_hash_(count_hash),
+    slots_(new List< Pair > *[capacity]{nullptr})
+  {
   }
 
   template< class Key, class Value, class Hash, class Equal >
