@@ -5,8 +5,9 @@
 #include <cstddef>
 
 namespace alekseev {
-  template< class T, class Hash, class Equal >
+  template< class Key, class Value, class Hash, class Equal >
   struct HashTable {
+    using Pair = std::pair< Key, Value >;
     ~HashTable();
     HashTable(const HashTable & rhs);
     HashTable & operator=(const HashTable & rhs);
@@ -17,13 +18,13 @@ namespace alekseev {
 
     private:
       size_t capacity;
-      List< T > ** slots;
+      List< Pair > ** slots;
       Hash count_hash;
       Equal is_equal;
   };
 
-  template< class T, class Hash, class Equal >
-  HashTable< T, Hash, Equal >::~HashTable()
+  template< class Key, class Value, class Hash, class Equal >
+  HashTable< Key, Value, Hash, Equal >::~HashTable()
   {
     for (size_t i = 0; i < capacity; ++i) {
       if (slots[i]) {
@@ -34,13 +35,13 @@ namespace alekseev {
     delete[] slots;
   }
 
-  template< class T, class Hash, class Equal >
-  HashTable< T, Hash, Equal >::HashTable(const HashTable & rhs):
+  template< class Key, class Value, class Hash, class Equal >
+  HashTable< Key, Value, Hash, Equal >::HashTable(const HashTable & rhs):
     capacity(rhs.capacity),
     is_equal(rhs.is_equal),
     count_hash(rhs.count_hash)
   {
-    slots = new List< T > *[capacity]{nullptr};
+    slots = new List< Pair > *[capacity]{nullptr};
     for (size_t i = 0; i < rhs.capacity; ++i) {
       if (rhs.slots[i]) {
         slots[i] = deep_copy(rhs.slots[i]);
@@ -48,16 +49,17 @@ namespace alekseev {
     }
   }
 
-  template< class T, class Hash, class Equal >
-  HashTable< T, Hash, Equal > & HashTable< T, Hash, Equal >::operator=(const HashTable & rhs)
+  template< class Key, class Value, class Hash, class Equal >
+  HashTable< Key, Value, Hash, Equal > & HashTable< Key, Value, Hash, Equal >::operator=(
+      const HashTable & rhs)
   {
-    HashTable< T, Hash, Equal > temp(rhs);
+    HashTable< Key, Value, Hash, Equal > temp(rhs);
     swap(temp);
     return *this;
   }
 
-  template< class T, class Hash, class Equal >
-  HashTable< T, Hash, Equal >::HashTable(HashTable && rhs) noexcept:
+  template< class Key, class Value, class Hash, class Equal >
+  HashTable< Key, Value, Hash, Equal >::HashTable(HashTable && rhs) noexcept:
     capacity(rhs.capacity),
     is_equal(rhs.is_equal),
     count_hash(rhs.count_hash),
@@ -66,15 +68,16 @@ namespace alekseev {
     rhs.slots = nullptr;
   }
 
-  template< class T, class Hash, class Equal >
-  HashTable<T, Hash, Equal> & HashTable<T, Hash, Equal>::operator=(HashTable && rhs) noexcept
+  template< class Key, class Value, class Hash, class Equal >
+  HashTable< Key, Value, Hash, Equal > & HashTable< Key, Value, Hash, Equal >::operator=(
+      HashTable && rhs) noexcept
   {
     swap(rhs);
     return *this;
   }
 
-  template< class T, class Hash, class Equal >
-  void HashTable< T, Hash, Equal >::swap(HashTable & rhs) noexcept
+  template< class Key, class Value, class Hash, class Equal >
+  void HashTable< Key, Value, Hash, Equal >::swap(HashTable & rhs) noexcept
   {
     std::swap(capacity, rhs.capacity);
     std::swap(is_equal, rhs.is_equal);
