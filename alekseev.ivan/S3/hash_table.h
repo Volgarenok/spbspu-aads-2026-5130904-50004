@@ -7,7 +7,6 @@
 namespace alekseev {
   template< class T, class Hash, class Equal >
   struct HashTable {
-    HashTable();
     ~HashTable();
     HashTable(const HashTable & rhs);
     HashTable & operator=(const HashTable & rhs);
@@ -20,5 +19,17 @@ namespace alekseev {
       Hash count_hash;
       Equal is_equal;
   };
+
+  template< class T, class Hash, class Equal >
+  HashTable<T, Hash, Equal>::~HashTable()
+  {
+    for (size_t i = 0; i < capacity; ++i) {
+      if (slots[i]) {
+        clear(slots[i], slots[i]);
+        rmfake(slots[i]);
+      }
+    }
+    delete[] slots;
+  }
 }
 #endif
