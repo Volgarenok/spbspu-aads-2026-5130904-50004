@@ -19,11 +19,11 @@ namespace alekseev {
     void add(const Key & key, const Value & value);
     void remove(const Key & key);
     bool contains(const Key & key) const;
-    unsigned short load_factor() const;
+    double load_factor() const;
     void refactor();
 
     private:
-      size_t capacity;
+      size_t capacity_, size;
       List< Pair > ** slots;
       Hash count_hash;
       Equal is_equal;
@@ -123,6 +123,7 @@ namespace alekseev {
       tail = slots[index];
     }
     insert_after(tail, std::pair< Key, Value >(key, value));
+    ++size;
   }
 
   template< class Key, class Value, class Hash, class Equal >
@@ -164,6 +165,13 @@ namespace alekseev {
       }
     }
     return false;
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  double HashTable< Key, Value, Hash, Equal >::load_factor() const
+  {
+    double s = size;
+    return s / capacity;
   }
 }
 #endif
