@@ -14,7 +14,7 @@ namespace khairullin {
         std::pair<bool, size_t> hasVertex(const std::string & vert);
 
         void addEdge(const std::string & vert1, const std::string & vert2, size_t weight);
-        void cutEdge(const std::string & vert1, const std::string & vert2);
+        void cutEdge(const std::string & vert1, const std::string & vert2, size_t weight);
         void addVertex(const std::string & vert);
     };
 }
@@ -44,9 +44,10 @@ void khairullin::Graph::addEdge(const std::string & vert1, const std::string & v
     std::string key = vert1 + vert2;
     std::pair<bool, size_t> infoVert1 = hasVertex(vert1);
     std::pair<bool, size_t> infoVert2 = hasVertex(vert2);
-    if (infoVert1.first && infoVert2.first) {
-        edges.add(key, weight);
+    if (!infoVert1.first || !infoVert2.first) {
+        throw std::logic_error("<INVALID COMMAND>");
     }
+    edges.add(key, weight);
     size_t index1 = infoVert1.second;
     size_t index2 = infoVert2.second;
     if (connection[index1] == nullptr) {
@@ -55,26 +56,22 @@ void khairullin::Graph::addEdge(const std::string & vert1, const std::string & v
     else {
         auto tail = connection[index1];
         while (tail->next) {
-            if (tail->value == index2) {
-                return;
-            }
             tail = tail->next;
         }
         tail->insert(index2, tail);
     }
 }
 
-void khairullin::Graph::cutEdge(const std::string & vert1, const std::string & vert2) {
+void khairullin::Graph::cutEdge(const std::string & vert1, const std::string & vert2, size_t weight) {
     std::string key = vert1 + vert2;
     std::pair<bool, size_t> infoVert1 = hasVertex(vert1);
     std::pair<bool, size_t> infoVert2 = hasVertex(vert2);
     if (!infoVert1.first || !infoVert2.first) {
-        throw std::logic_error("This vertex does not exist");
+        throw std::logic_error("<INVALID COMMAND>");
     }
-
     List< size_t > * tail = connection[infoVert1.second];
     if (tail == nullptr) {
-        throw std::logic_error("This edge does not exist");
+        throw std::logic_error("<INVALID COMMAND>");
     }
     else if (tail->next == nullptr) {
         connection[infoVert1.second] = tail->cut(tail);
@@ -98,7 +95,7 @@ void khairullin::Graph::cutEdge(const std::string & vert1, const std::string & v
     size_t index = edges.findIndex(key);
     auto slot = edges.table[index];
     List< std::pair< size_t, std::string> > * prev = slot;
-    while (slot && slot->value.second != key) {
+    while (slot && (slot->value.second != key && slot->value.first != weight)) {
         prev = slot;
         slot = slot->next;
     }
@@ -106,15 +103,15 @@ void khairullin::Graph::cutEdge(const std::string & vert1, const std::string & v
         prev->next = slot->cut(slot);
     }
     else {
-        throw std::logic_error("This edge does not exist");
+        throw std::logic_error("<INVALID COMMAND>");
     }
-    std::cout << "Completed\n";
+    //std::cout << "Completed\n";
 }
 
 void khairullin::Graph::addVertex(const std::string & vert) {
     auto index = hasVertex(vert);
     if (index.first) {
-        throw std::logic_error("This vertex already exists");
+        throw std::logic_error("<INVALID COMMAND>");
     }
     try {
         vertexes.pushBack(vert);
