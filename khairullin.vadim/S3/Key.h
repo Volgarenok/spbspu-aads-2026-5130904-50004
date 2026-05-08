@@ -29,3 +29,18 @@ std::string khairullin::Key::getKey() {
     return key;
 }
 #endif
+
+
+while (tail && tail->next && tail->next->value != infoVert2.second) {
+    tail = tail->next;
+}
+if (tail && tail->next) {
+    tail->next = tail->cut(tail->next);
+    connection[infoVert1.second] = head;
+}
+else if (tail == head) {
+    connection[infoVert1.second] = tail->cut(tail);
+}
+else {
+    throw std::logic_error("This edge does not exist");
+}
