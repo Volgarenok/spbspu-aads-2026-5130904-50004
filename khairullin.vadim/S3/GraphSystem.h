@@ -65,23 +65,107 @@ void khairullin::GraphSystem::outbound(std::string & line) {
     if (!index.first) {
         throw std::logic_error("<INVALID COMMAND>");
     }
-    Graph graph = vectorOfGraphs[index.second];
-    auto infoVert = graph.hasVertex(vertex);
-    if (!infoVert.first) {
+    Graph graph;
+    try {
+        graph = vectorOfGraphs[index.second];
+    }
+    catch (std::bad_alloc & e) {
+        throw;
+    }
+    Vector< std::pair< std::string, Vector< size_t > > > vertices;
+    auto infoVertex = graph.hasVertex(vertex);
+    if (!infoVertex.first) {
         throw std::logic_error("<INVALID COMMAND>");
     }
-    List< size_t > * head = graph.connection[infoVert.second];
-    Vector< std::pair< std::string, size_t > > vertices;
+    List< size_t > * head = graph.connection[infoVertex.second];
     while (head) {
+        Vector< size_t > Weights;
         std::string temp = graph.vertexes[head->value];
-        size_t weight = graph.edges.drop(vertex + temp);
-        vertices.push_back(std::make_pair(temp, weight));
-        head = head->next;
+        size_t indexEdge = graph.edges.findIndex(vertex + temp);
+        auto slot = graph.edges.table[indexEdge];
+        while (slot) {
+            if (slot->value.second == vertex + temp) {
+                try {
+                    Weights.pushBack(slot->value.first);
+                }
+                catch (std::bad_alloc & e) {
+                    throw;
+                }
+            }
+            slot = slot->next;
+        }
+        vertices.pushBack(std::make_pair(temp, Weights));
     }
-    sortPair(vertices);
+
     for (size_t i = 0; i < vertices.getSize(); i++) {
-        std::cout << vertices[i].first << " " << vertices[i].second << "\n";
+        std::cout << vertices[i].first << " ";
+        sortVector(vertices[i].second);
+        for (size_t j = 0; j < vertices[i].second.getSize(); j++) {
+            std::cout << vertices[i].second[j] << " ";
+        }
+        std::cout << "\n";
     }
+}
+
+void khairullin::GraphSystem::inbound(std::string & line) {
+    std::string nameGraph = getToken(line);
+    std::string vertex = getToken(line);
+    auto index = graphExists(nameGraph);
+    if (!index.first) {
+        throw std::logic_error("<INVALID COMMAND>");
+    }
+    Graph graph;
+    try {
+        graph = vectorOfGraphs[index.second];
+    }
+    catch (std::bad_alloc & e) {
+        throw;
+    }
+    Vector< std::pair< std::string, Vector< size_t > > > vertices;
+    auto infoVertex = graph.hasVertex(vertex);
+    if (!infoVertex.first) {
+        throw std::logic_error("<INVALID COMMAND>");
+    }
+    for (size_t i = 0; i < graph.vertexes.getSize(); i++) {
+        List< size_t > * head = graph.connection[infoVertex.second];
+        while (head) {
+            std::string temp = graph.vertexes[head->value];
+            Vector< size_t > Weights;
+            if (temp == vertex) {
+                size_t indexEdge = graph.edges.findIndex(graph.vertexes[i] + vertex);
+                auto slot = graph.edges.table[indexEdge];
+                while (slot) {
+                    if (slot->value.second == graph.vertexes[i] + vertex) {
+                        try {
+                            Weights.pushBack(slot->value.first);
+                        }
+                        catch (std::bad_alloc & e) {
+                            throw;
+                        }
+                    }
+                    slot = slot->next;
+                }
+                try {
+                    vertices.pushBack(std::make_pair(temp, Weights));
+                }
+                catch (std::bad_alloc & e) {
+                    throw;
+                }
+            }
+            head = head->next;
+        }
+    }
+    for (size_t i = 0; i < vertices.getSize(); i++) {
+        std::cout << vertices[i].first << " ";
+        sortVector(vertices[i].second);
+        for (size_t j = 0; j < vertices[i].second.getSize(); j++) {
+            std::cout << vertices[i].second[j] << " ";
+        }
+        std::cout << "\n";
+    }
+}
+
+
 }
 
 #endif

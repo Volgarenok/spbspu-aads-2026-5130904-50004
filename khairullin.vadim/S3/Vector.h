@@ -51,6 +51,7 @@ namespace khairullin
 
     T max();
     T min();
+    std::pair<bool, size_t> has(const T & value);
 
     Iterator< T > begin();
     Iterator< T > end();
@@ -485,6 +486,16 @@ T khairullin::Vector<T>::min() {
     }
   }
   return minimum;
+}
+
+template<class T>
+std::pair< bool, size_t > khairullin::Vector<T>::has(const T &value) {
+  for (size_t i = 0; i < size_ - 1; i++) {
+    if (data[i] == value) {
+      return std::make_pair(true, i);
+    }
+  }
+  return std::make_pair( false, 0);
 }
 
 template<class T>

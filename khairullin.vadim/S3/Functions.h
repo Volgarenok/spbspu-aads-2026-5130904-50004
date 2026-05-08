@@ -7,12 +7,12 @@ namespace khairullin {
         std::string token = "";
         std::string result = "";
         size_t new_start = 0;
-        for (size_t i = 0; i < line.length() && (line[i] != ' ' || line[i] != '\0'); i++) {
+        for (size_t i = 0; i < line.length() && line[i] != ' '; i++) {
             token += line[i];
             new_start = i;
         }
-        new_start++;
-        for (size_t i = 0; i < new_start && line[i] != '\0'; i++) {
+        new_start += 2;
+        for (size_t i = new_start; i < line.length() && line[i] != '\0'; i++) {
             result += line[i];
         }
         line = result;
@@ -23,11 +23,32 @@ namespace khairullin {
     void sortPair(khairullin::Vector< std::pair< T, U > > & vector) {
         for (size_t i = 0; i < vector.getSize() - 1; i++) {
             for (size_t j = 0; j < vector.getSize() - i - 1; j++) {
-                if (vector[j].second > vector[j + 1].second) {
+                if (vector[j].first > vector[j + 1].first) {
                     std::swap(vector[j], vector[j + 1]);
                 }
             }
         }
+    }
+
+    template<class T>
+    void sortVector(khairullin::Vector<T> & vector) {
+        for (size_t i = 0; i < vector.getSize() - 1; i++) {
+            for (size_t j = 0; j < vector.getSize() - i - 1; j++) {
+                if (vector[j]> vector[j + 1]) {
+                    std::swap(vector[j], vector[j + 1]);
+                }
+            }
+        }
+    }
+
+    template< class T, class U >
+    std::pair< bool, size_t > hasInPair(const Vector< std::pair<T, U> > & vector, const T & value) {
+        for (size_t i = 0; i < vector.getSize() - 1; i++) {
+            if (vector[i].first == value) {
+                return std::make_pair(true, i);
+            }
+        }
+        return std::make_pair(false, 0);
     }
 }
 #endif

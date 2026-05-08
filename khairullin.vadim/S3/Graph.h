@@ -44,7 +44,7 @@ void khairullin::Graph::addEdge(const std::string & vert1, const std::string & v
     std::string key = vert1 + vert2;
     std::pair<bool, size_t> infoVert1 = hasVertex(vert1);
     std::pair<bool, size_t> infoVert2 = hasVertex(vert2);
-    if (infoVert1.first == infoVert2.first) {
+    if (infoVert1.first && infoVert2.first) {
         edges.add(key, weight);
     }
     size_t index1 = infoVert1.second;
@@ -55,6 +55,9 @@ void khairullin::Graph::addEdge(const std::string & vert1, const std::string & v
     else {
         auto tail = connection[index1];
         while (tail->next) {
+            if (tail->value == index2) {
+                return;
+            }
             tail = tail->next;
         }
         tail->insert(index2, tail);
@@ -109,8 +112,16 @@ void khairullin::Graph::cutEdge(const std::string & vert1, const std::string & v
 }
 
 void khairullin::Graph::addVertex(const std::string & vert) {
-    vertexes.pushBack(vert);
-    connection.pushBack(nullptr);
+    auto index = hasVertex(vert);
+    if (index.first) {
+        throw std::logic_error("This vertex already exists");
+    }
+    try {
+        vertexes.pushBack(vert);
+        connection.pushBack(nullptr);
+    } catch (std::bad_alloc & e) {
+        throw std::bad_alloc();
+    }
 }
 
 
