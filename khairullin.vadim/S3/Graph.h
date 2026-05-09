@@ -6,12 +6,19 @@ namespace khairullin {
         std::string name;
         Vector< std::string > vertexes;
         Vector< List<size_t> * > connection;
-        HashTable< size_t, std::string, Hash< std::string> , Equal< size_t > > edges;
+        HashTable< size_t, std::string, Hash< std::string> , Equal< std::pair<size_t, std::string> > > edges;
 
         Graph(const std::string & name);
         Graph();
+        ~Graph();
+        Graph(const Graph & other);
+        Graph & operator=(const Graph & other);
+        Graph(Graph && other);
+        Graph & operator=(Graph && other);
+        bool operator==(const Graph & other) const noexcept;
 
         std::pair<bool, size_t> hasVertex(const std::string & vert);
+        void swap(Graph & graph);
 
         void addEdge(const std::string & vert1, const std::string & vert2, size_t weight);
         void cutEdge(const std::string & vert1, const std::string & vert2, size_t weight);
@@ -22,14 +29,93 @@ namespace khairullin {
 khairullin::Graph::Graph():
 name(""),
 vertexes(Vector< std::string >()),
-edges(HashTable< size_t, std::string, Hash< std::string> , Equal< size_t > >())
+connection(Vector< List<size_t> * >()),
+edges(HashTable< size_t, std::string, Hash< std::string> , Equal< std::pair<size_t, std::string> > >())
 {}
+
+khairullin::Graph::Graph(const Graph &other):
+Graph(other.name)
+{
+    vertexes = other.vertexes;
+    edges = other.edges;
+    for (size_t i = 0; i < other.connection.getSize(); i++) {
+        try {
+            connection.pushBack(nullptr);
+        }
+        catch (...) {
+            throw std::bad_alloc();
+        }
+        List< size_t > * head = nullptr;
+        try {
+            head = other.connection[i]->copy(other.connection[i]);
+        }
+        catch (...) {
+            throw std::bad_alloc();
+        }
+        std::swap(connection[i], head);
+    }
+}
+
+khairullin::Graph & khairullin::Graph::operator=(const Graph & other) {
+    if (*this == other) {
+        return *this;
+    }
+    Graph temp(other);
+    swap(temp);
+}
+
+khairullin::Graph::Graph(Graph &&other):
+Graph(other.name)
+{
+    vertexes.swap(other.vertexes);
+    edges.swap(other.edges);
+    connection.swap(other.connection);
+}
+
+khairullin::Graph & khairullin::Graph::operator=(Graph && other) {
+    if (*this == other) {
+        return *this;
+    }
+    auto temp(std::move(other));
+    swap(temp);
+}
+
+khairullin::Graph::~Graph() {
+    for (size_t i = 0; i < connection.getSize(); i++) {
+        if (connection[i]) {
+            connection[i]->clear(connection[i]);
+        }
+    }
+}
 
 khairullin::Graph::Graph(const std::string & name):
 name(name),
 vertexes(Vector< std::string >()),
-edges(HashTable< size_t, std::string, Hash< std::string>, Equal< size_t > >())
+connection(Vector< List<size_t> * >()),
+edges(HashTable< size_t, std::string, Hash< std::string>, Equal< std::pair<size_t, std::string> > >())
 {}
+
+bool khairullin::Graph::operator==(const Graph &other) const noexcept {
+    if (name != other.name || vertexes != other.vertexes || edges != other.edges) {
+        return false;
+    }
+    if (connection.getSize() != other.connection.getSize()) {
+        return false;
+    }
+    for (size_t i = 0; i < connection.getSize(); i++) {
+        auto Slot = connection[i];
+        auto otherSlot = other.connection[i];
+        while (Slot && otherSlot) {
+            if (Slot->value != otherSlot->value) {
+                return false;
+            }
+            if (Slot != otherSlot) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 std::pair<bool, size_t> khairullin::Graph::hasVertex(const std::string & vert) {
     for (size_t i = 0; i < vertexes.getSize(); i++) {
@@ -38,6 +124,13 @@ std::pair<bool, size_t> khairullin::Graph::hasVertex(const std::string & vert) {
         }
     }
     return std::make_pair(false, 0);
+}
+
+void khairullin::Graph::swap(Graph & graph) {
+    vertexes.swap(graph.vertexes);
+    edges.swap(graph.edges);
+    connection.swap(graph.connection);
+    std::swap(name, graph.name);
 }
 
 void khairullin::Graph::addEdge(const std::string & vert1, const std::string & vert2, size_t weight) {
@@ -92,7 +185,9 @@ void khairullin::Graph::cutEdge(const std::string & vert1, const std::string & v
         }
     }
 
-    size_t index = edges.findIndex(key);
+    edges.cut(key, weight);
+
+    /*size_t index = edges.findIndex(key);
     auto slot = edges.table[index];
     List< std::pair< size_t, std::string> > * prev = slot;
     while (slot && (slot->value.second != key && slot->value.first != weight)) {
@@ -102,10 +197,13 @@ void khairullin::Graph::cutEdge(const std::string & vert1, const std::string & v
     if (slot && prev) {
         prev->next = slot->cut(slot);
     }
+    else if (!prev && slot) {
+        edges.table[index] = slot->cut(slot);
+    }
     else {
         throw std::logic_error("<INVALID COMMAND>");
-    }
-    //std::cout << "Completed\n";
+    } */
+    std::cout << "Completed\n";
 }
 
 void khairullin::Graph::addVertex(const std::string & vert) {

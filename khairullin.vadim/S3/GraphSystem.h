@@ -3,7 +3,6 @@
 #include <iostream>
 #include <ostream>
 #include "Functions.h"
-
 #include "Graph.h"
 namespace khairullin {
     struct GraphSystem {
@@ -258,5 +257,7 @@ void khairullin::GraphSystem::create(std::string & line) {
         throw;
     }
 }
+
+
 
 #endif

@@ -4,6 +4,7 @@
 #include "Vector.h"
 #include "Equal.h"
 #include "Hash.h"
+#include "Key.h"
 
 namespace khairullin {
     template< class T, class Key, class Hash, class Equal >
@@ -15,13 +16,19 @@ namespace khairullin {
         void add(const Key & key, const T & value);
         size_t findIndex(const Key & key);
         T drop(const Key & key);
-        bool has(const Key & key);
+        void cut(const Key & key, const T & value);
+        bool has(const Key & key, const T & value);
         void rehash(size_t new_size);
 
         HashTable();
         HashTable(size_t size);
-        ~HashTable() = default;
-
+        ~HashTable();
+        HashTable(const HashTable & other);
+        HashTable & operator=(const HashTable & other);
+        HashTable(HashTable && other) noexcept;
+        HashTable & operator=(HashTable && other);
+        void swap(HashTable & other);
+        bool operator==(const HashTable & other) const noexcept;
     private:
         size_t size = 20;
         size_t count = 0;
@@ -41,6 +48,101 @@ table(Vector< List< std::pair<T, Key> > * >(size, nullptr)),
 equal(Equal()),
 hasher(Hash())
 {}
+
+template<class T, class Key, class Hash, class Equal>
+khairullin::HashTable<T, Key, Hash, Equal>::HashTable(const HashTable &other):
+HashTable(other.size)
+{
+    for (size_t i = 0; i < size; i++) {
+        List< std::pair<T, Key> > * slot = other.table[i];
+        List< std::pair<T, Key> > * head = nullptr;
+        if (slot) {
+            try {
+                head = new List< std::pair<T, Key> >(slot->value, nullptr);
+                slot = slot->next;
+            }
+            catch (...) {
+                throw std::bad_alloc();
+            }
+        }
+        auto tail = head;
+        while (slot) {
+            try {
+                tail = tail->insert(slot->value, tail);
+                slot = slot->next;
+            }
+            catch (...) {
+                throw std::bad_alloc();
+            }
+        }
+        std::swap(head, table[i]);
+    }
+    count = other.count;
+}
+
+template<class T, class Key, class Hash, class Equal>
+khairullin::HashTable<T, Key, Hash, Equal> & khairullin::HashTable<T, Key, Hash, Equal>::operator=(const HashTable & other) {
+    if (*this == other) {
+        return *this;
+    }
+    auto temp(other);
+    swap(temp);
+}
+
+template<class T, class Key, class Hash, class Equal>
+khairullin::HashTable<T, Key, Hash, Equal>::HashTable(HashTable &&other) noexcept:
+HashTable(other.size)
+{
+    table.swap(other.table);
+    std::swap(count, other.count);
+}
+
+template<class T, class Key, class Hash, class Equal>
+khairullin::HashTable<T, Key, Hash, Equal> & khairullin::HashTable<T, Key, Hash, Equal>::operator=(HashTable && other) {
+    if (*this == other) {
+        return *this;
+    }
+    auto temp(std::move(other));
+    swap(temp);
+}
+
+template<class T, class Key, class Hash, class Equal>
+void khairullin::HashTable<T, Key, Hash, Equal>::swap(HashTable &other) {
+    std::swap(table, other.table);
+    std::swap(size, other.size);
+    std::swap(count, other.count);
+}
+
+template<class T, class Key, class Hash, class Equal>
+bool khairullin::HashTable<T, Key, Hash, Equal>::operator==(const HashTable &other) const noexcept{
+    if (count != other.count || size != other.size) {
+        return false;
+    }
+    for (size_t i = 0; i < size; i++) {
+        List< std::pair<T, Key> > * otherSlot = other.table[i];
+        List< std::pair<T, Key> > * Slot = table[i];
+        while (Slot != nullptr && otherSlot != nullptr) {
+            if (Slot->value != otherSlot->value) {
+                return false;
+            }
+            Slot = Slot->next;
+            otherSlot = otherSlot->next;
+        }
+        if (Slot || otherSlot) {
+            return false;
+        }
+    }
+    return true;
+}
+
+template<class T, class Key, class Hash, class Equal>
+khairullin::HashTable< T, Key, Hash, Equal >::~HashTable() {
+    for (size_t i = 0; i < size; i++) {
+        if (table[i] != nullptr) {
+            table[i]->clear(table[i]);
+        }
+    }
+}
 
 template< class T, class Key, class Hash, class Equal >
 void khairullin::HashTable< T, Key, Hash, Equal >::add(const Key & key, const T & value) {
@@ -62,22 +164,42 @@ template< class T, class Key, class Hash, class Equal >
 T khairullin::HashTable< T, Key, Hash, Equal >::drop(const Key & key) {
     size_t index = hasher(key) % size;
     auto slot = table[index];
-    if (!has(key)) {
-        throw std::logic_error("This element doesn't exist");
+    while (slot && slot->value.second != key) {
+        slot = slot->next;
     }
-    else {
-        while (slot && slot->value.second != key) {
-            slot = slot->next;
-        }
+    if (slot == nullptr) {
+        throw std::logic_error("<INVALID COMMAND>");
     }
     return slot->value.first;
 }
 
 template< class T, class Key, class Hash, class Equal >
-bool khairullin::HashTable< T, Key, Hash, Equal >::has(const Key & key) {
+void khairullin::HashTable< T, Key, Hash, Equal >::cut(const Key & key, const T & value) {
+    size_t index = hasher(key) % size;
+    if (!has(key, value)) {
+        throw std::logic_error("<INVALID COMMAND>");
+    }
+    auto slot = table[index];
+    if (equal(slot->value, std::make_pair(value, key))) {
+        table[index] = slot->cut(slot);
+    }
+    else {
+        List< std::pair<T, Key> > * prev = slot;
+        slot = slot->next;
+        while (slot && !equal(slot->value, std::make_pair(value, key))) {
+            prev = slot;
+            slot = slot->next;
+        }
+        prev->next = slot->cut(slot);
+    }
+    count--;
+}
+
+template< class T, class Key, class Hash, class Equal >
+bool khairullin::HashTable< T, Key, Hash, Equal >::has(const Key & key, const T & value) {
     size_t index = hasher(key) % size;
     auto slot = table[index];
-    while (slot && slot->value.second != key) {
+    while (slot && !equal(slot->value, std::make_pair(value, key))) {
         slot = slot->next;
     }
     return slot;
