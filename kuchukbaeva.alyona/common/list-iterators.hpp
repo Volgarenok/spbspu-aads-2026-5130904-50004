@@ -1,8 +1,11 @@
 #ifndef LIST_ITERATORS_HPP
 #define LIST_ITERATORS_HPP
+#include "node.hpp"
 
-namespace  kuchukbaeva{
-template < class T >
+namespace  kuchukbaeva {
+  template < class T > class List;
+  template < class T > class LCIter;
+  template < class T >
   class LIter {
   public:
     LIter(detail::Node< T >* node = nullptr):

@@ -1,7 +1,7 @@
 #ifndef PROC_HPP
 #define PROC_HPP
 
-#include "list.hpp"
+#include "../common/list.hpp"
 #include <string>
 #include <iosfwd>
 

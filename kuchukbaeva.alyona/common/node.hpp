@@ -1,5 +1,7 @@
 #ifndef NODE_HPP
 #define NODE_HPP
+#include <utility>
+
 namespace kuchukbaeva {
   namespace detail {
     template < class T >
