@@ -165,6 +165,80 @@ ivantsova::HashTable< Key, Value, Hash, Equal >& ivantsova::HashTable< Key, Valu
 }
 
 template< typename Key, typename Value, typename Hash, typename Equal >
+void ivantsova::HashTable< Key, Value, Hash, Equal >::add(const Key& key, const Value& value) {
+  size_t idx = getIndex(key);
+  for (auto it = data_[idx].begin(); it != data_[idx].end(); ++it) {
+    if (equal_((*it).first, key)) {
+      (*it).second = value;
+      return;
+    }
+  }
+  data_[idx].push_back({key, value});
+  ++size_;
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+bool ivantsova::HashTable< Key, Value, Hash, Equal >::has(const Key& key) const noexcept {
+  size_t idx = getIndex(key);
+  for (auto it = data_[idx].cbegin(); it != data_[idx].cend(); ++it) {
+    if (equal_((*it).first, key)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+Value& ivantsova::HashTable< Key, Value, Hash, Equal >::get(const Key& key) {
+  size_t idx = getIndex(key);
+  for (auto it = data_[idx].begin(); it != data_[idx].end(); ++it) {
+    if (equal_((*it).first, key)) {
+      return (*it).second;
+    }
+  }
+  throw std::out_of_range("Key not found");
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+const Value& ivantsova::HashTable< Key, Value, Hash, Equal >::get(const Key& key) const {
+  size_t idx = getIndex(key);
+  for (auto it = data_[idx].cbegin(); it != data_[idx].cend(); ++it) {
+    if (equal_((*it).first, key)) {
+      return (*it).second;
+    }
+  }
+  throw std::out_of_range("Key not found");
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+Value ivantsova::HashTable< Key, Value, Hash, Equal >::drop(const Key& key) {
+  size_t idx = getIndex(key);
+  for (auto it = data_[idx].begin(); it != data_[idx].end(); ++it) {
+    if (equal_((*it).first, key)) {
+      Value val = (*it).second;
+      data_[idx].erase(it);
+      --size_;
+      return val;
+    }
+  }
+  throw std::out_of_range("Key not found");
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+void ivantsova::HashTable< Key, Value, Hash, Equal >::rehash(size_t new_slots) {
+  if (new_slots == 0 || new_slots == data_.getSize()) {
+    return;
+  }
+  HashTable new_table(new_slots);
+  for (size_t i = 0; i < data_.getSize(); ++i) {
+    for (auto it = data_[i].begin(); it != data_[i].end(); ++it) {
+      new_table.add((*it).first, (*it).second);
+    }
+  }
+  swap(new_table);
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
 typename ivantsova::HashTable< Key, Value, Hash, Equal >::HIter ivantsova::HashTable< Key, Value, Hash, Equal >::begin() {
   for (size_t i = 0; i < data_.getSize(); ++i) {
     if (!data_[i].empty()) {
