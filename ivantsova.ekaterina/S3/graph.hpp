@@ -32,11 +32,6 @@ namespace ivantsova {
 
     Vector< std::string > vertices_;
     EdgeTable edges_;
-    HashTable< std::string, bool > vertexSet_;
-
-    void ensureVertex(const std::string& name);
-    void addVertexName(const std::string& name);
-    void sortVertices();
   };
 }
 
