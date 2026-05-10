@@ -252,7 +252,7 @@ typename ivantsova::HashTable< Key, Value, Hash, Equal >::HIter ivantsova::HashT
 
 template< typename Key, typename Value, typename Hash, typename Equal >
 typename ivantsova::HashTable< Key, Value, Hash, Equal >::HIter ivantsova::HashTable< Key, Value, Hash, Equal >::end() {
-  return HIter(this, data_.getSize(), data_[0].end());
+  return HIter(this, data_.getSize(), LIter< std::pair< Key, Value > >());
 }
 
 template< typename Key, typename Value, typename Hash, typename Equal >
@@ -267,7 +267,7 @@ typename ivantsova::HashTable< Key, Value, Hash, Equal >::HCIter ivantsova::Hash
 
 template< typename Key, typename Value, typename Hash, typename Equal >
 typename ivantsova::HashTable< Key, Value, Hash, Equal >::HCIter ivantsova::HashTable< Key, Value, Hash, Equal >::end() const {
-  return HCIter(this, data_.getSize(), data_[0].cend());
+  return HCIter(this, data_.getSize(), LCIter<std::pair<Key, Value>>());
 }
 
 template< typename Key, typename Value, typename Hash, typename Equal >
