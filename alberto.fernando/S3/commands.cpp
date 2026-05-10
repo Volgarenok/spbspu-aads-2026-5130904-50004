@@ -104,3 +104,71 @@ void alberto::cmdInbound(const GraphTable& graphs,
     std::cout << "\n";
   }
 }
+void alberto::cmdBind(GraphTable& graphs,
+                       const std::vector< std::string >& tok)
+{
+  if (tok.size() < 5 || !graphs.has(tok[1])) {
+    std::cout << "<INVALID COMMAND>\n";
+    return;
+  }
+  const unsigned w = static_cast< unsigned >(std::stoul(tok[4]));
+  Graph& g = graphs.get(tok[1]);
+  try {
+    g.addEdge(tok[2], tok[3], w);
+  } catch (std::overflow_error&) {
+    g.edges.rehash(g.edges.bucketCount() * 2);
+    g.vertices.rehash(g.vertices.bucketCount() * 2);
+    g.addEdge(tok[2], tok[3], w);
+  }
+}
+
+void alberto::cmdCut(GraphTable& graphs,
+                      const std::vector< std::string >& tok)
+{
+  if (tok.size() < 5 || !graphs.has(tok[1])) {
+    std::cout << "<INVALID COMMAND>\n";
+    return;
+  }
+  Graph& g = graphs.get(tok[1]);
+  if (!g.hasVertex(tok[2]) || !g.hasVertex(tok[3])) {
+    std::cout << "<INVALID COMMAND>\n";
+    return;
+  }
+
+  const EdgeKey  k{tok[2], tok[3]};
+  const unsigned w = static_cast< unsigned >(std::stoul(tok[4]));
+
+  if (!g.edges.has(k)) {
+    std::cout << "<INVALID COMMAND>\n";
+    return;
+  }
+  WeightList& wl      = g.edges.get(k);
+  const bool  removed = wl.remove_if([w](unsigned x) {
+    return x == w;
+  });
+  if (!removed) {
+    std::cout << "<INVALID COMMAND>\n";
+    return;
+  }
+  if (wl.empty()) {
+    g.edges.drop(k);
+  }
+}
+
+void alberto::cmdCreate(GraphTable& graphs,
+                         const std::vector< std::string >& tok)
+{
+  if (tok.size() < 2 || graphs.has(tok[1])) {
+    std::cout << "<INVALID COMMAND>\n";
+    return;
+  }
+  Graph  ng;
+  size_t cnt = 0;
+  if (tok.size() >= 3) {
+    cnt = static_cast< size_t >(std::stoul(tok[2]));
+    for (size_t i = 0; i < cnt && (3 + i) < tok.size(); ++i) {
+      ng.ensureVertex(tok[3 + i]);
+    }
+  }
+  safeAddGraph(graphs, tok[1], std::move(ng));
+}
