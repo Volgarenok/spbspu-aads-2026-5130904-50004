@@ -78,5 +78,5 @@ BOOST_AUTO_TEST_SUITE (main_test)
   std::string gr3 = "gr3";
   system.vertexes(gr3);
   BOOST_TEST(stream.str() == "a\nb\nc\nd\ne\n");
-  stream.clear();
+  std::cout.rdbuf(buffer);
 }
