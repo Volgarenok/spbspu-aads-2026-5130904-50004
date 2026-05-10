@@ -88,6 +88,13 @@ ivantsova::Graph::getOutbound(const std::string& vertex) const {
       }
     }
   }
+  for (size_t i = 0; i < result.getSize() - 1; ++i) {
+    for (size_t j = 0; j < result.getSize() - i - 1; ++j) {
+      if (result[j].first > result[j + 1].first) {
+        std::swap(result[j], result[j + 1]);
+      }
+    }
+  }
   return result;
 }
 
@@ -110,6 +117,13 @@ ivantsova::Graph::getInbound(const std::string& vertex) const {
       }
       if (!found) {
         result.pushBack({key.first, weights});
+      }
+    }
+  }
+  for (size_t i = 0; i < result.getSize() - 1; ++i) {
+    for (size_t j = 0; j < result.getSize() - i - 1; ++j) {
+      if (result[j].first > result[j + 1].first) {
+        std::swap(result[j], result[j + 1]);
       }
     }
   }

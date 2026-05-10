@@ -30,8 +30,7 @@ void ivantsova::cmdVertexes(std::istream& in, std::ostream& out, ivantsova::Grap
   std::string name;
   in >> name;
   if (!graphs.has(name)) {
-    printInvalid(out);
-    return;
+    throw std::runtime_error("Graph not found");
   }
   ivantsova::Vector< std::string > verts = graphs.get(name).getVertices();
   for (size_t i = 0; i < verts.getSize() - 1; ++i) {
@@ -49,9 +48,11 @@ void ivantsova::cmdVertexes(std::istream& in, std::ostream& out, ivantsova::Grap
 void ivantsova::cmdOutbound(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
   std::string gname, v;
   in >> gname >> v;
-  if (!graphs.has(gname) || !graphs.get(gname).hasVertex(v)) {
-    printInvalid(out);
-    return;
+  if (!graphs.has(gname)) {
+    throw std::runtime_error("Graph not found");
+  }
+  if (!graphs.get(gname).hasVertex(v)) {
+    throw std::runtime_error("Vertex not found");
   }
   auto res = graphs.get(gname).getOutbound(v);
   for (size_t i = 0; i < res.getSize(); ++i) {
@@ -66,9 +67,11 @@ void ivantsova::cmdOutbound(std::istream& in, std::ostream& out, ivantsova::Grap
 void ivantsova::cmdInbound(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
   std::string gname, v;
   in >> gname >> v;
-  if (!graphs.has(gname) || !graphs.get(gname).hasVertex(v)) {
-    printInvalid(out);
-    return;
+  if (!graphs.has(gname)) {
+    throw std::runtime_error("Graph not found");
+  }
+  if (!graphs.get(gname).hasVertex(v)) {
+    throw std::runtime_error("Vertex not found");
   }
   auto res = graphs.get(gname).getInbound(v);
   for (size_t i = 0; i < res.getSize(); ++i) {
@@ -80,32 +83,33 @@ void ivantsova::cmdInbound(std::istream& in, std::ostream& out, ivantsova::Graph
   }
 }
 
-void ivantsova::cmdBind(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
+void ivantsova::cmdBind(std::istream& in, std::ostream&, ivantsova::GraphSet& graphs) {
   std::string gname, a, b;
   unsigned long long w;
   in >> gname >> a >> b >> w;
   if (!graphs.has(gname)) {
-    printInvalid(out);
-    return;
+    throw std::runtime_error("Graph not found");
   }
   graphs.get(gname).addEdge(a, b, w);
 }
 
-void ivantsova::cmdCut(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
+void ivantsova::cmdCut(std::istream& in, std::ostream&, ivantsova::GraphSet& graphs) {
   std::string gname, a, b;
   unsigned long long w;
   in >> gname >> a >> b >> w;
-  if (!graphs.has(gname) || !graphs.get(gname).removeEdge(a, b, w)) {
-    printInvalid(out);
+  if (!graphs.has(gname)) {
+    throw std::runtime_error("Graph not found");
+  }
+  if (!graphs.get(gname).removeEdge(a, b, w)) {
+    throw std::runtime_error("Edge not found");
   }
 }
 
-void ivantsova::cmdCreate(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
+void ivantsova::cmdCreate(std::istream& in, std::ostream&, ivantsova::GraphSet& graphs) {
   std::string name;
   in >> name;
   if (graphs.has(name)) {
-    printInvalid(out);
-    return;
+    throw std::runtime_error("Graph already exists");
   }
   size_t k;
   in >> k;
@@ -118,22 +122,29 @@ void ivantsova::cmdCreate(std::istream& in, std::ostream& out, ivantsova::GraphS
   graphs.add(name, g);
 }
 
-void ivantsova::cmdMerge(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
+void ivantsova::cmdMerge(std::istream& in, std::ostream&, ivantsova::GraphSet& graphs) {
   std::string newname, old1, old2;
   in >> newname >> old1 >> old2;
-  if (graphs.has(newname) || !graphs.has(old1) || !graphs.has(old2)) {
-    printInvalid(out);
-    return;
+  if (graphs.has(newname)) {
+    throw std::runtime_error("New graph already exists");
+  }
+  if (!graphs.has(old1)) {
+    throw std::runtime_error("First source graph not found");
+  }
+  if (!graphs.has(old2)) {
+    throw std::runtime_error("Second source graph not found");
   }
   graphs.add(newname, graphs.get(old1).merge(graphs.get(old2)));
 }
 
-void ivantsova::cmdExtract(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
+void ivantsova::cmdExtract(std::istream& in, std::ostream&, ivantsova::GraphSet& graphs) {
   std::string newname, oldname;
   in >> newname >> oldname;
-  if (graphs.has(newname) || !graphs.has(oldname)) {
-    printInvalid(out);
-    return;
+  if (graphs.has(newname)) {
+    throw std::runtime_error("New graph already exists");
+  }
+  if (!graphs.has(oldname)) {
+    throw std::runtime_error("Graph not found");
   }
   size_t k;
   in >> k;
@@ -146,8 +157,7 @@ void ivantsova::cmdExtract(std::istream& in, std::ostream& out, ivantsova::Graph
   const ivantsova::Graph& old = graphs.get(oldname);
   for (size_t i = 0; i < verts.getSize(); ++i) {
     if (!old.hasVertex(verts[i])) {
-      printInvalid(out);
-      return;
+      throw std::runtime_error("Vertex not found");
     }
   }
   graphs.add(newname, old.extract(verts));
