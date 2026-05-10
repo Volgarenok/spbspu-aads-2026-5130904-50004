@@ -79,3 +79,76 @@ void ivantsova::cmdInbound(std::istream& in, std::ostream& out, ivantsova::Graph
     out << '\n';
   }
 }
+
+void ivantsova::cmdBind(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
+  std::string gname, a, b;
+  unsigned long long w;
+  in >> gname >> a >> b >> w;
+  if (!graphs.has(gname)) {
+    printInvalid(out);
+    return;
+  }
+  graphs.get(gname).addEdge(a, b, w);
+}
+
+void ivantsova::cmdCut(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
+  std::string gname, a, b;
+  unsigned long long w;
+  in >> gname >> a >> b >> w;
+  if (!graphs.has(gname) || !graphs.get(gname).removeEdge(a, b, w)) {
+    printInvalid(out);
+  }
+}
+
+void ivantsova::cmdCreate(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
+  std::string name;
+  in >> name;
+  if (graphs.has(name)) {
+    printInvalid(out);
+    return;
+  }
+  size_t k;
+  in >> k;
+  ivantsova::Graph g;
+  for (size_t i = 0; i < k; ++i) {
+    std::string v;
+    in >> v;
+    g.addVertex(v);
+  }
+  graphs.add(name, g);
+}
+
+void ivantsova::cmdMerge(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
+  std::string newname, old1, old2;
+  in >> newname >> old1 >> old2;
+  if (graphs.has(newname) || !graphs.has(old1) || !graphs.has(old2)) {
+    printInvalid(out);
+    return;
+  }
+  graphs.add(newname, graphs.get(old1).merge(graphs.get(old2)));
+}
+
+void ivantsova::cmdExtract(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
+  std::string newname, oldname;
+  in >> newname >> oldname;
+  if (graphs.has(newname) || !graphs.has(oldname)) {
+    printInvalid(out);
+    return;
+  }
+  size_t k;
+  in >> k;
+  ivantsova::Vector< std::string > verts;
+  for (size_t i = 0; i < k; ++i) {
+    std::string v;
+    in >> v;
+    verts.pushBack(v);
+  }
+  const ivantsova::Graph& old = graphs.get(oldname);
+  for (size_t i = 0; i < verts.getSize(); ++i) {
+    if (!old.hasVertex(verts[i])) {
+      printInvalid(out);
+      return;
+    }
+  }
+  graphs.add(newname, old.extract(verts));
+}
