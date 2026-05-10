@@ -14,10 +14,12 @@ void ivantsova::cmdGraphs(std::istream&, std::ostream& out, ivantsova::GraphSet&
   for (auto it = graphs.begin(); it != graphs.end(); ++it) {
     names.pushBack((*it).first);
   }
-  for (size_t i = 0; i < names.getSize() - 1; ++i) {
-    for (size_t j = 0; j < names.getSize() - i - 1; ++j) {
-      if (names[j] > names[j + 1]) {
-        std::swap(names[j], names[j + 1]);
+  if (names.getSize() > 1) {
+    for (size_t i = 0; i < names.getSize() - 1; ++i) {
+      for (size_t j = 0; j < names.getSize() - i - 1; ++j) {
+        if (names[j] > names[j + 1]) {
+          std::swap(names[j], names[j + 1]);
+        }
       }
     }
   }
@@ -33,15 +35,20 @@ void ivantsova::cmdVertexes(std::istream& in, std::ostream& out, ivantsova::Grap
     throw std::runtime_error("Graph not found");
   }
   ivantsova::Vector< std::string > verts = graphs.get(name).getVertices();
-  for (size_t i = 0; i < verts.getSize() - 1; ++i) {
-    for (size_t j = 0; j < verts.getSize() - i - 1; ++j) {
-      if (verts[j] > verts[j + 1]) {
-        std::swap(verts[j], verts[j + 1]);
+  if (verts.getSize() > 1) {
+    for (size_t i = 0; i < verts.getSize() - 1; ++i) {
+      for (size_t j = 0; j < verts.getSize() - i - 1; ++j) {
+        if (verts[j] > verts[j + 1]) {
+          std::swap(verts[j], verts[j + 1]);
+        }
       }
     }
   }
   for (size_t i = 0; i < verts.getSize(); ++i) {
     out << verts[i] << '\n';
+  }
+  if (verts.getSize() == 0) {
+  out << '\n';
   }
 }
 
@@ -112,11 +119,15 @@ void ivantsova::cmdCreate(std::istream& in, std::ostream&, ivantsova::GraphSet& 
     throw std::runtime_error("Graph already exists");
   }
   size_t k;
-  in >> k;
+  if (!(in >> k)) {
+    throw std::runtime_error("Invalid command");
+  }
   ivantsova::Graph g;
   for (size_t i = 0; i < k; ++i) {
     std::string v;
-    in >> v;
+    if (!(in >> v)) {
+      throw std::runtime_error("Invalid command");
+    }
     g.addVertex(v);
   }
   graphs.add(name, g);

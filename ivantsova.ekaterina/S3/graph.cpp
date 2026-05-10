@@ -69,6 +69,9 @@ bool ivantsova::Graph::removeEdge(const std::string& from, const std::string& to
 ivantsova::Vector< std::pair< std::string, ivantsova::Vector< unsigned long long > > >
 ivantsova::Graph::getOutbound(const std::string& vertex) const {
   Vector< std::pair< std::string, Vector< unsigned long long > > > result;
+  if (vertices_.getSize() == 0) {
+    return result;
+  }
   for (auto it = edges_.begin(); it != edges_.end(); ++it) {
     const EdgeKey& key = (*it).first;
     if (key.first == vertex) {
@@ -101,6 +104,9 @@ ivantsova::Graph::getOutbound(const std::string& vertex) const {
 ivantsova::Vector< std::pair< std::string, ivantsova::Vector< unsigned long long > > >
 ivantsova::Graph::getInbound(const std::string& vertex) const {
   Vector< std::pair< std::string, Vector< unsigned long long > > > result;
+  if (vertices_.getSize() == 0) {
+    return result;
+  }
   for (auto it = edges_.begin(); it != edges_.end(); ++it) {
     const EdgeKey& key = (*it).first;
     if (key.second == vertex) {
