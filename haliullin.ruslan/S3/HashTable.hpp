@@ -16,7 +16,7 @@ namespace haliullin
     HashTable(size_t capacity = 16);
 
     HashTable(const HashTable& other);
-    HashTable(HashTable&& other);
+    HashTable(HashTable&& other) noexcept;
 
     HashTable& operator=(const HashTable& other);
     HashTable& operator=(HashTable&& other) noexcept;
@@ -46,8 +46,6 @@ namespace haliullin
   };
 }
 
-#endif
-
 template< class Key, class Value, class Hash, class Equal >
 haliullin::HashTable< Key, Value, Hash, Equal >::HashTable(size_t capacity):
   slots_(capacity),
@@ -70,11 +68,41 @@ haliullin::HashTable< Key, Value, Hash, Equal >::HashTable(const HashTable& othe
 {}
 
 template< class Key, class Value, class Hash, class Equal >
+haliullin::HashTable< Key, Value, Hash, Equal >::HashTable(HashTable&& other) noexcept:
+  HashTable()
+{
+  swap(other);
+}
+
+template< class Key, class Value, class Hash, class Equal >
+haliullin::HashTable< Key, Value, Hash, Equal >& haliullin::HashTable< Key, Value, Hash, Equal >::operator=(const HashTable& other)
+{
+  if (this != std::addressof(other))
+  {
+    HashTable tmp(other);
+    swap(tmp);
+  }
+  return *this;
+}
+
+template< class Key, class Value, class Hash, class Equal >
+haliullin::HashTable< Key, Value, Hash, Equal >& haliullin::HashTable< Key, Value, Hash, Equal >::operator=(HashTable&& other) noexcept
+{
+  if (this != std::addressof(other))
+  {
+    HashTable tmp(std::move(other));
+    swap(tmp);
+  }
+  return *this;
+}
+
+template< class Key, class Value, class Hash, class Equal >
 void haliullin::HashTable< Key, Value, Hash, Equal >::swap(HashTable& other) noexcept
 {
-  std::swap(slots_, other.slots_);
+  slots_.swap(other.slots_);
   std::swap(size_, other.size_);
   std::swap(hasher_, other.hasher_);
   std::swap(equal_, other.equal_);
 }
 
+#endif

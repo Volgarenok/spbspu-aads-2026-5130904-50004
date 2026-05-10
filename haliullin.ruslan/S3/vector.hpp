@@ -121,20 +121,22 @@ haliullin::Vector< T >::Vector(Vector< T >&& rhs) noexcept:
 template< class T >
 haliullin::Vector< T >& haliullin::Vector<T>::operator=(const Vector< T >& rhs)
 {
-  if (this == std::addressof(rhs))
+  if (this != std::addressof(rhs))
   {
-    return *this;
+    Vector< T > cpy(rhs);
+    swap(cpy);
   }
-  Vector< T > cpy(rhs);
-  swap(cpy);
   return *this;
 }
 
 template< class T >
 haliullin::Vector< T >& haliullin::Vector< T >::operator=(Vector< T >&& rhs) noexcept
 {
-  Vector< T > cpy(std::move(rhs));
-  swap(cpy);
+  if (this != std::addressof(rhs))
+  {
+    Vector< T > cpy(std::move(rhs));
+    swap(cpy);
+  }
   return *this;
 }
 
