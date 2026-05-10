@@ -80,6 +80,16 @@ size_t ivantsova::HashTable< Key, Value, Hash, Equal >::getIndex(const Key& key)
 }
 
 template< typename Key, typename Value, typename Hash, typename Equal >
+ivantsova::HashTable< Key, Value, Hash, Equal >::HashTable(size_t slots):
+  data_(slots), size_(0)
+{}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+ivantsova::HashTable< Key, Value, Hash, Equal >::~HashTable() {
+  clear();
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
 size_t ivantsova::HashTable< Key, Value, Hash, Equal >::size() const noexcept {
   return size_;
 }
