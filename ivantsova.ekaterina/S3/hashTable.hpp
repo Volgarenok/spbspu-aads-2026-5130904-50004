@@ -99,4 +99,20 @@ bool ivantsova::HashTable< Key, Value, Hash, Equal >::empty() const noexcept {
   return size_ == 0;
 }
 
+template< typename Key, typename Value, typename Hash, typename Equal >
+void ivantsova::HashTable< Key, Value, Hash, Equal >::clear() noexcept {
+  for (size_t i = 0; i < data_.getSize(); ++i) {
+    data_[i].clear();
+  }
+  size_ = 0;
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+void ivantsova::HashTable< Key, Value, Hash, Equal >::swap(HashTable& other) noexcept {
+  data_.swap(other.data_);
+  std::swap(size_, other.size_);
+  std::swap(hasher_, other.hasher_);
+  std::swap(equal_, other.equal_);
+}
+
 #endif
