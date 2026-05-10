@@ -105,4 +105,16 @@ void haliullin::HashTable< Key, Value, Hash, Equal >::swap(HashTable& other) noe
   std::swap(equal_, other.equal_);
 }
 
+template< class Key, class Value, class Hash, class Equal >
+size_t haliullin::HashTable< Key, Value, Hash, Equal >::getSize() const noexcept
+{
+  return size_;
+}
+
+template< class Key, class Value, class Hash, class Equal >
+size_t haliullin::HashTable< Key, Value, Hash, Equal >::getCapacity() const noexcept
+{
+  return slots_.getSize();
+}
+
 #endif
