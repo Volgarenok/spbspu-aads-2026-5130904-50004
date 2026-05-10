@@ -30,6 +30,7 @@ namespace haliullin
     const Value& get(const Key& k) const;
     void rehash(size_t newSize);
 
+    bool isEmpty() const noexcept;
     size_t getSize() const noexcept;
     size_t getCapacity() const noexcept;
 
@@ -103,6 +104,12 @@ void haliullin::HashTable< Key, Value, Hash, Equal >::swap(HashTable& other) noe
   std::swap(size_, other.size_);
   std::swap(hasher_, other.hasher_);
   std::swap(equal_, other.equal_);
+}
+
+template< class Key, class Value, class Hash, class Equal >
+bool haliullin::HashTable< Key, Value, Hash, Equal >::isEmpty() const noexcept
+{
+  return !size_;
 }
 
 template< class Key, class Value, class Hash, class Equal >
