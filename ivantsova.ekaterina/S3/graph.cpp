@@ -91,6 +91,18 @@ ivantsova::Graph::getOutbound(const std::string& vertex) const {
       }
     }
   }
+  for (size_t i = 0; i < result.getSize(); ++i) {
+    Vector< unsigned long long >& w = result[i].second;
+    if (w.getSize() > 1) {
+      for (size_t j = 0; j < w.getSize() - 1; ++j) {
+        for (size_t k = 0; k < w.getSize() - j - 1; ++k) {
+          if (w[k] > w[k + 1]) {
+            std::swap(w[k], w[k + 1]);
+          }
+        }
+      }
+    }
+  }
   if (result.getSize() > 1) {
     for (size_t i = 0; i < result.getSize() - 1; ++i) {
       for (size_t j = 0; j < result.getSize() - i - 1; ++j) {
@@ -125,6 +137,18 @@ ivantsova::Graph::getInbound(const std::string& vertex) const {
       }
       if (!found) {
         result.pushBack({key.first, weights});
+      }
+    }
+  }
+  for (size_t i = 0; i < result.getSize(); ++i) {
+    Vector< unsigned long long >& w = result[i].second;
+    if (w.getSize() > 1) {
+      for (size_t j = 0; j < w.getSize() - 1; ++j) {
+        for (size_t k = 0; k < w.getSize() - j - 1; ++k) {
+          if (w[k] > w[k + 1]) {
+            std::swap(w[k], w[k + 1]);
+          }
+        }
       }
     }
   }

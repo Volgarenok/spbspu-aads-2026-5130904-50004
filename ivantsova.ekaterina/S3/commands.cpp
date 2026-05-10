@@ -26,9 +26,6 @@ void ivantsova::cmdGraphs(std::istream&, std::ostream& out, ivantsova::GraphSet&
   for (size_t i = 0; i < names.getSize(); ++i) {
     out << names[i] << '\n';
   }
-  if (names.getSize() == 0) {
-    out << '\n';
-  }
 }
 
 void ivantsova::cmdVertexes(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
@@ -49,9 +46,6 @@ void ivantsova::cmdVertexes(std::istream& in, std::ostream& out, ivantsova::Grap
   }
   for (size_t i = 0; i < verts.getSize(); ++i) {
     out << verts[i] << '\n';
-  }
-  if (verts.getSize() == 0) {
-  out << '\n';
   }
 }
 
