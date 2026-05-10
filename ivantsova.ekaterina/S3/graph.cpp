@@ -115,3 +115,56 @@ ivantsova::Graph::getInbound(const std::string& vertex) const {
   }
   return result;
 }
+
+ivantsova::Graph ivantsova::Graph::merge(const Graph& other) const {
+  Graph result;
+  for (size_t i = 0; i < vertices_.getSize(); ++i) {
+    result.addVertex(vertices_[i]);
+  }
+  Vector< std::string > otherVerts = other.getVertices();
+  for (size_t i = 0; i < otherVerts.getSize(); ++i) {
+    result.addVertex(otherVerts[i]);
+  }
+  for (auto it = edges_.begin(); it != edges_.end(); ++it) {
+    const EdgeKey& key = (*it).first;
+    const Vector< unsigned long long >& weights = (*it).second;
+    for (size_t w = 0; w < weights.getSize(); ++w) {
+      result.addEdge(key.first, key.second, weights[w]);
+    }
+  }
+  for (auto it = other.edges_.begin(); it != other.edges_.end(); ++it) {
+    const EdgeKey& key = (*it).first;
+    const Vector< unsigned long long >& weights = (*it).second;
+    for (size_t w = 0; w < weights.getSize(); ++w) {
+      result.addEdge(key.first, key.second, weights[w]);
+    }
+  }
+  return result;
+}
+
+ivantsova::Graph ivantsova::Graph::extract(const Vector< std::string >& vertices) const {
+  Graph result;
+  for (size_t i = 0; i < vertices.getSize(); ++i) {
+    if (hasVertex(vertices[i])) {
+      result.addVertex(vertices[i]);
+    }
+  }
+  auto isSelected = [&vertices](const std::string& v) -> bool {
+    for (size_t i = 0; i < vertices.getSize(); ++i) {
+      if (vertices[i] == v) {
+        return true;
+      }
+    }
+    return false;
+  };
+  for (auto it = edges_.begin(); it != edges_.end(); ++it) {
+    const EdgeKey& key = (*it).first;
+    if (isSelected(key.first) && isSelected(key.second)) {
+      const Vector< unsigned long long >& weights = (*it).second;
+      for (size_t w = 0; w < weights.getSize(); ++w) {
+        result.addEdge(key.first, key.second, weights[w]);
+      }
+    }
+  }
+  return result;
+}
