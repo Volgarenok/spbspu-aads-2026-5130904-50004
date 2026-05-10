@@ -26,6 +26,9 @@ void ivantsova::cmdGraphs(std::istream&, std::ostream& out, ivantsova::GraphSet&
   for (size_t i = 0; i < names.getSize(); ++i) {
     out << names[i] << '\n';
   }
+  if (names.getSize() == 0) {
+    out << '\n';
+  }
 }
 
 void ivantsova::cmdVertexes(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
@@ -158,7 +161,9 @@ void ivantsova::cmdExtract(std::istream& in, std::ostream&, ivantsova::GraphSet&
     throw std::runtime_error("Graph not found");
   }
   size_t k;
-  in >> k;
+  if (!(in >> k)) {
+  throw std::runtime_error("Invalid command");
+  }
   ivantsova::Vector< std::string > verts;
   for (size_t i = 0; i < k; ++i) {
     std::string v;
