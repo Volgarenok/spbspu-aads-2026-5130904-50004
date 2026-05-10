@@ -47,3 +47,34 @@ namespace haliullin
 }
 
 #endif
+
+template< class Key, class Value, class Hash, class Equal >
+haliullin::HashTable< Key, Value, Hash, Equal >::HashTable(size_t capacity):
+  slots_(capacity),
+  size_(0),
+  hasher_()
+  equal_()
+{
+  for (size_t i = 0; i < slots_.getSize(); ++i)
+  {
+    slots_[i].second = 'e';
+  }
+}
+
+template< class Key, class Value, class Hash, class Equal >
+haliullin::HashTable< Key, Value, Hash, Equal >::HashTable(const HashTable& other):
+  slots_(other.slots_),
+  size_(other.size_),
+  hasher_(other.hasher_),
+  equal_(other.equal_)
+{}
+
+template< class Key, class Value, class Hash, class Equal >
+void haliullin::HashTable< Key, Value, Hash, Equal >::swap(HashTable& other) noexcept
+{
+  std::swap(slots_, other.slots_);
+  std::swap(size_, other.size_);
+  std::swap(hasher_, other.hasher_);
+  std::swap(equal_, other.equal_);
+}
+
