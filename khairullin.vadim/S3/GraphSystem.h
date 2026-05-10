@@ -8,9 +8,11 @@ namespace khairullin {
     struct GraphSystem {
         using func_t = void(GraphSystem::*)(std::string & line);
         Vector< Graph > vectorOfGraphs;
-        HashTable<func_t, std::string, Hash<std::string>, Equal<func_t>> functions;
+        HashTable<func_t, std::string, Hash<std::string>, Equal<std::pair<func_t, std::string>>> functions;
 
-        void func(std::string & function, std::string & line);
+        GraphSystem();
+
+        void func(std::string & line);
         std::pair<bool, size_t> graphExists(std::string & name);
 
         void graphs(std::string & line);
@@ -26,9 +28,26 @@ namespace khairullin {
     };
 }
 
-void khairullin::GraphSystem::func(std::string & function, std::string & line) {
-    auto method = functions.drop(function);
-    //(this->*method)(line);
+khairullin::GraphSystem::GraphSystem():
+vectorOfGraphs(Vector< Graph >()),
+functions(HashTable<func_t, std::string, Hash<std::string>, Equal<std::pair<func_t, std::string>>>())
+{
+    functions.add("graphs", &GraphSystem::graphs);
+    functions.add("vertexes", &GraphSystem::vertexes);
+    functions.add("outbound", &GraphSystem::outbound);
+    functions.add("inbound", &GraphSystem::inbound);
+    functions.add("bind", &GraphSystem::bind);
+    functions.add("cut", &GraphSystem::cut);
+    functions.add("create", &GraphSystem::create);
+    functions.add("merge", &GraphSystem::merge);
+    functions.add("extract", &GraphSystem::extract);
+}
+
+void khairullin::GraphSystem::func(std::string & line) {
+    std::string function = getToken(line);
+    auto methods = functions.drop(function);
+    func_t method = methods[0];
+    (this->*method)(line);
 }
 
 void khairullin::GraphSystem::graphs(std::string &line) {
@@ -245,7 +264,6 @@ void khairullin::GraphSystem::merge(std::string &line) {
             Vector<size_t> weights2;
             try {
                 weights1 = gr2.edges.drop(vertex1 + vertex2);
-                weights2 = gr2.edges.drop(vertex2 + vertex1);
             }
             catch (...) {
                 throw std::bad_alloc();
@@ -253,9 +271,6 @@ void khairullin::GraphSystem::merge(std::string &line) {
             try {
                 for (size_t k = 0; k < weights1.getSize(); k++) {
                     result.addEdge(vertex1, vertex2, weights1[k]);
-                }
-                for (size_t k = 0; k < weights2.getSize(); k++) {
-                    result.addEdge(vertex2, vertex1, weights2[k]);
                 }
             }
             catch (...) {
@@ -287,7 +302,7 @@ void khairullin::GraphSystem::extract(std::string & line) {
         throw std::logic_error("<INVALID COMMAND>");
     }
 
-    Graph resultGraph;
+    Graph resultGraph(result);
     Graph & basisGraph = vectorOfGraphs[infoBasis.second];
     for (size_t i = 0; i < count; i++) {
         std::string vertex = getToken(line);
@@ -325,6 +340,12 @@ void khairullin::GraphSystem::extract(std::string & line) {
                 resultGraph.addEdge(vertex1, vertex2, weights[k]);
             }
         }
+    }
+    try {
+        vectorOfGraphs.pushBack(resultGraph);
+    }
+    catch (...) {
+        throw std::bad_alloc();
     }
 }
 
