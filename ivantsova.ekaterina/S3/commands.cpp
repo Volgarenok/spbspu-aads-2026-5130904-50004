@@ -45,3 +45,37 @@ void ivantsova::cmdVertexes(std::istream& in, std::ostream& out, ivantsova::Grap
     out << verts[i] << '\n';
   }
 }
+
+void ivantsova::cmdOutbound(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
+  std::string gname, v;
+  in >> gname >> v;
+  if (!graphs.has(gname) || !graphs.get(gname).hasVertex(v)) {
+    printInvalid(out);
+    return;
+  }
+  auto res = graphs.get(gname).getOutbound(v);
+  for (size_t i = 0; i < res.getSize(); ++i) {
+    out << res[i].first;
+    for (size_t w = 0; w < res[i].second.getSize(); ++w) {
+      out << " " << res[i].second[w];
+    }
+    out << '\n';
+  }
+}
+
+void ivantsova::cmdInbound(std::istream& in, std::ostream& out, ivantsova::GraphSet& graphs) {
+  std::string gname, v;
+  in >> gname >> v;
+  if (!graphs.has(gname) || !graphs.get(gname).hasVertex(v)) {
+    printInvalid(out);
+    return;
+  }
+  auto res = graphs.get(gname).getInbound(v);
+  for (size_t i = 0; i < res.getSize(); ++i) {
+    out << res[i].first;
+    for (size_t w = 0; w < res[i].second.getSize(); ++w) {
+      out << " " << res[i].second[w];
+    }
+    out << '\n';
+  }
+}
