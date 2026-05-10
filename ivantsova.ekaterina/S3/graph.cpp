@@ -1,3 +1,4 @@
+#include "hashIters.hpp"
 #include "graph.hpp"
 #include <algorithm>
 #include <stdexcept>
@@ -63,4 +64,54 @@ bool ivantsova::Graph::removeEdge(const std::string& from, const std::string& to
     }
   }
   return false;
+}
+
+ivantsova::Vector< std::pair< std::string, ivantsova::Vector< unsigned long long > > >
+ivantsova::Graph::getOutbound(const std::string& vertex) const {
+  Vector< std::pair< std::string, Vector< unsigned long long > > > result;
+  for (auto it = edges_.begin(); it != edges_.end(); ++it) {
+    const EdgeKey& key = (*it).first;
+    if (key.first == vertex) {
+      const Vector< unsigned long long >& weights = (*it).second;
+      bool found = false;
+      for (size_t i = 0; i < result.getSize(); ++i) {
+        if (result[i].first == key.second) {
+          found = true;
+          for (size_t w = 0; w < weights.getSize(); ++w) {
+            result[i].second.pushBack(weights[w]);
+          }
+          break;
+        }
+      }
+      if (!found) {
+        result.pushBack({key.second, weights});
+      }
+    }
+  }
+  return result;
+}
+
+ivantsova::Vector< std::pair< std::string, ivantsova::Vector< unsigned long long > > >
+ivantsova::Graph::getInbound(const std::string& vertex) const {
+  Vector< std::pair< std::string, Vector< unsigned long long > > > result;
+  for (auto it = edges_.begin(); it != edges_.end(); ++it) {
+    const EdgeKey& key = (*it).first;
+    if (key.second == vertex) {
+      const Vector< unsigned long long >& weights = (*it).second;
+      bool found = false;
+      for (size_t i = 0; i < result.getSize(); ++i) {
+        if (result[i].first == key.first) {
+          found = true;
+          for (size_t w = 0; w < weights.getSize(); ++w) {
+            result[i].second.pushBack(weights[w]);
+          }
+          break;
+        }
+      }
+      if (!found) {
+        result.pushBack({key.first, weights});
+      }
+    }
+  }
+  return result;
 }

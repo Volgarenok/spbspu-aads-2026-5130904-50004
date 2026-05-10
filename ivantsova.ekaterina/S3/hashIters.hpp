@@ -11,7 +11,7 @@ namespace ivantsova {
 
   public:
     HashIter();
-    HashIter(HashTable< Key, Value, Hash, Equal >* table, size_t bucket_index, typename List<std::pair<Key, Value>>::Iterator it);
+    HashIter(HashTable< Key, Value, Hash, Equal >* table, size_t bucket_index,  LIter<std::pair<Key, Value>> it);
 
     HashIter& operator++();
     bool operator!=(const HashIter& other) const;
@@ -21,7 +21,7 @@ namespace ivantsova {
   private:
     HashTable< Key, Value, Hash, Equal >* table_;
     size_t bucket_index_;
-    typename List<std::pair<Key, Value>>::Iterator it_;
+    LIter<std::pair<Key, Value>> it_;
   };
 
   template< typename Key, typename Value, typename Hash, typename Equal >
@@ -31,7 +31,7 @@ namespace ivantsova {
   public:
     HashConstIter();
     HashConstIter(const HashTable< Key, Value, Hash, Equal >* table, size_t bucket_index,
-    typename List<std::pair<Key, Value>>::ConstIterator it);
+    LCIter<std::pair<Key, Value>> it);
 
     HashConstIter& operator++();
     bool operator!=(const HashConstIter& other) const;
@@ -41,7 +41,7 @@ namespace ivantsova {
   private:
     const HashTable< Key, Value, Hash, Equal >* table_;
     size_t bucket_index_;
-    typename List<std::pair<Key, Value>>::ConstIterator it_;
+    LCIter<std::pair<Key, Value>> it_;
   };
 }
 
@@ -52,25 +52,25 @@ ivantsova::HashIter< Key, Value, Hash, Equal >::HashIter() :
 
 template< typename Key, typename Value, typename Hash, typename Equal >
 ivantsova::HashIter< Key, Value, Hash, Equal >::HashIter(HashTable< Key, Value, Hash, Equal >* table,
-size_t bucket_index, typename List< std::pair< Key, Value > >::Iterator it) :
+size_t bucket_index, LIter<std::pair<Key, Value>> it) :
   table_(table), bucket_index_(bucket_index), it_(it) {
-  while (bucket_index_ < table_->data_.getSize() && it_ == (*table_->data_[bucket_index_]).end()) {
+  while (bucket_index_ < table_->data_.getSize() && it_ == table_->data_[bucket_index_].end()) {
     ++bucket_index_;
     if (bucket_index_ < table_->data_.getSize()) {
-      it_ = (*table_->data_[bucket_index_]).begin();
+      it_ = table_->data_[bucket_index_].begin();
     }
   }
 }
 
 template< typename Key, typename Value, typename Hash, typename Equal >
 ivantsova::HashIter< Key, Value, Hash, Equal >& ivantsova::HashIter< Key, Value, Hash, Equal >::operator++() {
-  if (it_ != (*table_->data_[bucket_index_]).end()) {
+  if (it_ != table_->data_[bucket_index_].end()) {
     ++it_;
   }
-  while (bucket_index_ < table_->data_.getSize() && it_ == (*table_->data_[bucket_index_]).end()) {
+  while (bucket_index_ < table_->data_.getSize() && it_ == table_->data_[bucket_index_].end()) {
     ++bucket_index_;
     if (bucket_index_ < table_->data_.getSize()) {
-      it_ = (*table_->data_[bucket_index_]).begin();
+      it_ = table_->data_[bucket_index_].begin();
     }
   }
   return *this;
@@ -98,25 +98,25 @@ ivantsova::HashConstIter< Key, Value, Hash, Equal >::HashConstIter() :
 
 template< typename Key, typename Value, typename Hash, typename Equal >
 ivantsova::HashConstIter< Key, Value, Hash, Equal >::HashConstIter(const HashTable< Key, Value, Hash, Equal >* table,
-size_t bucket_index, typename List< std::pair< Key, Value > >::ConstIterator it) :
+size_t bucket_index, LCIter<std::pair<Key, Value>> it) :
   table_(table), bucket_index_(bucket_index), it_(it) {
-  while (bucket_index_ < table_->data_.getSize() && it_ == (*table_->data_[bucket_index_]).cend()) {
+  while (bucket_index_ < table_->data_.getSize() && it_ == table_->data_[bucket_index_].cend()) {
     ++bucket_index_;
     if (bucket_index_ < table_->data_.getSize()) {
-      it_ = (*table_->data_[bucket_index_]).cbegin();
+      it_ = table_->data_[bucket_index_].cbegin();
     }
   }
 }
 
 template< typename Key, typename Value, typename Hash, typename Equal >
 ivantsova::HashConstIter< Key, Value, Hash, Equal >& ivantsova::HashConstIter< Key, Value, Hash, Equal >::operator++() {
-  if (it_ != (*table_->data_[bucket_index_]).cend()) {
+  if (it_ != table_->data_[bucket_index_].cend()) {
     ++it_;
   }
-  while (bucket_index_ < table_->data_.getSize() && it_ == (*table_->data_[bucket_index_]).cend()) {
+  while (bucket_index_ < table_->data_.getSize() && it_ == table_->data_[bucket_index_].cend()) {
     ++bucket_index_;
     if (bucket_index_ < table_->data_.getSize()) {
-      it_ = (*table_->data_[bucket_index_]).cbegin();
+      it_ = table_->data_[bucket_index_].cbegin();
     }
   }
   return *this;

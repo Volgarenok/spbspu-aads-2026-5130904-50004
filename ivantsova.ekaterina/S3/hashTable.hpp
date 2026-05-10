@@ -50,6 +50,8 @@ namespace ivantsova {
   template< typename Key, typename Value, typename Hash = BoostSHA1Hash, typename Equal = Equal< Key > >
   class HashTable {
   public:
+    friend class HashIter<Key, Value, Hash, Equal>;
+    friend class HashConstIter<Key, Value, Hash, Equal>;
     explicit HashTable(size_t slots = 101);
     ~HashTable();
 
