@@ -50,7 +50,7 @@ template< class Key, class Value, class Hash, class Equal >
 haliullin::HashTable< Key, Value, Hash, Equal >::HashTable(size_t capacity):
   slots_(capacity),
   size_(0),
-  hasher_()
+  hasher_(),
   equal_()
 {
   for (size_t i = 0; i < slots_.getSize(); ++i)
