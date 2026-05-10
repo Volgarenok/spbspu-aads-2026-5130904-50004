@@ -72,6 +72,12 @@ namespace ivantsova {
 
     using HIter = HashIter< Key, Value, Hash, Equal >;
     using HCIter = HashConstIter< Key, Value, Hash, Equal >;
+    HIter begin();
+    HIter end();
+    HCIter begin() const;
+    HCIter end() const;
+    HCIter cbegin() const;
+    HCIter cend() const;
 
   private:
     using Bucket = List< std::pair< Key, Value > >;
@@ -123,6 +129,46 @@ void ivantsova::HashTable< Key, Value, Hash, Equal >::swap(HashTable& other) noe
   std::swap(size_, other.size_);
   std::swap(hasher_, other.hasher_);
   std::swap(equal_, other.equal_);
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+typename ivantsova::HashTable< Key, Value, Hash, Equal >::HIter ivantsova::HashTable< Key, Value, Hash, Equal >::begin() {
+  for (size_t i = 0; i < data_.getSize(); ++i) {
+    if (!data_[i].empty()) {
+      return HIter(this, i, data_[i].begin());
+    }
+  }
+  return end();
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+typename ivantsova::HashTable< Key, Value, Hash, Equal >::HIter ivantsova::HashTable< Key, Value, Hash, Equal >::end() {
+  return HIter(this, data_.getSize(), data_[0].end());
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+typename ivantsova::HashTable< Key, Value, Hash, Equal >::HCIter ivantsova::HashTable< Key, Value, Hash, Equal >::begin() const {
+  for (size_t i = 0; i < data_.getSize(); ++i) {
+    if (!data_[i].empty()) {
+      return HCIter(this, i, data_[i].cbegin());
+    }
+  }
+  return end();
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+typename ivantsova::HashTable< Key, Value, Hash, Equal >::HCIter ivantsova::HashTable< Key, Value, Hash, Equal >::end() const {
+  return HCIter(this, data_.getSize(), data_[0].cend());
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+typename ivantsova::HashTable< Key, Value, Hash, Equal >::HCIter ivantsova::HashTable< Key, Value, Hash, Equal >::cbegin() const {
+  return begin();
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+typename ivantsova::HashTable< Key, Value, Hash, Equal >::HCIter ivantsova::HashTable< Key, Value, Hash, Equal >::cend() const {
+  return end();
 }
 
 #endif
