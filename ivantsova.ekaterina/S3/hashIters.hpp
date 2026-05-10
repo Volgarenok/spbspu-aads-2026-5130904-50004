@@ -30,7 +30,8 @@ namespace ivantsova {
 
   public:
     HashConstIter();
-    HashConstIter(const HashTable< Key, Value, Hash, Equal >* table, size_t bucket_index, typename List<std::pair<Key, Value>>::ConstIterator it);
+    HashConstIter(const HashTable< Key, Value, Hash, Equal >* table, size_t bucket_index,
+        typename List<std::pair<Key, Value>>::ConstIterator it);
 
     HashConstIter& operator++();
     bool operator!=(const HashConstIter& other) const;
