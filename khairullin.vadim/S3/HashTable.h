@@ -15,7 +15,7 @@ namespace khairullin {
 
         void add(const Key & key, const T & value);
         size_t findIndex(const Key & key);
-        T drop(const Key & key);
+        Vector<T> drop(const Key & key);
         void cut(const Key & key, const T & value);
         bool has(const Key & key, const T & value);
         void rehash(size_t new_size);
@@ -87,6 +87,7 @@ khairullin::HashTable<T, Key, Hash, Equal> & khairullin::HashTable<T, Key, Hash,
     }
     auto temp(other);
     swap(temp);
+    return *this;
 }
 
 template<class T, class Key, class Hash, class Equal>
@@ -104,6 +105,7 @@ khairullin::HashTable<T, Key, Hash, Equal> & khairullin::HashTable<T, Key, Hash,
     }
     auto temp(std::move(other));
     swap(temp);
+    return *this;
 }
 
 template<class T, class Key, class Hash, class Equal>
@@ -161,16 +163,22 @@ void khairullin::HashTable< T, Key, Hash, Equal >::add(const Key & key, const T 
 }
 
 template< class T, class Key, class Hash, class Equal >
-T khairullin::HashTable< T, Key, Hash, Equal >::drop(const Key & key) {
+khairullin::Vector<T> khairullin::HashTable< T, Key, Hash, Equal >::drop(const Key & key) {
     size_t index = hasher(key) % size;
     auto slot = table[index];
-    while (slot && slot->value.second != key) {
+    Vector<T> result;
+    while (slot) {
+        if (slot->value.second == key) {
+            try {
+                result.pushBack(slot->value.first);
+            }
+            catch (...) {
+                throw std::bad_alloc();
+            }
+        }
         slot = slot->next;
     }
-    if (slot == nullptr) {
-        throw std::logic_error("<INVALID COMMAND>");
-    }
-    return slot->value.first;
+    return result;
 }
 
 template< class T, class Key, class Hash, class Equal >

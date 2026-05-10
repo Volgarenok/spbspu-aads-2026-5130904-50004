@@ -28,7 +28,7 @@ namespace khairullin {
 
 void khairullin::GraphSystem::func(std::string & function, std::string & line) {
     auto method = functions.drop(function);
-    (this->*method)(line);
+    //(this->*method)(line);
 }
 
 void khairullin::GraphSystem::graphs(std::string &line) {
@@ -69,46 +69,28 @@ void khairullin::GraphSystem::outbound(std::string & line) {
         graph = vectorOfGraphs[index.second];
     }
     catch (std::bad_alloc & e) {
-        throw;
+        throw std::bad_alloc();
     }
-    Vector< std::pair< std::string, Vector< size_t > > > vertices;
-    auto infoVertex = graph.hasVertex(vertex);
+
+    std::pair<bool, size_t> infoVertex = graph.hasVertex(vertex);
     if (!infoVertex.first) {
         throw std::logic_error("<INVALID COMMAND>");
     }
-    List< size_t > * head = graph.connection[infoVertex.second];
-    while (head) {
-        Vector< size_t > Weights;
-        std::string temp = graph.vertexes[head->value];
-        if (hasInPair(vertices, temp)) {
-            head = head->next;
+    for (size_t i = 0; i < graph.vertexes.getSize(); i++) {
+        if (!graph.hasConnection(vertex, graph.vertexes[i])) {
             continue;
         }
-        size_t indexEdge = graph.edges.findIndex(vertex + temp);
-        auto slot = graph.edges.table[indexEdge];
-        while (slot) {
-            if (slot->value.second == vertex + temp) {
-                try {
-                    Weights.pushBack(slot->value.first);
-                }
-                catch (std::bad_alloc & e) {
-                    throw;
-                }
-            }
-            slot = slot->next;
-        }
+        Vector<size_t> weights;
         try {
-            vertices.pushBack(std::make_pair(temp, Weights));
-        } catch (std::bad_alloc & e) {
-            throw;
+            weights = graph.edges.drop(vertex + graph.vertexes[i]);
         }
-    }
-
-    for (size_t i = 0; i < vertices.getSize(); i++) {
-        std::cout << vertices[i].first << " ";
-        sortVector(vertices[i].second);
-        for (size_t j = 0; j < vertices[i].second.getSize(); j++) {
-            std::cout << vertices[i].second[j] << " ";
+        catch (...) {
+            throw std::bad_alloc();
+        }
+        sortVector(weights);
+        std::cout << graph.vertexes[i];
+        for (size_t j = 0; j < weights.getSize(); j++) {
+            std::cout << " " << weights[j];
         }
         std::cout << "\n";
     }
@@ -126,48 +108,24 @@ void khairullin::GraphSystem::inbound(std::string & line) {
         graph = vectorOfGraphs[index.second];
     }
     catch (std::bad_alloc & e) {
-        throw;
+        throw std::bad_alloc();
     }
-    Vector< std::pair< std::string, Vector< size_t > > > vertices;
-    auto infoVertex = graph.hasVertex(vertex);
-    if (!infoVertex.first) {
-        std::cout << "<INVALID COMMAND>\n";
-        return;
-    }
+
     for (size_t i = 0; i < graph.vertexes.getSize(); i++) {
-        List< size_t > * head = graph.connection[infoVertex.second];
-        while (head) {
-            std::string temp = graph.vertexes[head->value];
-            Vector< size_t > Weights;
-            if (temp == vertex) {
-                size_t indexEdge = graph.edges.findIndex(graph.vertexes[i] + vertex);
-                auto slot = graph.edges.table[indexEdge];
-                while (slot) {
-                    if (slot->value.second == graph.vertexes[i] + vertex) {
-                        try {
-                            Weights.pushBack(slot->value.first);
-                        }
-                        catch (std::bad_alloc & e) {
-                            throw;
-                        }
-                    }
-                    slot = slot->next;
-                }
-                try {
-                    vertices.pushBack(std::make_pair(temp, Weights));
-                }
-                catch (std::bad_alloc & e) {
-                    throw;
-                }
-            }
-            head = head->next;
+        if (!graph.hasConnection(graph.vertexes[i], vertex)) {
+            continue;
         }
-    }
-    for (size_t i = 0; i < vertices.getSize(); i++) {
-        std::cout << vertices[i].first << " ";
-        sortVector(vertices[i].second);
-        for (size_t j = 0; j < vertices[i].second.getSize(); j++) {
-            std::cout << vertices[i].second[j] << " ";
+        Vector<size_t> weights;
+        try {
+            weights = graph.edges.drop(graph.vertexes[i] + vertex);
+        }
+        catch (...) {
+            throw std::bad_alloc();
+        }
+        sortVector(weights);
+        std::cout << graph.vertexes[i];
+        for (size_t j = 0; j < weights.getSize(); j++) {
+            std::cout << " " << weights[j];
         }
         std::cout << "\n";
     }
@@ -180,21 +138,19 @@ void khairullin::GraphSystem::bind(std::string & line) {
     size_t weight = 0;
     auto infoGraph = graphExists(graph);
     if (!infoGraph.first) {
-        std::cout << "<INVALID COMMAND>\n";
-        return;
+        throw std::logic_error("<INVALID COMMAND>");
     }
     try {
         weight = std::stoi(getToken(line));
     }
     catch (...) {
-        std::cout << "<INVALID COMMAND>\n";
-        return;
+        throw std::logic_error("<INVALID COMMAND>");
     }
     try {
         vectorOfGraphs[infoGraph.second].addEdge(Vertex1, Vertex2, weight);
     }
     catch (std::logic_error & e) {
-        std::cout << e.what() << "\n";
+        throw std::logic_error("<INVALID COMMAND>");
     }
 }
 
@@ -205,39 +161,36 @@ void khairullin::GraphSystem::cut(std::string & line) {
     size_t weight = 0;
     auto infoGraph = graphExists(graph);
     if (!infoGraph.first) {
-        std::cout << "<INVALID COMMAND>\n";
-        return;
+        throw std::logic_error("<INVALID COMMAND>");
     }
     try {
         weight = std::stoi(getToken(line));
     }
     catch (...) {
-        std::cout << "<INVALID COMMAND>\n";
+        throw std::logic_error("<INVALID COMMAND>");
     }
     try {
         vectorOfGraphs[infoGraph.second].cutEdge(Vertex1, Vertex2, weight);
     }
     catch (std::logic_error & e) {
-        std::cout << e.what() << "\n";
+        throw std::logic_error("<INVALID COMMAND>");
     }
 }
 
 void khairullin::GraphSystem::create(std::string & line) {
     std::string nameGraph = getToken(line);
     auto infoGraph = graphExists(nameGraph);
-    if (!infoGraph.first) {
-        std::cout << "<INVALID COMMAND>\n";
-        return;
+    if (infoGraph.first) {
+        throw std::logic_error("<INVALID COMMAND>");
     }
     size_t count = 0;
     try {
         count = std::stoi(getToken(line));
     }
     catch (...) {
-        std::cout << "<INVALID COMMAND>\n";
-        return;
+        throw std::logic_error("<INVALID COMMAND>");
     }
-    Graph graph;
+    Graph graph(nameGraph);
     for (size_t i = 0; i < count; i++) {
         std::string vertex = getToken(line);
         try {
@@ -247,17 +200,133 @@ void khairullin::GraphSystem::create(std::string & line) {
             graph.addVertex(vertex);
         }
         catch (std::logic_error & e) {
-            std::cout << e.what() << "\n";
+            throw std::logic_error("<INVALID COMMAND>");
         }
     }
     try {
         vectorOfGraphs.pushBack(graph);
     }
     catch (...) {
-        throw;
+        throw std::bad_alloc();
     }
 }
 
+void khairullin::GraphSystem::merge(std::string &line) {
+    std::string resultGraph = getToken(line);
+    std::string nameGraph1 = getToken(line);
+    std::string nameGraph2 = getToken(line);
+    auto infoResult = graphExists(resultGraph);
+    auto infoGraph1 = graphExists(nameGraph1);
+    auto infoGraph2 = graphExists(nameGraph2);
+    if ((!infoGraph1.first || !infoGraph2.first) || infoResult.first) {
+        throw std::logic_error("<INVALID COMMAND>");
+    }
+    Graph result;
+    Graph & gr1 = vectorOfGraphs[infoGraph1.second];;
+    Graph & gr2 = vectorOfGraphs[infoGraph2.second];
+    try {
+        result = vectorOfGraphs[infoGraph1.second];
+        result.name = resultGraph;
+    }
+    catch (...) {
+        throw std::bad_alloc();
+    }
+    for (size_t i = 0; i < gr2.vertexes.getSize(); i++) {
+        auto infoVert = result.hasVertex(gr2.vertexes[i]);
+        if (!infoVert.first) {
+            result.addVertex(gr2.vertexes[i]);
+        }
+    }
+    for (size_t i = 0; i < result.vertexes.getSize(); i++) {
+        std::string vertex1 = result.vertexes[i];
+        for (size_t j = 0; j < gr2.vertexes.getSize(); j++) {
+            std::string vertex2 = gr2.vertexes[j];
+            Vector<size_t> weights1;
+            Vector<size_t> weights2;
+            try {
+                weights1 = gr2.edges.drop(vertex1 + vertex2);
+                weights2 = gr2.edges.drop(vertex2 + vertex1);
+            }
+            catch (...) {
+                throw std::bad_alloc();
+            }
+            try {
+                for (size_t k = 0; k < weights1.getSize(); k++) {
+                    result.addEdge(vertex1, vertex2, weights1[k]);
+                }
+                for (size_t k = 0; k < weights2.getSize(); k++) {
+                    result.addEdge(vertex2, vertex1, weights2[k]);
+                }
+            }
+            catch (...) {
+                throw std::bad_alloc();
+            }
+        }
+    }
+    try {
+        vectorOfGraphs.pushBack(result);
+    }
+    catch (...) {
+        throw std::bad_alloc();
+    }
+}
+
+void khairullin::GraphSystem::extract(std::string & line) {
+    std::string result = getToken(line);
+    std::string basis = getToken(line);
+    size_t count = 0;
+    try {
+        count = std::stoi(getToken(line));
+    }
+    catch (...) {
+        throw std::logic_error("<INVALID COMMAND>");
+    }
+
+    auto infoBasis = graphExists(basis);
+    if (!infoBasis.first) {
+        throw std::logic_error("<INVALID COMMAND>");
+    }
+
+    Graph resultGraph;
+    Graph & basisGraph = vectorOfGraphs[infoBasis.second];
+    for (size_t i = 0; i < count; i++) {
+        std::string vertex = getToken(line);
+        auto infoVert = basisGraph.hasVertex(vertex);
+        if (!infoVert.first) {
+            throw std::logic_error("<INVALID COMMAND>");
+        }
+        try {
+            resultGraph.addVertex(vertex);
+        }
+        catch (...) {
+            throw std::bad_alloc();
+        }
+    }
+    for (size_t i = 0; i < basisGraph.vertexes.getSize(); i++) {
+        for (size_t j = 0; j < basisGraph.vertexes.getSize(); j++) {
+            std::string vertex1 = basisGraph.vertexes[i];
+            std::string vertex2 = basisGraph.vertexes[j];
+            auto infoVert1 = resultGraph.hasVertex(vertex1);
+            auto infoVert2 = resultGraph.hasVertex(vertex2);
+            if (!infoVert1.first) {
+                break;
+            }
+            else if (!infoVert2.first) {
+                continue;
+            }
+            Vector< size_t > weights;
+            try {
+                weights = basisGraph.edges.drop(vertex1 + vertex2);
+            }
+            catch (...) {
+                throw std::bad_alloc();
+            }
+            for (size_t k = 0; k < weights.getSize(); k++) {
+                resultGraph.addEdge(vertex1, vertex2, weights[k]);
+            }
+        }
+    }
+}
 
 
 #endif

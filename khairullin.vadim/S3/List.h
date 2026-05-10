@@ -8,6 +8,7 @@ namespace khairullin {
         List * next;
 
         List(const T & value, List * next);
+        bool operator==(const List * other);
 
         List * add(const T & value, List * head);
         List * insert(const T & value, List * head);
@@ -22,6 +23,23 @@ khairullin::List<T>::List(const T & value, List * next):
 value(value),
 next(next)
 {}
+
+template<class T>
+bool khairullin::List<T>::operator==(const List *other) {
+    List< T > * List = *this;
+    auto otherList = other;
+    while (otherList && List) {
+        if (List->value != otherList->value) {
+            return false;
+        }
+        List = List->next;
+        otherList = otherList->next;
+    }
+    if (List || otherList) {
+        return false;
+    }
+    return true;
+}
 
 template< class T >
 khairullin::List<T> * khairullin::List<T>::add(const T & value, List * head) {
