@@ -10,6 +10,13 @@
 
 namespace ivantsova {
 
+  template<typename Key, typename Value, typename Hash, typename Equal>
+  class HashIter;
+
+  template<typename Key, typename Value, typename Hash, typename Equal>
+  class HashConstIter;
+
+
   template< typename T >
   struct Equal {
     bool operator()(const T& a, const T& b) const {
@@ -62,6 +69,9 @@ namespace ivantsova {
     size_t size() const noexcept;
     bool empty() const noexcept;
     void swap(HashTable& other) noexcept;
+
+    using HIter = HashIter< Key, Value, Hash, Equal >;
+    using HCIter = HashConstIter< Key, Value, Hash, Equal >;
 
   private:
     using Bucket = List< std::pair< Key, Value > >;
