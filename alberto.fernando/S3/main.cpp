@@ -10,3 +10,13 @@ int main(int argc, char* argv[])
               << "Usage: " << argv[0] << " filename\n";
     return 1;
   }
+  alberto::GraphTable graphs(32);
+  try {
+    alberto::loadGraphs(argv[1], graphs);
+  } catch (const std::exception& e) {
+    std::cerr << "Error: " << e.what() << "\n";
+    return 1;
+  }
+
+  alberto::HashTable< std::string, alberto::CmdFn, alberto::xx_hash > cmds(16);
+  alberto::buildCommands(cmds);
