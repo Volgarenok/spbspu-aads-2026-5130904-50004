@@ -65,12 +65,16 @@ void ivantsova::cmdOutbound(std::istream& in, std::ostream& out, ivantsova::Grap
     throw std::runtime_error("Vertex not found");
   }
   auto res = graphs.get(gname).getOutbound(v);
-  for (size_t i = 0; i < res.getSize(); ++i) {
-    out << res[i].first;
-    for (size_t w = 0; w < res[i].second.getSize(); ++w) {
-      out << " " << res[i].second[w];
-    }
+  if (res.getSize() == 0) {
     out << '\n';
+  } else {
+    for (size_t i = 0; i < res.getSize(); ++i) {
+      out << res[i].first;
+      for (size_t w = 0; w < res[i].second.getSize(); ++w) {
+        out << " " << res[i].second[w];
+      }
+      out << '\n';
+    }
   }
 }
 
@@ -84,12 +88,16 @@ void ivantsova::cmdInbound(std::istream& in, std::ostream& out, ivantsova::Graph
     throw std::runtime_error("Vertex not found");
   }
   auto res = graphs.get(gname).getInbound(v);
-  for (size_t i = 0; i < res.getSize(); ++i) {
-    out << res[i].first;
-    for (size_t w = 0; w < res[i].second.getSize(); ++w) {
-      out << " " << res[i].second[w];
-    }
+  if (res.getSize() == 0) {
     out << '\n';
+  } else {
+    for (size_t i = 0; i < res.getSize(); ++i) {
+      out << res[i].first;
+      for (size_t w = 0; w < res[i].second.getSize(); ++w) {
+        out << " " << res[i].second[w];
+      }
+      out << '\n';
+    }
   }
 }
 
