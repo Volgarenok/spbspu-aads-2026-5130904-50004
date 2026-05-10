@@ -9,7 +9,7 @@ namespace khairullin
   template< class T >
   struct Iterator;
 
-  template< class T>
+  template< class T >
   struct CIterator;
 
   template< class T >
@@ -17,11 +17,11 @@ namespace khairullin
     Vector();
     ~Vector();
     Vector(size_t size, const T & value);
-    Vector(const Vector<T> & rhs);
-    Vector(Vector<T> && rhs) noexcept;
-    Vector<T> & operator=(const Vector<T> & rhs);
-    Vector<T> & operator=(Vector<T> && rhs) noexcept;
-    void swap(Vector<T> & rhs) noexcept;
+    Vector(const Vector< T > & rhs);
+    Vector(Vector< T > && rhs) noexcept;
+    Vector< T > & operator=(const Vector< T > & rhs);
+    Vector< T > & operator=(Vector< T > && rhs) noexcept;
+    void swap(Vector< T > & rhs) noexcept;
 
     T & operator[](size_t id) noexcept;
     T & at(size_t id);
@@ -30,13 +30,13 @@ namespace khairullin
     bool isEmpty() const noexcept;
     size_t getSize() const noexcept;
     size_t getCapacity() const noexcept;
-    bool operator==(const Vector<T> & rhs) const noexcept;
-    bool operator!=(const Vector<T> & rhs) const noexcept;
+    bool operator==(const Vector< T > & rhs) const noexcept;
+    bool operator!=(const Vector< T > & rhs) const noexcept;
 
     void insert(size_t id, const T & t);
-    void insert(size_t id, const Vector<T> & rhs, size_t beg, size_t end);
-    void insert(Iterator<T> pos, const T & value);
-    void insert(Iterator<T> pos, CIterator<T> begin, CIterator<T> end);
+    void insert(size_t id, const Vector< T > & rhs, size_t beg, size_t end);
+    void insert(Iterator< T > pos, const T & value);
+    void insert(Iterator< T > pos, CIterator< T > begin, CIterator< T > end);
     void insert(Iterator< T > pos, const T & value, size_t k);
 
     void erase(size_t id);
@@ -44,14 +44,14 @@ namespace khairullin
     void erase(Iterator< T > pos);
     void erase(Iterator< T > begin, Iterator< T > end);
     void erase(CIterator< T > begin, size_t k);
-    
+
     void pushBack(const T &);
     void popBack();
     void pushFront(const T &);
 
     T max();
     T min();
-    std::pair<bool, size_t> has(const T & value);
+    std::pair< bool, size_t > has(const T & value);
 
     Iterator< T > begin();
     Iterator< T > end();
@@ -59,13 +59,14 @@ namespace khairullin
     CIterator< T > cbegin();
     CIterator< T > cend();
     CIterator< T > citerator(size_t i);
+
     private:
       explicit Vector(size_t size);
       T * data;
       size_t size_, capacity;
   };
 
-  template<class T>
+  template< class T >
   struct Iterator {
     Iterator(Vector< T > &, size_t);
     ~Iterator() = default;
@@ -81,7 +82,7 @@ namespace khairullin
     bool operator==(const Iterator< T > & rhs) const noexcept;
     bool operator!=(const Iterator< T > & rhs) const noexcept;
 
-    Vector<T> & vector;
+    Vector< T > & vector;
     size_t id;
   };
 
@@ -105,38 +106,39 @@ namespace khairullin
   };
 }
 
-template<class T>
-khairullin::Vector<T>::Vector():
+template< class T >
+khairullin::Vector< T >::Vector():
   data(nullptr),
   size_(0),
   capacity(0)
-{}
+{
+}
 
-template <class T>
-khairullin::Vector<T>::~Vector()
+template< class T >
+khairullin::Vector< T >::~Vector()
 {
   delete [] data;
 }
 
-template<class T>
-khairullin::Vector<T>::Vector(size_t size, const T & value):
+template< class T >
+khairullin::Vector< T >::Vector(size_t size, const T & value):
   Vector(size)
 {
-  for (size_t i = 0; i < size; i++)
-  {
+  for (size_t i = 0; i < size; i++) {
     data[i] = value;
   }
 }
 
-template<class T>
-khairullin::Vector<T>::Vector(size_t size):
+template< class T >
+khairullin::Vector< T >::Vector(size_t size):
   data(size ? new T[size * 2]() : nullptr),
   size_(size),
   capacity(size * 2)
-{}
+{
+}
 
-template<class T>
-khairullin::Vector<T>::Vector(const Vector<T> & rhs):
+template< class T >
+khairullin::Vector< T >::Vector(const Vector< T > & rhs):
   Vector(rhs.getSize())
 {
   for (size_t i = 0; i < rhs.getSize(); i++)
@@ -145,98 +147,96 @@ khairullin::Vector<T>::Vector(const Vector<T> & rhs):
   }
 }
 
-template<class T>
-khairullin::Vector<T>::Vector(Vector<T> && rhs) noexcept:
-data(rhs.data),
-size_(rhs.size_),
-capacity(rhs.capacity)
+template< class T >
+khairullin::Vector< T >::Vector(Vector< T > && rhs) noexcept:
+  data(rhs.data),
+  size_(rhs.size_),
+  capacity(rhs.capacity)
 {
   rhs.data = nullptr;
 }
 
-template<class T>
-khairullin::Vector<T> & khairullin::Vector<T>::operator=(const Vector<T> & rhs)
+template< class T >
+khairullin::Vector< T > & khairullin::Vector< T >::operator=(const Vector< T > & rhs)
 {
   if (this == std::addressof(rhs))   //для взятия именно адреса
   {
     return *this;
   }
-  Vector<T> cpy(rhs);
+  Vector< T > cpy(rhs);
   swap(cpy);
   return *this;
 }
 
-template<class T>
-khairullin::Vector<T> & khairullin::Vector<T>::operator=(Vector<T> && rhs) noexcept
+template< class T >
+khairullin::Vector< T > & khairullin::Vector< T >::operator=(Vector< T > && rhs) noexcept
 {
-  if (this == &rhs)
-  {
+  if (this == &rhs) {
     return *this;
   }
-  Vector<T> cpy(std::move(rhs));
+  Vector< T > cpy(std::move(rhs));
   swap(cpy);
   return *this;
 }
 
-template<class T>
-void khairullin::Vector<T>::swap(Vector & rhs) noexcept
+template< class T >
+void khairullin::Vector< T >::swap(Vector & rhs) noexcept
 {
   std::swap(data, rhs.data);
   std::swap(size_, rhs.size_);
   std::swap(capacity, rhs.capacity);
 }
 
-template<class T>
-T & khairullin::Vector<T>::operator[](size_t id) noexcept
+template< class T >
+T & khairullin::Vector< T >::operator[](size_t id) noexcept
 {
   return data[id];
 }
 
-template<class T>
-T & khairullin::Vector<T>::at(size_t id)
+template< class T >
+T & khairullin::Vector< T >::at(size_t id)
 {
-  const Vector<T> * cthis = this;
+  const Vector< T > * cthis = this;
   const T & cr = cthis->at(id);
   T & r = const_cast< T & >(cr);
   return r;
 }
 
-template<class T>
-const T & khairullin::Vector<T>::operator[](size_t id) const noexcept
+template< class T >
+const T & khairullin::Vector< T >::operator[](size_t id) const noexcept
 {
   return data[id];
 }
 
-template<class T>
-const T &khairullin::Vector<T>::at(size_t id) const
+template< class T >
+const T & khairullin::Vector< T >::at(size_t id) const
 {
-  if (id < getSize())
-  {
+  if (id < getSize()) {
     return (*this)[id];
   }
   throw std::out_of_range("id out of bound");
 }
 
-template<class T>
-bool khairullin::Vector<T>::isEmpty() const noexcept
+template< class T >
+bool khairullin::Vector< T >::isEmpty() const noexcept
 {
   return !size_;
 }
 
-template<class T>
-size_t khairullin::Vector<T>::getSize() const noexcept
+template< class T >
+size_t khairullin::Vector< T >::getSize() const noexcept
 {
   return size_;
 }
 
-template<class T>
-size_t khairullin::Vector<T>::getCapacity() const noexcept
+template< class T >
+size_t khairullin::Vector< T >::getCapacity() const noexcept
 {
   return capacity;
 }
 
-template<class T>
-bool khairullin::Vector<T>::operator==(const Vector<T> & rhs) const noexcept
+template< class T >
+bool khairullin::Vector< T >::operator==(const Vector< T > & rhs) const noexcept
 {
   if (getSize() != rhs.getSize()) {
     return false;
@@ -249,13 +249,15 @@ bool khairullin::Vector<T>::operator==(const Vector<T> & rhs) const noexcept
   return true;
 }
 
-template<class T>
-bool khairullin::Vector<T>::operator!=(const Vector<T> &rhs) const noexcept {
+template< class T >
+bool khairullin::Vector< T >::operator!=(const Vector< T > & rhs) const noexcept
+{
   return !(*this == rhs);
 }
 
-template<class T>
-void khairullin::Vector<T>::insert(size_t id, const T & t) {
+template< class T >
+void khairullin::Vector< T >::insert(size_t id, const T & t)
+{
   if (id > size_ - 1) {
     throw std::out_of_range("id out of bound");
   }
@@ -265,21 +267,20 @@ void khairullin::Vector<T>::insert(size_t id, const T & t) {
     try {
       if (i == id) {
         new_vec[i] = t;
-      }
-      else {
+      } else {
         new_vec[i] = (*this)[index];
         index++;
       }
-    }
-    catch (...) {
+    } catch (...) {
       throw std::bad_alloc();
     }
   }
   swap(new_vec);
 }
 
-template<class T>
-void khairullin::Vector<T>::insert(size_t id, const Vector<T> &rhs, size_t beg, size_t end) {
+template< class T >
+void khairullin::Vector< T >::insert(size_t id, const Vector< T > & rhs, size_t beg, size_t end)
+{
   if (id > size_ - 1) {
     throw std::out_of_range("id out of bound");
   }
@@ -299,25 +300,27 @@ void khairullin::Vector<T>::insert(size_t id, const Vector<T> &rhs, size_t beg, 
     for (size_t i = id + sizeOfSegment; i < size_ + sizeOfSegment; i++) {
       result[i] = rhs[i - sizeOfSegment];
     }
-  }
-  catch (...) {
+  } catch (...) {
     throw std::bad_alloc();
   }
   swap(result);
 }
 
-template<class T>
-void khairullin::Vector<T>::insert(Iterator<T> pos, const T & value) {
+template< class T >
+void khairullin::Vector< T >::insert(Iterator< T > pos, const T & value)
+{
   pos.vector.insert(pos.id, value);
 }
 
-template<class T>
-void khairullin::Vector<T>::insert(Iterator<T> pos, CIterator<T> begin, CIterator<T> end) {
+template< class T >
+void khairullin::Vector< T >::insert(Iterator< T > pos, CIterator< T > begin, CIterator< T > end)
+{
   pos.vector.insert(pos.id, begin.vector, begin.id, end.id);
 }
 
-template<class T>
-void khairullin::Vector<T>::insert(Iterator<T> pos, const T & value, size_t k) {
+template< class T >
+void khairullin::Vector< T >::insert(Iterator< T > pos, const T & value, size_t k)
+{
   Vector< T > copy_v(size_ + k);
   try {
     for (size_t i = 0; i < pos.id; i++) {
@@ -329,15 +332,15 @@ void khairullin::Vector<T>::insert(Iterator<T> pos, const T & value, size_t k) {
     for (size_t i = pos.id + k; i < size_ + k; i++) {
       copy_v[i] = (*this)[i - k];
     }
-  }
-  catch (...) {
+  } catch (...) {
     throw std::bad_alloc();
   }
   swap(copy_v);
 }
 
-template<class T>
-void khairullin::Vector<T>::erase(size_t id) {
+template< class T >
+void khairullin::Vector< T >::erase(size_t id)
+{
   if (id > size_ - 1) {
     throw std::out_of_range("id out of bound");
   }
@@ -350,16 +353,16 @@ void khairullin::Vector<T>::erase(size_t id) {
     try {
       copy_v[index] = (*this)[i];
       index++;
-    }
-    catch (...) {
+    } catch (...) {
       throw std::bad_alloc();
     }
   }
   swap(copy_v);
 }
 
-template<class T>
-void khairullin::Vector<T>::erase(size_t beg, size_t end) {
+template< class T >
+void khairullin::Vector< T >::erase(size_t beg, size_t end)
+{
   if (beg > size_ - 1 || end > size_) {
     throw std::out_of_range("id is out of bound");
   }
@@ -371,30 +374,31 @@ void khairullin::Vector<T>::erase(size_t beg, size_t end) {
       if (i < beg || i >= end) {
         copy_v[index] = (*this)[i];
         index++;
-      }
-      else {
+      } else {
         continue;
       }
     }
-  }
-  catch (...) {
+  } catch (...) {
     throw std::bad_alloc();
   }
   swap(copy_v);
 }
 
-template<class T>
-void khairullin::Vector<T>::erase(Iterator<T> pos) {
+template< class T >
+void khairullin::Vector< T >::erase(Iterator< T > pos)
+{
   erase(pos.id);
 }
 
-template<class T>
-void khairullin::Vector<T>::erase(Iterator<T> begin, Iterator<T> end) {
+template< class T >
+void khairullin::Vector< T >::erase(Iterator< T > begin, Iterator< T > end)
+{
   erase(begin.id, end.id);
 }
 
-template<class T>
-void khairullin::Vector<T>::erase(CIterator<T> begin, size_t k) {
+template< class T >
+void khairullin::Vector< T >::erase(CIterator< T > begin, size_t k)
+{
   if (k + begin.id > size_) {
     throw std::out_of_range("Too many element must be deleted");
   }
@@ -416,25 +420,20 @@ void khairullin::Vector<T>::erase(CIterator<T> begin, size_t k) {
   swap(v);
 }
 
-template<class T>
-void khairullin::Vector<T>::pushBack(const T & value)
+template< class T >
+void khairullin::Vector< T >::pushBack(const T & value)
 {
-  if (size_ == capacity)
-  {
+  if (size_ == capacity) {
     T * new_data = nullptr;
-    try
-    {
+    try {
       new_data = new T[capacity * 2 + 1];
       capacity = capacity * 2 + 1;
-      for (size_t i = 0; i < size_; i++)
-      {
+      for (size_t i = 0; i < size_; i++) {
         new_data[i] = data[i];
       }
       delete [] data;
       data = new_data;
-    }
-    catch (...)
-    {
+    } catch (...) {
       delete new_data;
       throw;
     }
@@ -442,32 +441,31 @@ void khairullin::Vector<T>::pushBack(const T & value)
   data[size_++] = value;
 }
 
-template<class T>
-void khairullin::Vector<T>::popBack()
+template< class T >
+void khairullin::Vector< T >::popBack()
 {
-  if (size_ == 0)
-  {
+  if (size_ == 0) {
     throw std::logic_error("Logic error: vector is empty");
   }
   size_--;
 }
 
-template<class T>
-void khairullin::Vector<T>::pushFront(const T & t)
+template< class T >
+void khairullin::Vector< T >::pushFront(const T & t)
 {
-  Vector<T> v(getSize() + 1);
+  Vector< T > v(getSize() + 1);
   v[0] = t;
   {
-    for (size_t i = 1; i < v.getSize(); ++i)
-    {
+    for (size_t i = 1; i < v.getSize(); ++i) {
       v[i] = (*this)[i - 1];
     }
   }
   swap(v);
 }
 
-template<class T>
-T khairullin::Vector<T>::max() {
+template< class T >
+T khairullin::Vector< T >::max()
+{
   auto maximum = data[0];
   for (size_t i = 1; i < size_; i++) {
     if (data[i] > maximum) {
@@ -477,10 +475,11 @@ T khairullin::Vector<T>::max() {
   return maximum;
 }
 
-template< class T>
-T khairullin::Vector<T>::min() {
+template< class T >
+T khairullin::Vector< T >::min()
+{
   auto minimum = data[0];
-  for ( size_t i = 1; i < size_; i++) {
+  for (size_t i = 1; i < size_; i++) {
     if (data[i] < minimum) {
       minimum = data[i];
     }
@@ -488,62 +487,72 @@ T khairullin::Vector<T>::min() {
   return minimum;
 }
 
-template<class T>
-std::pair< bool, size_t > khairullin::Vector<T>::has(const T &value) {
+template< class T >
+std::pair< bool, size_t > khairullin::Vector< T >::has(const T & value)
+{
   for (size_t i = 0; i < size_ - 1; i++) {
     if (data[i] == value) {
       return std::make_pair(true, i);
     }
   }
-  return std::make_pair( false, 0);
+  return std::make_pair(false, 0);
 }
 
-template<class T>
-khairullin::Iterator<T> khairullin::Vector<T>::begin() {
+template< class T >
+khairullin::Iterator< T > khairullin::Vector< T >::begin()
+{
   return Iterator< T >(*this, 0);
 }
 
-template<class T>
-khairullin::Iterator<T> khairullin::Vector<T>::end() {
+template< class T >
+khairullin::Iterator< T > khairullin::Vector< T >::end()
+{
   return Iterator< T >(*this, size_);
 }
 
-template<class T>
-khairullin::Iterator<T> khairullin::Vector<T>::iterator(size_t i) {
+template< class T >
+khairullin::Iterator< T > khairullin::Vector< T >::iterator(size_t i)
+{
   return Iterator< T >(*this, i);
 }
 
-template<class T>
-khairullin::CIterator<T> khairullin::Vector<T>::cbegin() {
+template< class T >
+khairullin::CIterator< T > khairullin::Vector< T >::cbegin()
+{
   return CIterator< T >(*this, 0);
 }
 
-template< class T>
-khairullin::CIterator< T > khairullin::Vector< T >::cend() {
+template< class T >
+khairullin::CIterator< T > khairullin::Vector< T >::cend()
+{
   return CIterator< T >(*this, size_);
 }
 
-template<class T>
-khairullin::CIterator<T> khairullin::Vector<T>::citerator(size_t i) {
+template< class T >
+khairullin::CIterator< T > khairullin::Vector< T >::citerator(size_t i)
+{
   return CIterator< T >(*this, i);
 }
 
-template<class T>
-khairullin::Iterator<T>::Iterator(Vector<T> & v, size_t i):
-vector(v),
-id(i)
-{}
+template< class T >
+khairullin::Iterator< T >::Iterator(Vector< T > & v, size_t i):
+  vector(v),
+  id(i)
+{
+}
 
-template<class T>
-void khairullin::Iterator<T>::operator+=(size_t i) {
+template< class T >
+void khairullin::Iterator< T >::operator+=(size_t i)
+{
   if (id + i > vector.getSize()) {
     throw std::out_of_range("Iterator is out of bound");
   }
   id += i;
 }
 
-template<class T>
-void khairullin::Iterator<T>::operator-=(size_t i) {
+template< class T >
+void khairullin::Iterator< T >::operator-=(size_t i)
+{
   if (id + 1 - i < 0) {
     throw std::out_of_range("Iterator is out of bound");
   }
@@ -551,7 +560,8 @@ void khairullin::Iterator<T>::operator-=(size_t i) {
 }
 
 template< class T >
-khairullin::Iterator< T > khairullin::Iterator< T >::operator++() {
+khairullin::Iterator< T > khairullin::Iterator< T >::operator++()
+{
   if (id + 1 >= vector.getSize()) {
     throw std::out_of_range("Iterator is out of bound");
   }
@@ -560,7 +570,8 @@ khairullin::Iterator< T > khairullin::Iterator< T >::operator++() {
 }
 
 template< class T >
-khairullin::Iterator< T > khairullin::Iterator< T >::operator++(int) {
+khairullin::Iterator< T > khairullin::Iterator< T >::operator++(int)
+{
   if (id + 1 >= vector.getSize()) {
     throw std::out_of_range("Iterator is out of bound");
   }
@@ -569,8 +580,9 @@ khairullin::Iterator< T > khairullin::Iterator< T >::operator++(int) {
   return copy;
 }
 
-template<class T>
-khairullin::Iterator<T> khairullin::Iterator<T>::operator--() {
+template< class T >
+khairullin::Iterator< T > khairullin::Iterator< T >::operator--()
+{
   if (id - 1 < 0) {
     throw std::out_of_range("Iterator is out of bound");
   }
@@ -578,8 +590,9 @@ khairullin::Iterator<T> khairullin::Iterator<T>::operator--() {
   return *this;
 }
 
-template<class T>
-khairullin::Iterator<T> khairullin::Iterator<T>::operator--(int) {
+template< class T >
+khairullin::Iterator< T > khairullin::Iterator< T >::operator--(int)
+{
   if (id - 1 < 0) {
     throw std::out_of_range("Iterator is out of bound");
   }
@@ -588,48 +601,55 @@ khairullin::Iterator<T> khairullin::Iterator<T>::operator--(int) {
   return copy;
 }
 
-template<class T>
-void khairullin::Iterator<T>::write(const T &value) {
+template< class T >
+void khairullin::Iterator< T >::write(const T & value)
+{
   vector[id] = value;
 }
 
-template<class T>
-void khairullin::Iterator<T>::cut() {
+template< class T >
+void khairullin::Iterator< T >::cut()
+{
   vector.erase(id);
 }
 
-template<class T>
-T & khairullin::Iterator<T>::operator*() const noexcept {
+template< class T >
+T & khairullin::Iterator< T >::operator*() const noexcept
+{
   return vector[id];
 }
 
-template<class T>
-bool khairullin::Iterator<T>::operator==(const Iterator<T> &rhs) const noexcept {
+template< class T >
+bool khairullin::Iterator< T >::operator==(const Iterator< T > & rhs) const noexcept
+{
   return (*this).vector == rhs.vector && (*this).id == rhs.id;
 }
 
 template< class T >
-bool khairullin::Iterator< T >::operator!=(const Iterator< T > & rhs) const noexcept {
+bool khairullin::Iterator< T >::operator!=(const Iterator< T > & rhs) const noexcept
+{
   return !(*this == rhs);
 }
 
+template< class T >
+khairullin::CIterator< T >::CIterator(Vector< T > & v, size_t i):
+  vector(v),
+  id(i)
+{
+}
 
-template<class T>
-khairullin::CIterator<T>::CIterator(Vector<T> & v, size_t i):
-vector(v),
-id(i)
-{}
-
-template<class T>
-void khairullin::CIterator<T>::operator+=(size_t i) {
+template< class T >
+void khairullin::CIterator< T >::operator+=(size_t i)
+{
   if (id + i > vector.getSize()) {
     throw std::out_of_range("Const Iterator is out of bound");
   }
   id += i;
 }
 
-template<class T>
-void khairullin::CIterator<T>::operator-=(size_t i) {
+template< class T >
+void khairullin::CIterator< T >::operator-=(size_t i)
+{
   if (id + 1 - i < 0) {
     throw std::out_of_range("Const Iterator is out of bound");
   }
@@ -637,7 +657,8 @@ void khairullin::CIterator<T>::operator-=(size_t i) {
 }
 
 template< class T >
-khairullin::CIterator< T > khairullin::CIterator<T>::operator++() {
+khairullin::CIterator< T > khairullin::CIterator< T >::operator++()
+{
   if (id + 1 >= vector.getSize()) {
     throw std::out_of_range("Iterator is out of bound");
   }
@@ -646,7 +667,8 @@ khairullin::CIterator< T > khairullin::CIterator<T>::operator++() {
 }
 
 template< class T >
-khairullin::CIterator< T > khairullin::CIterator<T>::operator++(int) {
+khairullin::CIterator< T > khairullin::CIterator< T >::operator++(int)
+{
   if (id + 1 >= vector.getSize()) {
     throw std::out_of_range("Iterator is out of bound");
   }
@@ -656,7 +678,8 @@ khairullin::CIterator< T > khairullin::CIterator<T>::operator++(int) {
 }
 
 template< class T >
-khairullin::CIterator< T > khairullin::CIterator<T>::operator--(int) {
+khairullin::CIterator< T > khairullin::CIterator< T >::operator--(int)
+{
   if (id - 1 < 0) {
     throw std::out_of_range("Iterator is out of bound");
   }
@@ -664,23 +687,28 @@ khairullin::CIterator< T > khairullin::CIterator<T>::operator--(int) {
   id--;
   return copy;
 }
-template<class T>
-T & khairullin::CIterator<T>::read() {
+
+template< class T >
+T & khairullin::CIterator< T >::read()
+{
   return vector[id];
 }
 
-template<class T>
-T & khairullin::CIterator<T>::operator*() const noexcept {
+template< class T >
+T & khairullin::CIterator< T >::operator*() const noexcept
+{
   return vector[id];
 }
 
-template<class T>
-bool khairullin::CIterator<T>::operator==(const CIterator<T> &rhs) const noexcept {
+template< class T >
+bool khairullin::CIterator< T >::operator==(const CIterator< T > & rhs) const noexcept
+{
   return (*this).vector == rhs.vector && (*this).id == rhs.id;
 }
 
 template< class T >
-bool khairullin::CIterator<T>::operator!=(const CIterator< T > & rhs) const noexcept {
+bool khairullin::CIterator< T >::operator!=(const CIterator< T > & rhs) const noexcept
+{
   return !(*this == rhs);
 }
 #endif
