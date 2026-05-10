@@ -132,6 +132,39 @@ void ivantsova::HashTable< Key, Value, Hash, Equal >::swap(HashTable& other) noe
 }
 
 template< typename Key, typename Value, typename Hash, typename Equal >
+ivantsova::HashTable< Key, Value, Hash, Equal >::HashTable(const HashTable& other) :
+  data_(other.data_.getSize()), size_(0), hasher_(other.hasher_), equal_(other.equal_) {
+  for (size_t i = 0; i < other.data_.getSize(); ++i) {
+    for (auto it = other.data_[i].cbegin(); it != other.data_[i].cend(); ++it) {
+      add((*it).first, (*it).second);
+    }
+  }
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+ivantsova::HashTable< Key, Value, Hash, Equal >::HashTable(HashTable&& other) noexcept :
+  data_(std::move(other.data_)), size_(other.size_), hasher_(std::move(other.hasher_)), equal_(std::move(other.equal_)) {
+  other.size_ = 0;
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+ivantsova::HashTable< Key, Value, Hash, Equal >& ivantsova::HashTable< Key, Value, Hash, Equal >::operator=(const HashTable& other) {
+  if (this != &other) {
+    HashTable tmp(other);
+    swap(tmp);
+  }
+  return *this;
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
+ivantsova::HashTable< Key, Value, Hash, Equal >& ivantsova::HashTable< Key, Value, Hash, Equal >::operator=(HashTable&& other) noexcept {
+  if (this != &other) {
+    swap(other);
+  }
+  return *this;
+}
+
+template< typename Key, typename Value, typename Hash, typename Equal >
 typename ivantsova::HashTable< Key, Value, Hash, Equal >::HIter ivantsova::HashTable< Key, Value, Hash, Equal >::begin() {
   for (size_t i = 0; i < data_.getSize(); ++i) {
     if (!data_[i].empty()) {
