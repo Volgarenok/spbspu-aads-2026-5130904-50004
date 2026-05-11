@@ -21,3 +21,14 @@ struct Graph {
   bool hasVertex(const std::string& v) const;
 };
 using GraphTable = HashTable< std::string, Graph, xx_hash >;
+template< class HT >
+std::vector< std::string >
+sortedKeys(const HT& ht)
+{
+  std::vector< std::string > keys;
+  for (const auto& p : ht) {
+    keys.push_back(p.first);
+  }
+  std::sort(keys.begin(), keys.end());
+  return keys;
+}
