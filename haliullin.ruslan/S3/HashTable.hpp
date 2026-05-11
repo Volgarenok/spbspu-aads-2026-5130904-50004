@@ -2,6 +2,7 @@
 #define HASHTABLE_HPP
 
 #include "vector.hpp"
+#include "HashTable-iterators.hpp"
 #include <cstddef>
 #include <stdexcept>
 #include <utility>
@@ -35,7 +36,7 @@ namespace haliullin
     size_t getCapacity() const noexcept;
 
   private:
-    using Slot = std::pair< std::pair<Key, Value>, char >;
+    using Slot = std::pair< std::pair< Key, Value >, char >;
 
     Vector< Slot > slots_;
     size_t size_;
