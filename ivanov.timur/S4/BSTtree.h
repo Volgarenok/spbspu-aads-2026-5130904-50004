@@ -5,6 +5,7 @@
 #include <utility>
 
 template<class Key, class Value, class Compare> class BSTtree;
+template<class Key, class Value, class Compare> class BSTConstIterator;
 
 template<class Key, class Value, class Compare>
 class BSTIterator {
@@ -14,12 +15,47 @@ public:
   using tree = BSTtree<Key, Value, Compare>;
 private:
   tree* ptr;
-  explicit BSTIterator(const tree* p): ptr(p) {}
-public:
+  explicit BSTIterator(tree* p): ptr(p) {}
 
+public:
+  BSTIterator(): ptr(nullptr) {}
+  operator BSTConstIterator<Key, Value, Compare>() const {
+    return BSTConstIterator<Key, Value, Compare>(ptr);
+  }
+
+  bool operator==(const BSTIterator& other) const {
+    return ptr == other.ptr;
+  }
+  bool operator!=(const BSTIterator& other) const {
+    return !operator==(other);
+  }
+
+  std::pair<const Key&, Value&> operator*() const {
+    return {ptr->key, ptr->val};
+  }
+
+  BSTIterator& operator++() {
+    if (!(ptr->isFakeRoot) && ptr->right != &tree::nil) {
+      ptr = ptr->right;
+      while (ptr->left != &tree::nil) ptr = ptr->left;
+    } else {
+      tree* parent = ptr->parent;
+      while (parent != &tree::nil && ptr == parent->right) {
+        ptr = parent;
+        parent = parent->parent;
+      }
+      ptr = parent;
+    }
+    return *this;
+  }
+  BSTIterator operator++(size_t) {
+    BSTIterator tmp = *this;
+    ++*this;
+    return tmp;
+  }
 };
 
-template<class Key, class Value>
+template<class Key, class Value, class Compare>
 class BSTConstIterator {
 private:
   friend class BSTtree<Key, Value, Compare>;
