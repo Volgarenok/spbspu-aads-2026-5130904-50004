@@ -125,3 +125,74 @@ public:
   {
     return size_ == 0;
   }
+  struct iterator {
+    Node* n_;
+
+    explicit iterator(Node* n):
+      n_(n)
+    {}
+
+    T& operator*()
+    {
+      return n_->data;
+    }
+
+    T* operator->()
+    {
+      return &n_->data;
+    }
+
+    iterator& operator++()
+    {
+      n_ = n_->next;
+      return *this;
+    }
+
+    bool operator==(iterator o) const
+    {
+      return n_ == o.n_;
+    }
+
+    bool operator!=(iterator o) const
+    {
+      return n_ != o.n_;
+    }
+  };
+
+  struct const_iterator {
+    const Node* n_;
+
+    explicit const_iterator(const Node* n):
+      n_(n)
+    {}
+
+    const_iterator(iterator it):
+      n_(it.n_)
+    {}
+
+    const T& operator*() const
+    {
+      return n_->data;
+    }
+
+    const T* operator->() const
+    {
+      return &n_->data;
+    }
+
+    const_iterator& operator++()
+    {
+      n_ = n_->next;
+      return *this;
+    }
+
+    bool operator==(const_iterator o) const
+    {
+      return n_ == o.n_;
+    }
+
+    bool operator!=(const_iterator o) const
+    {
+      return n_ != o.n_;
+    }
+  };
