@@ -134,3 +134,134 @@ public:
     std::swap(hash_,       o.hash_);
     std::swap(equal_,      o.equal_);
   }
+  void add(const Key& k, Value v)
+  {
+    const size_t idx = bucketIndex(k);
+    Bucket&      b   = buckets_[idx];
+
+    if (bucketSize_ > 0 && b.size() >= bucketSize_) {
+      throw std::overflow_error(
+          "HashTable: bucket overflow — call rehash()");
+    }
+
+    for (auto& p : b) {
+      if (equal_(p.first, k)) {
+        p.second = std::move(v);
+        return;
+      }
+    }
+    b.push_back({k, std::move(v)});
+    ++count_;
+  }
+  
+  Value drop(const Key& k)
+  {
+    const size_t idx   = bucketIndex(k);
+    Bucket&      b     = buckets_[idx];
+    Value        tmp{};
+    bool         found = false;
+
+    for (auto& p : b) {
+      if (equal_(p.first, k)) {
+        tmp   = p.second;
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      throw std::out_of_range("HashTable::drop: key not found");
+    }
+    b.remove_if([&](const Pair& p) {
+      return equal_(p.first, k);
+    });
+    --count_;
+    return tmp;
+  }
+
+  bool has(const Key& k) const
+  {
+    const size_t  idx = bucketIndex(k);
+    const Bucket& b   = buckets_[idx];
+    for (const auto& p : b) {
+      if (equal_(p.first, k)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Value& get(const Key& k)
+  {
+    const size_t idx = bucketIndex(k);
+    Bucket&      b   = buckets_[idx];
+    for (auto& p : b) {
+      if (equal_(p.first, k)) {
+        return p.second;
+      }
+    }
+    throw std::out_of_range("HashTable::get: key not found");
+  }
+
+  const Value& get(const Key& k) const
+  {
+    const size_t  idx = bucketIndex(k);
+    const Bucket& b   = buckets_[idx];
+    for (const auto& p : b) {
+      if (equal_(p.first, k)) {
+        return p.second;
+      }
+    }
+    throw std::out_of_range("HashTable::get: key not found");
+  }
+
+  void rehash(size_t slots)
+  {
+    if (slots == 0) {
+      slots = 1;
+    }
+    HashTable tmp(slots, bucketSize_, hash_, equal_);
+    for (size_t i = 0; i < numBuckets_; ++i) {
+      for (auto& p : buckets_[i]) {
+        tmp.add(p.first, p.second);
+      }
+    }
+    swap(tmp);
+  }
+
+  size_t size() const
+  {
+    return count_;
+  }
+
+  bool empty() const
+  {
+    return count_ == 0;
+  }
+
+  size_t bucketCount() const
+  {
+    return numBuckets_;
+  }
+
+  double loadFactor() const
+  {
+    return numBuckets_
+        ? static_cast< double >(count_) / numBuckets_
+        : 0.0;
+  }
+
+  double avgPerBucket() const
+  {
+    return loadFactor();
+  }
+
+  size_t maxBucketSize() const
+  {
+    size_t mx = 0;
+    for (size_t i = 0; i < numBuckets_; ++i) {
+      if (buckets_[i].size() > mx) {
+        mx = buckets_[i].size();
+      }
+    }
+    return mx;
+  }
