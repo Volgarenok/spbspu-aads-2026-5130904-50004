@@ -42,7 +42,7 @@ namespace haliullin
     Hash hasher_;
     Equal equal_;
 
-    size_t findId(const Key& k) const noexcept;
+    size_t findIdx(const Key& k) const noexcept;
     size_t probe(size_t hash, size_t i) const noexcept;
   };
 }
@@ -110,29 +110,42 @@ template< class Key, class Value, class Hash, class Equal >
 void haliullin::HashTable< Key, Value, Hash, Equal >::add(const Key& k, const Value& v)
 {
   size_t hash = hasher_(k);
-  size_t id = slots_.getSize();
+  size_t idx = slots_.getSize();
   for (size_t i = 0; i < slots_.getSize(); ++i)
   {
-    size_t probeId = probe(hash, i);
-    if (slots_[probeId].second != 'o')
+    size_t probeIdx = probe(hash, i);
+    if (slots_[probeIdx].second != 'o')
     {
-      id = probeId;
+      idx = probeIdx;
       break;
     }
   }
 
-  if (id == slots_.getSize())
+  if (idx == slots_.getSize())
   {
-    throw std::runtime_error("Needed rehash hashtable");
+    throw std::runtime_error("Need to rehash hashtable");
   }
 
   Key keyCp(k);
   Value valCp(v);
-
-  slots_.[idx].first.first = std::move(keyCp);
-  slots_.[idx].first.second = std::move(valCp);
-  slots_.[idx].second = 'o';
+  slots_[idx].first.first = std::move(keyCp);
+  slots_[idx].first.second = std::move(valCp);
+  slots_[idx].second = 'o';
   ++size_;
+}
+
+template< class Key, class Value, class Hash, class Equal >
+Value haliullin::HashTable< Key, Value, Hash, Equal >::drop(const Key& k)
+{
+  size_t idx = findIdx(k);
+  if (idx == slots_.getSize())
+  {
+    throw std::out_of_range("Key not found");
+  }
+  Value result = slots_[idx].first.second;
+  slots_[idx].second = 't';
+  --size_;
+  return result;
 }
 
 template< class Key, class Value, class Hash, class Equal >
@@ -154,7 +167,7 @@ size_t haliullin::HashTable< Key, Value, Hash, Equal >::getCapacity() const noex
 }
 
 template< class Key, class Value, class Hash, class Equal >
-size_t haliullin::HashTable< Key, Value, Hash, Equal >::findId(const Key& k) const noexcept
+size_t haliullin::HashTable< Key, Value, Hash, Equal >::findIdx(const Key& k) const noexcept
 {
   size_t hash = hasher_(k);
   for (size_t i = 0; i < slots_.getSize(); ++i)
