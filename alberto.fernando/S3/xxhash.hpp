@@ -16,3 +16,35 @@ rotl32(uint32_t x, int r)
 {
   return (x << r) | (x >> (32 - r));
 }
+inline uint32_t
+xxhash32(const void* input, size_t len, uint32_t seed = 0)
+{
+  const uint8_t* p   = static_cast< const uint8_t* >(input);
+  const uint8_t* end = p + len;
+  uint32_t h32 = 0;
+
+  if (len >= 16) {
+    uint32_t v1 = seed + PRIME1 + PRIME2;
+    uint32_t v2 = seed + PRIME2;
+    uint32_t v3 = seed;
+    uint32_t v4 = seed - PRIME1;
+    do {
+      uint32_t tmp = 0;
+      memcpy(&tmp, p, 4);
+      v1 = rotl32(v1 + tmp * PRIME2, 13) * PRIME1;
+      p += 4;
+      memcpy(&tmp, p, 4);
+      v2 = rotl32(v2 + tmp * PRIME2, 13) * PRIME1;
+      p += 4;
+      memcpy(&tmp, p, 4);
+      v3 = rotl32(v3 + tmp * PRIME2, 13) * PRIME1;
+      p += 4;
+      memcpy(&tmp, p, 4);
+      v4 = rotl32(v4 + tmp * PRIME2, 13) * PRIME1;
+      p += 4;
+    } while (p <= end - 16);
+    h32 = rotl32(v1,  1) + rotl32(v2,  7)
+        + rotl32(v3, 12) + rotl32(v4, 18);
+  } else {
+    h32 = seed + PRIME5;
+  }
