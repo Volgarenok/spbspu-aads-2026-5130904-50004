@@ -236,7 +236,7 @@ size_t haliullin::HashTable< Key, Value, Hash, Equal >::findIdx(const Key& k) co
 template< class Key, class Value, class Hash, class Equal >
 size_t haliullin::HashTable< Key, Value, Hash, Equal >::probe(size_t hash, size_t i) const noexcept
 {
-  return (hash + i * i) % slots_.getCapacity();
+  return (hash + i * i) % getCapacity();
 }
 
 #endif
