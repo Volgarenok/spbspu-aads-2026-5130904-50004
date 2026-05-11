@@ -3,6 +3,7 @@
 
 #include "../common/List.h"
 #include <cstddef>
+#include <stdexcept>
 
 namespace alekseev {
   template< class Key, class Value, class Hash, class Equal >
@@ -14,25 +15,26 @@ namespace alekseev {
     HashTable(HashTable && rhs) noexcept;
     HashTable & operator=(HashTable && rhs) noexcept;
 
-    HashTable(Hash count_hash, Equal is_equal, size_t capacity);
+    HashTable(Hash hasher, Equal is_equal, size_t capacity);
 
     void swap(HashTable & rhs) noexcept;
     void clear();
-    void add(const Key & key, const Value & value);
+    void insert(const Key & key, const Value & value);
     void remove(const Key & key);
+    Value & at(const Key & key);
     bool contains(const Key & key) const;
     double load_factor() const;
-    void refactor(size_t new_capacity);
+    void rehash(size_t new_capacity);
     size_t capacity() const;
     size_t size() const;
 
     private:
       size_t capacity_, size_;
       List< Pair > ** slots_;
-      Hash count_hash_;
+      Hash hasher_;
       Equal is_equal_;
 
-      List< std::pair< Key, Value > > * find_previous_node(Key key);
+      List< std::pair< Key, Value > > * find_previous_node(const Key & key);
   };
 
   template< class Key, class Value, class Hash, class Equal >
@@ -52,7 +54,7 @@ namespace alekseev {
     capacity_(rhs.capacity_),
     size_(rhs.size_),
     is_equal_(rhs.is_equal_),
-    count_hash_(rhs.count_hash_)
+    hasher_(rhs.hasher_)
   {
     slots_ = new List< Pair > *[capacity_]{nullptr};
     for (size_t i = 0; i < rhs.capacity_; ++i) {
@@ -76,7 +78,7 @@ namespace alekseev {
     capacity_(rhs.capacity_),
     size_(rhs.size_),
     is_equal_(rhs.is_equal_),
-    count_hash_(rhs.count_hash_),
+    hasher_(rhs.hasher_),
     slots_(rhs.slots_)
   {
     rhs.slots_ = nullptr;
@@ -91,11 +93,11 @@ namespace alekseev {
   }
 
   template< class Key, class Value, class Hash, class Equal >
-  HashTable< Key, Value, Hash, Equal >::HashTable(Hash count_hash, Equal is_equal, size_t capacity):
+  HashTable< Key, Value, Hash, Equal >::HashTable(Hash hasher, Equal is_equal, size_t capacity):
     capacity_(capacity),
     size_(0),
     is_equal_(is_equal),
-    count_hash_(count_hash),
+    hasher_(hasher),
     slots_(new List< Pair > *[capacity]{nullptr})
   {
   }
@@ -106,7 +108,7 @@ namespace alekseev {
     std::swap(capacity_, rhs.capacity_);
     std::swap(size_, rhs.size_);
     std::swap(is_equal_, rhs.is_equal_);
-    std::swap(count_hash_, rhs.count_hash_);
+    std::swap(hasher_, rhs.hasher_);
     std::swap(slots_, rhs.slots_);
   }
 
@@ -117,22 +119,25 @@ namespace alekseev {
       if (slots_[i]) {
         clear(slots_[i]->next, slots_[i]);
         rmfake(slots_[i]);
+        slots_[i] = nullptr;
       }
     }
+    size_ = 0;
   }
 
   template< class Key, class Value, class Hash, class Equal >
-  void HashTable< Key, Value, Hash, Equal >::add(const Key & key, const Value & value)
+  void HashTable< Key, Value, Hash, Equal >::insert(const Key & key, const Value & value)
   {
-    Hash hash = count_hash(key);
+    Hash hash = hasher_(key);
     size_t index = hash % capacity_;
-    List< Pair > ** tail = nullptr;
+    List< Pair > * tail = nullptr;
     if (slots_[index]) {
       List< Pair > * fake = slots_[index];
       List< Pair > * current = fake;
       while (current->next != fake) {
         current = current->next;
         if (is_equal(current->data.first, key)) {
+          current->data.second = value;
           return;
         }
       }
@@ -153,48 +158,50 @@ namespace alekseev {
       return;
     }
     erase_after(pre_node);
+    --size_;
     if (pre_node->next == pre_node) {
       rmfake(pre_node);
-      size_t index = count_hash(key) % capacity_;
+      size_t index = hasher_(key) % capacity_;
       slots_[index] = nullptr;
     }
   }
 
   template< class Key, class Value, class Hash, class Equal >
+  Value & HashTable< Key, Value, Hash, Equal >::at(const Key & key)
+  {
+    List< Pair > * found = find_previous_node(key);
+    if (found) {
+      return found->next->data.second;
+    }
+    throw std::out_of_range("Key not found");
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
   bool HashTable< Key, Value, Hash, Equal >::contains(const Key & key) const
   {
-    Hash hash = count_hash(key);
-    size_t index = hash % capacity_;
-    if (slots_[index]) {
-      List< Pair > * fake = slots_[index];
-      List< Pair > * current = fake;
-      while (current != fake) {
-        if (is_equal(current->data.first, key)) {
-          return true;
-        }
-        current = current->next;
-      }
-    }
-    return false;
+    return find_previous_node(key) != nullptr;
   }
 
   template< class Key, class Value, class Hash, class Equal >
   double HashTable< Key, Value, Hash, Equal >::load_factor() const
   {
+    if (size() == 0) {
+      return 0;
+    }
     double s = size_;
     return s / capacity_;
   }
 
   template< class Key, class Value, class Hash, class Equal >
-  void HashTable< Key, Value, Hash, Equal >::refactor(size_t new_capacity)
+  void HashTable< Key, Value, Hash, Equal >::rehash(size_t new_capacity)
   {
-    HashTable< Key, Value, Hash, Equal > temp(count_hash_, is_equal_, new_capacity);
+    HashTable< Key, Value, Hash, Equal > temp(hasher_, is_equal_, new_capacity);
     for (size_t i = 0; i < capacity_; ++i) {
       if (slots_[i]) {
         List< Pair > * fake = slots_[i];
         List< Pair > * current = fake->next;
         while (current != fake) {
-          temp.add(current->data.first, current->data.second);
+          temp.insert(current->data.first, current->data.second);
           current = current->next;
         }
       }
@@ -216,9 +223,9 @@ namespace alekseev {
 
   template< class Key, class Value, class Hash, class Equal >
   List< std::pair< Key, Value > > * HashTable< Key, Value, Hash,
-    Equal >::find_previous_node(Key key)
+    Equal >::find_previous_node(const Key & key)
   {
-    Hash hash = count_hash(key);
+    Hash hash = hasher_(key);
     size_t index = hash % capacity_;
     if (!slots_[index]) {
       return nullptr;
