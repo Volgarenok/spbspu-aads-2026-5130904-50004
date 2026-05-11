@@ -15,17 +15,41 @@ class BSTConstIterator {
 
 template<class Key, class Value, class Compare>
 class BSTtree {
+private:
   Value val;
   Key key;
+  Compare comp;
   BSTtree *right, *left;
   BSTtree *parent;
+  bool isFakeRoot;
+
+  static BSTtree nil;
 
 public:
+  BSTtree(): left(&nil), right(&nil), parent(&nil), isFakeRoot(true) {}
   BSTtree(std::pair<Value, Key> init): val(init.first), key(init.second),
-  right(nullptr), left(nullptr), parent(nullptr) {}
+  right(&nil), left(&nil), parent(&nil), isFakeRoot(false) {}
+  BSTtree(std::pair<Value, Key> init, BSTtree *parnt = nullptr): val(init.first), key(init.second),
+  right(&nil), left(&nil), parent(parnt), isFakeRoot(false) {}
   ~BSTtree() = default;
 
-  void push(Key k, Value v);
+  void push(const Key& k, const Value& v) {
+    BSTtree *p = this;
+    BSTtree *curr = left;
+    while (curr != &nil) {
+      p = curr;
+      if (comp(k, curr->key)) curr = curr->left;
+      else if (comp(curr->key, k)) curr = curr->right;
+      else {
+        curr->val = v;
+        return;
+      }
+    }
+    BSTtree *nw = new BSTtree(k, v, p);
+    if (p == this || comp(p, p->key)) p->left = nw; //вставка
+    else p->right = nw;
+
+  }
   Value get(Key k);
   Value drop(Key k);
 
