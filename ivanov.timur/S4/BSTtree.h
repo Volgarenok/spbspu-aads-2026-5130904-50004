@@ -225,7 +225,26 @@ public:
 
     return const_iterator(y);
   }
-  const_iterator rotateRight(const_iterator it);
+  const_iterator rotateRight(const_iterator it) {
+    BSTtree *y = const_cast<BSTtree *>(it.ptr);
+    if (y->isFakeRoot) throw std::invalid_argument("Cannot parse fake part");
+    BSTtree *x = y->parent;
+    if (x->isFakeRoot || x == &nil) throw std::invalid_argument("Cannot parse fake part");
+    if (x->left != y) throw std::logic_error("Your tree is broken, cannot be roatated");
+    x->left = y->right;
+
+    if (y->right != &nil) y->right->parent = x;
+    y->right->parent = x;
+
+    if (x->parent->isFakeRoot) x->parent->left = y;
+    else if (x == x->parent->left) x->parent->left = y;
+    else x->parent->right = y;
+
+    y->right = x;
+    x->parent = y;
+
+    return const_iterator(y);
+  }
 
   const_iterator rotateLargeLeft(const_iterator it);
   const_iterator rotateLargeRight(const_iterator it);
