@@ -42,7 +42,7 @@ namespace haliullin
     Hash hasher_;
     Equal equal_;
 
-    size_t findIndex(const Key& k) const;
+    size_t findId(const Key& k) const;
     size_t probe(size_t hash, size_t i) const noexcept;
   };
 }
@@ -122,6 +122,33 @@ template< class Key, class Value, class Hash, class Equal >
 size_t haliullin::HashTable< Key, Value, Hash, Equal >::getCapacity() const noexcept
 {
   return slots_.getSize();
+}
+
+template< class Key, class Value, class Hash, class Equal >
+size_t haliullin::HashTable< Key, Value, Hash, Equal >::findId(const Key& k) const
+{
+  size_t hash = hasher_(k);
+  for (size_t i = 0; i < slots_.getSize(); ++i)
+  {
+    size_t idx = probe(hash, i);
+    char state = slots_[idx].second;
+
+    if (state == 'e')
+    {
+      return slots_.getSize();
+    }
+    else if (state == 'o' && equal_(slots_[idx].first.first, k))
+    {
+      return idx;
+    }
+  }
+  return slots_.getSize();
+}
+
+template< class Key, class Value, class Hash, class Equal >
+size_t haliullin::HashTable< Key, Value, Hash, Equal >::probe(size_t hash, size_t i) const noexcept
+{
+  return (hash + i * i) % slots_.getCapacity();
 }
 
 #endif
