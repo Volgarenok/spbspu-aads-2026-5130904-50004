@@ -31,6 +31,8 @@ namespace alekseev {
       List< Pair > ** slots_;
       Hash count_hash_;
       Equal is_equal_;
+
+      List< std::pair< Key, Value > > * find_previous_node(Key key);
   };
 
   template< class Key, class Value, class Hash, class Equal >
@@ -219,6 +221,25 @@ namespace alekseev {
   size_t HashTable< Key, Value, Hash, Equal >::size() const
   {
     return size_;
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  List< std::pair< Key, Value > > * HashTable< Key, Value, Hash, Equal >::find_previous_node(Key key)
+  {
+    Hash hash = count_hash(key);
+    size_t index = hash % capacity_;
+    if (!slots_[index]) {
+      return nullptr;
+    }
+    List< Pair > * fake = slots_[index];
+    List< Pair > * current = fake;
+    while (current->next != fake) {
+      if (is_equal(current->next->data.first, key)) {
+        return current;
+      }
+      current = current->next;
+    }
+    return nullptr;
   }
 }
 #endif
