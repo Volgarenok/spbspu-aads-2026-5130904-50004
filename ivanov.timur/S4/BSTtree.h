@@ -48,7 +48,7 @@ public:
     }
     return *this;
   }
-  BSTIterator operator++(size_t) {
+  BSTIterator operator++(int) {
     BSTIterator tmp = *this;
     ++*this;
     return tmp;
@@ -65,12 +65,47 @@ private:
   const tree* ptr;
   explicit BSTConstIterator(const tree* p): ptr(p) {}
 public:
+  BSTConstIterator(): ptr(nullptr) {}
+  bool operator==(const BSTConstIterator& other) const {
+    return ptr == other.ptr;
+  }
+  bool operator!=(const BSTConstIterator& other) const {
+    return !operator==(other);
+  }
 
+  std::pair<const Key&, Value&> operator*() const {
+    return {ptr->key, ptr->val};
+  }
+
+  BSTConstIterator& operator++() {
+    if (!(ptr->isFakeRoot) && ptr->right != &tree::nil) {
+      ptr = ptr->right;
+      while (ptr->left !=  &tree::nil) ptr = ptr->left;
+    } else {
+      const tree* parent = ptr->parent;
+      while (parent != &tree::nil && ptr == parent->right) {
+        ptr = parent;
+        parent = parent->parent;
+      }
+      ptr = parent;
+    }
+    return *this;
+  }
+  BSTConstIterator& operator++(int) {
+    BSTConstIterator tmp = *this;
+    ++*this;
+    return tmp;
+  }
 };
 
 template<class Key, class Value, class Compare>
 class BSTtree {
 private:
+  friend class BSTIterator<Key, Value, Compare>;
+  using iterator = BSTIterator<Key, Value, Compare>;
+  friend class BSTConstIterator<Key, Value, Compare>;
+  using const_iterator = BSTConstIterator<Key, Value, Compare>;
+
   Value val;
   Key key;
   Compare comp;
@@ -142,7 +177,27 @@ public:
     return rmv;
   }
 
-  using const_iterator = BSTConstIterator<Key, Value>;
+  iterator begin() {
+    if (left == &nil) return iterator(this);
+    BSTtree* cur = left;
+    while (cur->left != &nil) cur = cur->left;
+    return iterator(cur);
+  }
+  const_iterator begin() const {
+    if (left == &nil) return const_iterator(this);
+    const BSTtree* cur = left;
+    while (cur->left != &nil) cur = cur->left;
+    return const_iterator(cur);
+  }
+  iterator end() {
+    return iterator(this);
+  }
+  const_iterator end() const {
+    return const_iterator(this);
+  }
+  const_iterator cbegin() const { return begin(); }
+  const_iterator cend() const { return end(); }
+
   const_iterator rotateLeft(const_iterator it);
   const_iterator rotateRight(const_iterator it);
 
