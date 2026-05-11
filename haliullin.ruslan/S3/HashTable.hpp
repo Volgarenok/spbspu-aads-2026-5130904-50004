@@ -177,6 +177,24 @@ const Value& haliullin::HashTable< Key, Value, Hash, Equal >::get(const Key& k) 
 }
 
 template< class Key, class Value, class Hash, class Equal >
+void haliullin::HashTable< Key, Value, Hash, Equal >::rehash(size_t newSlots)
+{
+  if (newSlots < size_)
+  {
+    throw std::invalid_argument("Cannot rehash the table: new capacity is too small");
+  }
+  HashTable tmp(newSlots);
+  for (size_t i = 0; i < slots_.getSize(); ++i)
+  {
+    if (slots_[i].second == 'o')
+    {
+      tmp.add(slots_[i].first.first, slots_[i].first.second);
+    }
+  }
+  swap(tmp);
+}
+
+template< class Key, class Value, class Hash, class Equal >
 bool haliullin::HashTable< Key, Value, Hash, Equal >::isEmpty() const noexcept
 {
   return !size_;
