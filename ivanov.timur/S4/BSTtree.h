@@ -4,14 +4,32 @@
 #include <stdexcept>
 #include <utility>
 
-template<class Key, class Value>
+template<class Key, class Value, class Compare> class BSTtree;
+
+template<class Key, class Value, class Compare>
 class BSTIterator {
-  ...
+private:
+  friend class BSTtree<Key, Value, Compare>;
+public:
+  using tree = BSTtree<Key, Value, Compare>;
+private:
+  tree* ptr;
+  explicit BSTIterator(const tree* p): ptr(p) {}
+public:
+
 };
 
 template<class Key, class Value>
 class BSTConstIterator {
-  ...
+private:
+  friend class BSTtree<Key, Value, Compare>;
+public:
+  using tree = BSTtree<Key, Value, Compare>;
+private:
+  const tree* ptr;
+  explicit BSTConstIterator(const tree* p): ptr(p) {}
+public:
+
 };
 
 template<class Key, class Value, class Compare>
