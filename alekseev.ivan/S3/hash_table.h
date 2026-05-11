@@ -148,23 +148,14 @@ namespace alekseev {
   template< class Key, class Value, class Hash, class Equal >
   void HashTable< Key, Value, Hash, Equal >::remove(const Key & key)
   {
-    Hash hash = count_hash(key);
-    size_t index = hash % capacity_;
-    if (!slots_[index]) {
+    List< Pair > * pre_node = find_previous_node(key);
+    if (!pre_node) {
       return;
     }
-    List< Pair > * fake = slots_[index];
-    List< Pair > * current = fake;
-    while (current->next != fake) {
-      if (is_equal(current->next->data.first, key)) {
-        erase_after(current->next);
-        --size_;
-        break;
-      }
-      current = current->next;
-    }
-    if (fake->next == fake) {
-      rmfake(slots_[index]);
+    erase_after(pre_node);
+    if (pre_node->next == pre_node) {
+      rmfake(pre_node);
+      size_t index = count_hash(key) % capacity_;
       slots_[index] = nullptr;
     }
   }
@@ -224,7 +215,8 @@ namespace alekseev {
   }
 
   template< class Key, class Value, class Hash, class Equal >
-  List< std::pair< Key, Value > > * HashTable< Key, Value, Hash, Equal >::find_previous_node(Key key)
+  List< std::pair< Key, Value > > * HashTable< Key, Value, Hash,
+    Equal >::find_previous_node(Key key)
   {
     Hash hash = count_hash(key);
     size_t index = hash % capacity_;
