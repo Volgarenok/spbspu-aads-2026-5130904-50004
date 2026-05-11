@@ -115,6 +115,13 @@ private:
 
   static BSTtree nil;
 
+  size_t subHg(const BSTtree *tree) const {
+    if (tree == &nil) return 0;
+    size_t leftH = subHg(tree->left);
+    size_t rightH = subHg(tree->right);
+    return 1 + std::max(leftH, rightH);
+  }
+
 public:
   BSTtree(): left(&nil), right(&nil), parent(&nil), isFakeRoot(true) {}
   BSTtree(std::pair<Value, Key> init): val(init.first), key(init.second),
@@ -204,8 +211,13 @@ public:
   const_iterator rotateLargeLeft(const_iterator it);
   const_iterator rotateLargeRight(const_iterator it);
 
-  size_t height(const_iterator it);
-  size_t height();
+  size_t height(const_iterator it) {
+    if (it.ptr->isFakeRoot) return height();
+    return subHg(it.ptr);
+  }
+  size_t height() const {
+    return subHg(left);
+  }
 };
 
 
