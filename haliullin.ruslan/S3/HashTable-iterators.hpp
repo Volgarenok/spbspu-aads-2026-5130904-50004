@@ -14,6 +14,9 @@ namespace haliullin
   class HashTable;
 
   template< class Key, class Value, class Hash, class Equal >
+  class HCIter;
+
+  template< class Key, class Value, class Hash, class Equal >
   class HIter
   {
   public:
@@ -152,7 +155,7 @@ haliullin::HCIter< Key, Value, Hash, Equal >::HCIter() noexcept:
 {}
 
 template< class Key, class Value, class Hash, class Equal >
-haliullin::HCIter< Key, Value, Hash, Equal >::HCIter(const Vector< SlotType<Key, Value > >*, size_t idx) noexcept:
+haliullin::HCIter< Key, Value, Hash, Equal >::HCIter(const Vector< SlotType<Key, Value > >* slots, size_t idx) noexcept:
   slots_(slots),
   idx_(idx)
 {}
