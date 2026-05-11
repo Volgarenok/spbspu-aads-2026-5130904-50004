@@ -43,3 +43,94 @@ struct pair_equal {
     return a == b;
   }
 };
+template< class Key, class Value,
+          class Hash  = xx_hash,
+          class Equal = std::equal_to< Key > >
+class HashTable {
+public:
+
+  using Pair   = std::pair< Key, Value >;
+  using Bucket = SList< Pair >;
+
+private:
+
+  Bucket* buckets_     = nullptr;
+  size_t  numBuckets_  = 0;
+  size_t  count_       = 0;
+  size_t  bucketSize_  = 0;
+  Hash    hash_;
+  Equal   equal_;
+
+  size_t bucketIndex(const Key& k) const
+  {
+    return hash_(k) % numBuckets_;
+  }
+
+  void destroy() noexcept
+  {
+    delete[] buckets_;
+    buckets_    = nullptr;
+    numBuckets_ = 0;
+    count_      = 0;
+  }
+
+public:
+
+  explicit HashTable(size_t slots     = 16,
+                     size_t bucketCap = 0,
+                     Hash   h         = Hash{},
+                     Equal  eq        = Equal{}):
+    numBuckets_(slots > 0 ? slots : 1),
+    bucketSize_(bucketCap),
+    hash_(h),
+    eq(eq)
+  {
+    buckets_ = new Bucket[numBuckets_];
+  }
+
+  HashTable(const HashTable& o):
+    numBuckets_(o.numBuckets_),
+    count_(o.count_),
+    bucketSize_(o.bucketSize_),
+    hash_(o.hash_),
+    equal_(o.equal_)
+  {
+    buckets_ = new Bucket[numBuckets_];
+    for (size_t i = 0; i < numBuckets_; ++i) {
+      buckets_[i] = o.buckets_[i];
+    }
+  }
+
+  HashTable(HashTable&& o) noexcept:
+    buckets_(o.buckets_),
+    numBuckets_(o.numBuckets_),
+    count_(o.count_),
+    bucketSize_(o.bucketSize_),
+    hash_(std::move(o.hash_)),
+    equal_(std::move(o.equal_))
+  {
+    o.buckets_    = nullptr;
+    o.numBuckets_ = 0;
+    o.count_      = 0;
+  }
+
+  HashTable& operator=(HashTable o) noexcept
+  {
+    swap(o);
+    return *this;
+  }
+
+  ~HashTable()
+  {
+    destroy();
+  }
+
+  void swap(HashTable& o) noexcept
+  {
+    std::swap(buckets_,    o.buckets_);
+    std::swap(numBuckets_, o.numBuckets_);
+    std::swap(count_,      o.count_);
+    std::swap(bucketSize_, o.bucketSize_);
+    std::swap(hash_,       o.hash_);
+    std::swap(equal_,      o.equal_);
+  }
