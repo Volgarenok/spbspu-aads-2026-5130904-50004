@@ -1,6 +1,7 @@
 
 #ifndef BSTTREE_H
 #define BSTTREE_H
+#include <stdexcept>
 #include <utility>
 
 template<class Key, class Value>
@@ -50,8 +51,18 @@ public:
     else p->right = nw;
 
   }
-  Value get(Key k);
-  Value drop(Key k);
+  Value get(Key k) {
+    BSTtree *curr = left; //первый же фейк?
+    while (curr != &nil) {
+      if (comp(k, curr->key)) curr = curr->left;
+      else if (comp(curr->key, k)) curr = curr->right;
+      else return curr->val;
+    }
+    throw std::out_of_range("No such element here");
+  }
+  Value drop(Key k) {
+
+  }
 
   using const_iterator = BSTConstIterator<Key, Value>;
   const_iterator rotateLeft(const_iterator it);
