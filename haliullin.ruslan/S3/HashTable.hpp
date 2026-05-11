@@ -254,7 +254,7 @@ haliullin::HIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Ha
   {
     if (slots_[i].second == 'o')
     {
-      return HIter(&slots_, i);
+      return HIter< Key, Value, Hash, Equal >(&slots_, i);
     }
   }
   return end();
@@ -267,7 +267,7 @@ haliullin::HCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, H
   {
     if (slots_[i].second == 'o')
     {
-      return HCIter(&slots_, i);
+      return HCIter< Key, Value, Hash, Equal >(&slots_, i);
     }
   }
   return end();
@@ -282,13 +282,13 @@ haliullin::HCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, H
 template< class Key, class Value, class Hash, class Equal >
 haliullin::HIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::end() noexcept
 {
-  return HIter(&slots_, slots_.getSize());
+  return HIter< Key, Value, Hash, Equal >(&slots_, slots_.getSize());
 }
 
 template< class Key, class Value, class Hash, class Equal >
 haliullin::HCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::end() const noexcept
 {
-  return HCIter(&slots_, slots_.getSize());
+  return HCIter< Key, Value, Hash, Equal >(&slots_, slots_.getSize());
 }
 
 template< class Key, class Value, class Hash, class Equal >
