@@ -153,7 +153,7 @@ public:
     b.push_back({k, std::move(v)});
     ++count_;
   }
-  
+
   Value drop(const Key& k)
   {
     const size_t idx   = bucketIndex(k);
@@ -265,3 +265,124 @@ public:
     }
     return mx;
   }
+  struct iterator {
+    HashTable*              ht_;
+    size_t                  bi_;
+    typename Bucket::iterator it_;
+
+    iterator(HashTable* ht, size_t bi, typename Bucket::iterator it):
+      ht_(ht),
+      bi_(bi),
+      it_(it)
+    {
+      advanceToValid();
+    }
+
+    void advanceToValid()
+    {
+      while (bi_ < ht_->numBuckets_ && it_ == ht_->buckets_[bi_].end()) {
+        ++bi_;
+        if (bi_ < ht_->numBuckets_) {
+          it_ = ht_->buckets_[bi_].begin();
+        }
+      }
+    }
+
+    Pair& operator*() { return *it_; }
+    Pair* operator->() { return &*it_; }
+
+    iterator& operator++()
+    {
+      ++it_;
+      advanceToValid();
+      return *this;
+    }
+
+    bool operator==(const iterator& o) const
+    {
+      return bi_ == o.bi_
+          && (bi_ >= ht_->numBuckets_ || it_ == o.it_);
+    }
+
+    bool operator!=(const iterator& o) const { return !(*this == o); }
+  };
+
+  struct const_iterator {
+    const HashTable*                  ht_;
+    size_t                            bi_;
+    typename Bucket::const_iterator   it_;
+
+    const_iterator(const HashTable* ht, size_t bi,
+                   typename Bucket::const_iterator it):
+      ht_(ht),
+      bi_(bi),
+      it_(it)
+    {
+      advanceToValid();
+    }
+
+    void advanceToValid()
+    {
+      while (bi_ < ht_->numBuckets_ && it_ == ht_->buckets_[bi_].cend()) {
+        ++bi_;
+        if (bi_ < ht_->numBuckets_) {
+          it_ = ht_->buckets_[bi_].cbegin();
+        }
+      }
+    }
+
+    const Pair& operator*() const { return *it_; }
+    const Pair* operator->() const { return &*it_; }
+
+    const_iterator& operator++()
+    {
+      ++it_;
+      advanceToValid();
+      return *this;
+    }
+
+    bool operator==(const const_iterator& o) const
+    {
+      return bi_ == o.bi_
+          && (bi_ >= ht_->numBuckets_ || it_ == o.it_);
+    }
+
+    bool operator!=(const const_iterator& o) const { return !(*this == o); }
+  };
+
+  iterator begin()
+  {
+    if (numBuckets_ == 0) return end();
+    return iterator(this, 0, buckets_[0].begin());
+  }
+
+  iterator end()
+  {
+    return iterator(this, numBuckets_,
+        numBuckets_ ? buckets_[numBuckets_ - 1].end()
+                    : typename Bucket::iterator(nullptr));
+  }
+
+  const_iterator begin() const
+  {
+    if (numBuckets_ == 0) return end();
+    return const_iterator(this, 0, buckets_[0].cbegin());
+  }
+
+  const_iterator end() const
+  {
+    if (numBuckets_ == 0) {
+      return const_iterator(this, 0,
+          typename Bucket::const_iterator(nullptr));
+    }
+    return const_iterator(this, numBuckets_,
+        buckets_[numBuckets_ - 1].cend());
+  }
+
+  const_iterator cbegin() const { return begin(); }
+  const_iterator cend() const { return end(); }
+};
+
+}
+
+#endif
