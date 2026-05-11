@@ -25,7 +25,7 @@ namespace haliullin
 
     void add(const Key& k, const Value& v);
     Value drop(const Key& k);
-    bool has(const Key& k) const;
+    bool has(const Key& k) const noexcept;
     Value& get(const Key& k);
     const Value& get(const Key& k) const;
     void rehash(size_t newSize);
@@ -146,6 +146,34 @@ Value haliullin::HashTable< Key, Value, Hash, Equal >::drop(const Key& k)
   slots_[idx].second = 't';
   --size_;
   return result;
+}
+
+template< class Key, class Value, class Hash, class Equal >
+bool haliullin::HashTable< Key, Value, Hash, Equal >::has(const Key& k) const noexcept
+{
+  return findIdx(k) != slots_.getSize();
+}
+
+template< class Key, class Value, class Hash, class Equal >
+Value& haliullin::HashTable< Key, Value, Hash, Equal >::get(const Key& k)
+{
+  size_t idx = findIdx(k);
+  if (idx == slots_.getSize())
+  {
+    throw std::out_of_range("Key not found");
+  }
+  return slots_[idx].first.second;
+}
+
+template< class Key, class Value, class Hash, class Equal >
+const Value& haliullin::HashTable< Key, Value, Hash, Equal >::get(const Key& k) const
+{
+  size_t idx = findIdx(k);
+  if (idx == slots_.getSize())
+  {
+    throw std::out_of_range("Key not found");
+  }
+  return slots_[idx].first.second;
 }
 
 template< class Key, class Value, class Hash, class Equal >
