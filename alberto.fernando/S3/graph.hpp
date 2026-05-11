@@ -32,3 +32,12 @@ sortedKeys(const HT& ht)
   std::sort(keys.begin(), keys.end());
   return keys;
 }
+std::vector< std::string > tokenize(const std::string& line);
+
+void loadGraphs(const std::string& filename, GraphTable& graphs);
+
+void safeAddGraph(GraphTable& graphs, const std::string& name, Graph g);
+
+}
+
+#endif
