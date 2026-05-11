@@ -48,3 +48,27 @@ xxhash32(const void* input, size_t len, uint32_t seed = 0)
   } else {
     h32 = seed + PRIME5;
   }
+  h32 += static_cast< uint32_t >(len);
+
+  while (p + 4 <= end) {
+    uint32_t tmp = 0;
+    memcpy(&tmp, p, 4);
+    h32 = rotl32(h32 + tmp * PRIME3, 17) * PRIME4;
+    p += 4;
+  }
+  while (p < end) {
+    h32 = rotl32(h32 + (*p) * PRIME5, 11) * PRIME1;
+    ++p;
+  }
+
+  h32 ^= h32 >> 15;
+  h32 *= PRIME2;
+  h32 ^= h32 >> 13;
+  h32 *= PRIME3;
+  h32 ^= h32 >> 16;
+  return h32;
+}
+
+}
+
+#endif
