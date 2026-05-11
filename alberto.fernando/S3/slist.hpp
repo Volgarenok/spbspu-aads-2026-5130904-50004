@@ -196,3 +196,37 @@ public:
       return n_ != o.n_;
     }
   };
+  iterator begin()
+  {
+    return iterator{head_};
+  }
+
+  iterator end()
+  {
+    return iterator{nullptr};
+  }
+
+  const_iterator begin() const
+  {
+    return const_iterator{head_};
+  }
+
+  const_iterator end() const
+  {
+    return const_iterator{nullptr};
+  }
+
+  const_iterator cbegin() const
+  {
+    return begin();
+  }
+
+  const_iterator cend() const
+  {
+    return end();
+  }
+};
+
+}
+
+#endif
