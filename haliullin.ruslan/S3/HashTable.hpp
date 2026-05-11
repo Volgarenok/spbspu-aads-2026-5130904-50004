@@ -35,6 +35,13 @@ namespace haliullin
     size_t getSize() const noexcept;
     size_t getCapacity() const noexcept;
 
+    HIter< Key, Value, Hash, Equal > begin() noexcept;
+    HCIter< Key, Value, Hash, Equal > begin() const noexcept;
+    HCIter< Key, Value, Hash, Equal > cbegin() const noexcept;
+    HIter< Key, Value, Hash, Equal > end() noexcept;
+    HCIter< Key, Value, Hash, Equal > end() const noexcept;
+    HCIter< Key, Value, Hash, Equal > cend() const noexcept;
+
   private:
     using Slot = std::pair< std::pair< Key, Value >, char >;
 
@@ -238,6 +245,56 @@ template< class Key, class Value, class Hash, class Equal >
 size_t haliullin::HashTable< Key, Value, Hash, Equal >::probe(size_t hash, size_t i) const noexcept
 {
   return (hash + i * i) % getCapacity();
+}
+
+template< class Key, class Value, class Hash, class Equal >
+haliullin::HIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::begin() noexcept
+{
+  for (size_t i = 0; i < slots_.getSize(); ++i)
+  {
+    if (slots_[i].second == 'o')
+    {
+      return HIter(&slots_, i);
+    }
+  }
+  return end();
+}
+
+template< class Key, class Value, class Hash, class Equal >
+haliullin::HCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::begin() const noexcept
+{
+    for (size_t i = 0; i < slots_.getSize(); ++i)
+  {
+    if (slots_[i].second == 'o')
+    {
+      return HCIter(&slots_, i);
+    }
+  }
+  return end();
+}
+
+template< class Key, class Value, class Hash, class Equal >
+haliullin::HCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::cbegin() const noexcept
+{
+  return begin();
+}
+
+template< class Key, class Value, class Hash, class Equal >
+haliullin::HIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::end() noexcept
+{
+  return HIter(&slots_, slots_.getSize());
+}
+
+template< class Key, class Value, class Hash, class Equal >
+haliullin::HCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::end() const noexcept
+{
+  return HCIter(&slots_, slots_.getSize());
+}
+
+template< class Key, class Value, class Hash, class Equal >
+haliullin::HCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::cend() const noexcept
+{
+  return end();
 }
 
 #endif
