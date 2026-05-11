@@ -42,7 +42,7 @@ namespace haliullin
     Hash hasher_;
     Equal equal_;
 
-    size_t findId(const Key& k) const;
+    size_t findId(const Key& k) const noexcept;
     size_t probe(size_t hash, size_t i) const noexcept;
   };
 }
@@ -107,6 +107,35 @@ void haliullin::HashTable< Key, Value, Hash, Equal >::swap(HashTable& other) noe
 }
 
 template< class Key, class Value, class Hash, class Equal >
+void haliullin::HashTable< Key, Value, Hash, Equal >::add(const Key& k, const Value& v)
+{
+  size_t hash = hasher_(k);
+  size_t id = slots_.getSize();
+  for (size_t i = 0; i < slots_.getSize(); ++i)
+  {
+    size_t probeId = probe(hash, i);
+    if (slots_[probeId].second != 'o')
+    {
+      id = probeId;
+      break;
+    }
+  }
+
+  if (id == slots_.getSize())
+  {
+    throw std::runtime_error("Needed rehash hashtable");
+  }
+
+  Key keyCp(k);
+  Value valCp(v);
+
+  slots_.[idx].first.first = std::move(keyCp);
+  slots_.[idx].first.second = std::move(valCp);
+  slots_.[idx].second = 'o';
+  ++size_;
+}
+
+template< class Key, class Value, class Hash, class Equal >
 bool haliullin::HashTable< Key, Value, Hash, Equal >::isEmpty() const noexcept
 {
   return !size_;
@@ -125,7 +154,7 @@ size_t haliullin::HashTable< Key, Value, Hash, Equal >::getCapacity() const noex
 }
 
 template< class Key, class Value, class Hash, class Equal >
-size_t haliullin::HashTable< Key, Value, Hash, Equal >::findId(const Key& k) const
+size_t haliullin::HashTable< Key, Value, Hash, Equal >::findId(const Key& k) const noexcept
 {
   size_t hash = hasher_(k);
   for (size_t i = 0; i < slots_.getSize(); ++i)
