@@ -26,10 +26,9 @@ namespace haliullin
 
     void addVertex(const std::string& vert);
     bool hasVertex(const std::string& vert) const noexcept;
-    void cutVertex(const std::string& vert);
 
     void addEdge(const std::string& fromVert, const std::string& toVert, unsigned long long weight);
-    void cutEdge(const std::string& fromVert, const std::string& toVert, unsigned long long weight);
+    bool cutEdge(const std::string& fromVert, const std::string& toVert, unsigned long long weight);
 
     Vector< std::string > getVertexes() const;
 

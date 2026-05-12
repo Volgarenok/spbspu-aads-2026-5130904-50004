@@ -64,45 +64,48 @@ bool haliullin::Graph::hasVertex(const std::string& vert) const noexcept
   return false;
 }
 
-void haliullin::Graph::cutVertex(const std::string& vert)
+void haliullin::Graph::addEdge(const std::string& fromVert, const std::string& toVert, unsigned long long weight)
 {
-  size_t pos = vertexes_.getSize();
-  for (size_t i = 0; i < vertexes_.getSize(); ++i)
+  addVertex(fromVert);
+  addVertex(toVert);
+
+  std::pair< std::string, std::string > key{fromVert, toVert};
+  if (!edges_.has(key))
   {
-    if (vertexes_[i] == vert)
+    Vector< unsigned long long > w;
+    w.pushBack(weight);
+    edges_.add(key, w);
+  }
+  else
+  {
+    Vector< unsigned long long >& w = edges_.get(key);
+    size_t pos = 0;
+    while (pos < w.getSize() && w[pos] < weight)
     {
-      pos = i;
-      break;
+      ++pos;
+    }
+    w.insert(pos, weight);
+  }
+}
+
+bool haliullin::Graph::cutEdge(const std::string& fromVert, const std::string& toVert, unsigned long long weight)
+{
+  std::pair< std::string, std::string > key{fromVert, toVert};
+  if (!edges_.has(key))
+    return false;
+
+  Vector< unsigned long long >& w = edges_.get(key);
+  for (size_t i = 0; i < w.getSize(); ++i)
+  {
+    if (w[i] == weight)
+    {
+      w.erase(i);
+      if (w.isEmpty())
+      {
+        edges_.drop(key);
+      }
+      return true;
     }
   }
-  if (pos == vertexes_.getSize())
-  {
-    return;
-  }
-
-  Vector< std::string > tmp;
-  for (size_t i = 0; i < pos; ++i)
-  {
-    tmp.pushBack(vertexes_[i]);
-  }
-  for (size_t i = pos + 1; i < vertexes_.getSize(); ++i)
-  {
-    tmp.pushBack(vertexes_[i]);
-  }
-
-  Vector< std::pair< std::string, std::string > > keysToRemove;
-  for (auto it = edges_.cbegin(); it != edges_.cend(); ++it)
-  {
-    const auto& key = (*it).first;
-    if (key.first == vert || key.second == vert)
-    {
-      keysToRemove.pushBack(key);
-    }
-  }
-  for (size_t i = 0; i < keysToRemove.getSize(); ++i)
-  {
-    edges_.drop(keysToRemove[i]);
-  }
-
-  vertexes_.swap(tmp);
+  return false;
 }
