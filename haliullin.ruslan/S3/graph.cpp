@@ -110,6 +110,11 @@ bool haliullin::Graph::cutEdge(const std::string& fromVert, const std::string& t
   return false;
 }
 
+haliullin::Vector< std::string > haliullin::Graph::getVertexes() const noexcept
+{
+  return vertexes_;
+}
+
 haliullin::Vector< std::pair< std::string, haliullin::Vector< unsigned long long > > >
 haliullin::Graph::getOutbound(const std::string& fromVert) const
 {
