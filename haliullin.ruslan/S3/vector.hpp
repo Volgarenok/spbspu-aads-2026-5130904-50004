@@ -35,6 +35,7 @@ namespace haliullin
     size_t getCapacity() const noexcept;
     bool operator==(const Vector< T >& rhs) const noexcept;
     bool operator!=(const Vector< T >& rhs) const noexcept;
+    bool operator<(const Vector< T >& rhs) const noexcept;
 
     void pushBack(const T& val);
     void pushBackRepeat(const T& val, size_t k);
@@ -239,6 +240,20 @@ template< class T >
 bool haliullin::Vector< T >::operator!=(const Vector< T >& rhs) const noexcept
 {
   return !(*this == rhs);
+}
+
+template< class T >
+bool haliullin::Vector< T >::operator<(const Vector< T >& rhs) const noexcept
+{
+  size_t minSize = getSize() < rhs.getSize() ? getSize() : rhs.getSize();
+  for (size_t i = 0; i < minSize; ++i)
+  {
+    if ((*this)[i] < rhs[i])
+      return true;
+    if (rhs[i] < (*this)[i])
+      return false;
+  }
+  return getSize() < rhs.getSize();
 }
 
 template< class T >
