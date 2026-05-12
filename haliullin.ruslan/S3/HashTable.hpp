@@ -2,6 +2,7 @@
 #define HASHTABLE_HPP
 
 #include "vector.hpp"
+#include "slot.hpp"
 #include "HashTable-iterators.hpp"
 #include <cstddef>
 #include <stdexcept>
@@ -35,17 +36,15 @@ namespace haliullin
     size_t getSize() const noexcept;
     size_t getCapacity() const noexcept;
 
-    HIter< Key, Value, Hash, Equal > begin() noexcept;
-    HCIter< Key, Value, Hash, Equal > begin() const noexcept;
-    HCIter< Key, Value, Hash, Equal > cbegin() const noexcept;
-    HIter< Key, Value, Hash, Equal > end() noexcept;
-    HCIter< Key, Value, Hash, Equal > end() const noexcept;
-    HCIter< Key, Value, Hash, Equal > cend() const noexcept;
+    HtIter< Key, Value, Hash, Equal > begin() noexcept;
+    HtCIter< Key, Value, Hash, Equal > begin() const noexcept;
+    HtCIter< Key, Value, Hash, Equal > cbegin() const noexcept;
+    HtIter< Key, Value, Hash, Equal > end() noexcept;
+    HtCIter< Key, Value, Hash, Equal > end() const noexcept;
+    HtCIter< Key, Value, Hash, Equal > cend() const noexcept;
 
   private:
-    using Slot = std::pair< std::pair< Key, Value >, char >;
-
-    Vector< Slot > slots_;
+    Vector< Slot< Key, Value> > slots_;
     size_t size_;
     Hash hasher_;
     Equal equal_;
@@ -61,12 +60,7 @@ haliullin::HashTable< Key, Value, Hash, Equal >::HashTable(size_t capacity):
   size_(0),
   hasher_(),
   equal_()
-{
-  for (size_t i = 0; i < slots_.getSize(); ++i)
-  {
-    slots_[i].second = 'e';
-  }
-}
+{}
 
 template< class Key, class Value, class Hash, class Equal >
 haliullin::HashTable< Key, Value, Hash, Equal >::HashTable(const HashTable& other):
@@ -122,7 +116,7 @@ void haliullin::HashTable< Key, Value, Hash, Equal >::add(const Key& k, const Va
   for (size_t i = 0; i < slots_.getSize(); ++i)
   {
     size_t probeIdx = probe(hash, i);
-    if (slots_[probeIdx].second != 'o')
+    if (slots_[probeIdx].info_ != 'o')
     {
       idx = probeIdx;
       break;
@@ -136,9 +130,9 @@ void haliullin::HashTable< Key, Value, Hash, Equal >::add(const Key& k, const Va
 
   Key keyCp(k);
   Value valCp(v);
-  slots_[idx].first.first = std::move(keyCp);
-  slots_[idx].first.second = std::move(valCp);
-  slots_[idx].second = 'o';
+  slots_[idx].key_ = std::move(keyCp);
+  slots_[idx].value_ = std::move(valCp);
+  slots_[idx].info_ = 'o';
   ++size_;
 }
 
@@ -150,8 +144,8 @@ Value haliullin::HashTable< Key, Value, Hash, Equal >::drop(const Key& k)
   {
     throw std::out_of_range("Key not found");
   }
-  Value result = slots_[idx].first.second;
-  slots_[idx].second = 't';
+  Value result = slots_[idx].value_;
+  slots_[idx].info_ = 't';
   --size_;
   return result;
 }
@@ -170,7 +164,7 @@ Value& haliullin::HashTable< Key, Value, Hash, Equal >::get(const Key& k)
   {
     throw std::out_of_range("Key not found");
   }
-  return slots_[idx].first.second;
+  return slots_[idx].value_;
 }
 
 template< class Key, class Value, class Hash, class Equal >
@@ -181,7 +175,7 @@ const Value& haliullin::HashTable< Key, Value, Hash, Equal >::get(const Key& k) 
   {
     throw std::out_of_range("Key not found");
   }
-  return slots_[idx].first.second;
+  return slots_[idx].value_;
 }
 
 template< class Key, class Value, class Hash, class Equal >
@@ -194,9 +188,9 @@ void haliullin::HashTable< Key, Value, Hash, Equal >::rehash(size_t newSlots)
   HashTable tmp(newSlots);
   for (size_t i = 0; i < slots_.getSize(); ++i)
   {
-    if (slots_[i].second == 'o')
+    if (slots_[i].info_ == 'o')
     {
-      tmp.add(slots_[i].first.first, slots_[i].first.second);
+      tmp.add(slots_[i].key_, slots_[i].value_);
     }
   }
   swap(tmp);
@@ -227,13 +221,13 @@ size_t haliullin::HashTable< Key, Value, Hash, Equal >::findIdx(const Key& k) co
   for (size_t i = 0; i < slots_.getSize(); ++i)
   {
     size_t idx = probe(hash, i);
-    char state = slots_[idx].second;
+    char state = slots_[idx].info_;
 
     if (state == 'e')
     {
       return slots_.getSize();
     }
-    else if (state == 'o' && equal_(slots_[idx].first.first, k))
+    else if (state == 'o' && equal_(slots_[idx].key_, k))
     {
       return idx;
     }
@@ -248,51 +242,51 @@ size_t haliullin::HashTable< Key, Value, Hash, Equal >::probe(size_t hash, size_
 }
 
 template< class Key, class Value, class Hash, class Equal >
-haliullin::HIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::begin() noexcept
+haliullin::HtIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::begin() noexcept
 {
   for (size_t i = 0; i < slots_.getSize(); ++i)
   {
-    if (slots_[i].second == 'o')
+    if (slots_[i].info_ == 'o')
     {
-      return HIter< Key, Value, Hash, Equal >(&slots_, i);
+      return HtIter< Key, Value, Hash, Equal >(&slots_, i);
     }
   }
   return end();
 }
 
 template< class Key, class Value, class Hash, class Equal >
-haliullin::HCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::begin() const noexcept
+haliullin::HtCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::begin() const noexcept
 {
-    for (size_t i = 0; i < slots_.getSize(); ++i)
+  for (size_t i = 0; i < slots_.getSize(); ++i)
   {
-    if (slots_[i].second == 'o')
+    if (slots_[i].info_ == 'o')
     {
-      return HCIter< Key, Value, Hash, Equal >(&slots_, i);
+      return HtCIter< Key, Value, Hash, Equal >(&slots_, i);
     }
   }
   return end();
 }
 
 template< class Key, class Value, class Hash, class Equal >
-haliullin::HCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::cbegin() const noexcept
+haliullin::HtCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::cbegin() const noexcept
 {
   return begin();
 }
 
 template< class Key, class Value, class Hash, class Equal >
-haliullin::HIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::end() noexcept
+haliullin::HtIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::end() noexcept
 {
-  return HIter< Key, Value, Hash, Equal >(&slots_, slots_.getSize());
+  return HtIter< Key, Value, Hash, Equal >(&slots_, slots_.getSize());
 }
 
 template< class Key, class Value, class Hash, class Equal >
-haliullin::HCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::end() const noexcept
+haliullin::HtCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::end() const noexcept
 {
-  return HCIter< Key, Value, Hash, Equal >(&slots_, slots_.getSize());
+  return HtCIter< Key, Value, Hash, Equal >(&slots_, slots_.getSize());
 }
 
 template< class Key, class Value, class Hash, class Equal >
-haliullin::HCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::cend() const noexcept
+haliullin::HtCIter< Key, Value, Hash, Equal > haliullin::HashTable< Key, Value, Hash, Equal >::cend() const noexcept
 {
   return end();
 }
