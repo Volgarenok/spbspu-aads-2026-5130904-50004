@@ -109,3 +109,19 @@ bool haliullin::Graph::cutEdge(const std::string& fromVert, const std::string& t
   }
   return false;
 }
+
+haliullin::Vector< std::pair< std::string, haliullin::Vector< unsigned long long > > >
+haliullin::Graph::getOutbound(const std::string& fromVert) const
+{
+  Vector< std::pair< std::string, Vector< unsigned long long > > > result;
+  for (auto it = edges_.cbegin(); it != edges_.cend(); ++it)
+  {
+    if ((*it).first.first == fromVert)
+    {
+      result.pushBack({ (*it).first.second, (*it).second });
+    }
+  }
+  result.insSort();
+  return result;
+}
+
