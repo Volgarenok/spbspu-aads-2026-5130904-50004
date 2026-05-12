@@ -112,27 +112,39 @@ template< class Key, class Value, class Hash, class Equal >
 void haliullin::HashTable< Key, Value, Hash, Equal >::add(const Key& k, const Value& v)
 {
   size_t hash = hasher_(k);
-  size_t idx = slots_.getSize();
+  size_t insertIdx = slots_.getSize();
+
   for (size_t i = 0; i < slots_.getSize(); ++i)
   {
-    size_t probeIdx = probe(hash, i);
-    if (slots_[probeIdx].info_ != 'o')
+    size_t idx = probe(hash, i);
+    char state = slots_[idx].info_;
+
+    if (state == 'o' && equal_(slots_[idx].key_, k))
     {
-      idx = probeIdx;
+      throw std::invalid_argument("Key already exists");
+    }
+
+    if (state != 'o' && insertIdx == slots_.getSize())
+    {
+      insertIdx = idx;
+    }
+
+    if (state == 'e')
+    {
       break;
     }
   }
 
-  if (idx == slots_.getSize())
+  if (insertIdx == slots_.getSize())
   {
     throw std::runtime_error("Need to rehash hashtable");
   }
 
   Key keyCp(k);
   Value valCp(v);
-  slots_[idx].key_ = std::move(keyCp);
-  slots_[idx].value_ = std::move(valCp);
-  slots_[idx].info_ = 'o';
+  slots_[insertIdx].key_ = std::move(keyCp);
+  slots_[insertIdx].value_ = std::move(valCp);
+  slots_[insertIdx].info_ = 'o';
   ++size_;
 }
 
