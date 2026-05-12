@@ -80,7 +80,7 @@ haliullin::HtIter< Key, Value, Hash, Equal >::HtIter(Vector< Slot< Key, Value > 
 template< class Key, class Value, class Hash, class Equal >
 std::pair< const Key, Value > haliullin::HtIter< Key, Value, Hash, Equal >::operator*() const noexcept
 {
-  return std::pair((*slots_)[idx_].key_, (*slots_)[idx_].value_);
+  return std::pair< const Key, Value >((*slots_)[idx_].key_, (*slots_)[idx_].value_);
 }
 
 template< class Key, class Value, class Hash, class Equal >
@@ -159,7 +159,7 @@ haliullin::HtCIter< Key, Value, Hash, Equal >::HtCIter(const HtIter< Key, Value,
 template< class Key, class Value, class Hash, class Equal >
 const std::pair< const Key, Value > haliullin::HtCIter< Key, Value, Hash, Equal >::operator*() const noexcept
 {
-  return std::pair((*slots_)[idx_].key_, (*slots_)[idx_].value_);
+  return std::pair< const Key, Value >((*slots_)[idx_].key_, (*slots_)[idx_].value_);
 }
 
 template< class Key, class Value, class Hash, class Equal >
