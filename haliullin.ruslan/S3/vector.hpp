@@ -27,6 +27,8 @@ namespace haliullin
     T& operator[](size_t id) noexcept;
     const T& operator[](size_t id) const noexcept;
 
+    void insSort();
+
     bool isEmpty() const noexcept;
     size_t getSize() const noexcept;
     size_t getCapacity() const noexcept;
@@ -177,6 +179,31 @@ template< class T >
 const T& haliullin::Vector< T >::operator[](size_t id) const noexcept
 {
   return data_[id];
+}
+
+template< class T >
+void haliullin::Vector< T >::insSort()
+{
+  Vector< T > tmp(*this);
+  try
+  {
+    for (size_t i = 1; i < tmp.size_; ++i)
+    {
+      T key = tmp.data_[i];
+      size_t j = i;
+      while (j > 0 && tmp.data_[j - 1] > key)
+      {
+        tmp.data_[j] = tmp.data_[j - 1];
+        --j;
+      }
+      tmp.data_[j] = key;
+    }
+  }
+  catch (...)
+  {
+    throw;
+  }
+  swap(tmp);
 }
 
 template< class T >
