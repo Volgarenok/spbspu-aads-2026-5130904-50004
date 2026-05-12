@@ -125,3 +125,17 @@ haliullin::Graph::getOutbound(const std::string& fromVert) const
   return result;
 }
 
+haliullin::Vector< std::pair< std::string, haliullin::Vector< unsigned long long > > >
+haliullin::Graph::getInbound(const std::string& toVert) const
+{
+  Vector< std::pair< std::string, Vector< unsigned long long > > > result;
+  for (auto it = edges_.cbegin(); it != edges_.cend(); ++it)
+  {
+    if ((*it).first.second == toVert)
+    {
+      result.pushBack({ (*it).first.first, (*it).second });
+    }
+  }
+  result.insSort();
+  return result;
+}
