@@ -25,13 +25,19 @@ namespace haliullin
     void swap(Graph& other) noexcept;
 
     void addVertex(const std::string& vert);
-    bool hasVertex(const std::string& vert) const;
-    void removeVertex(const std::string& vert);
+    bool hasVertex(const std::string& vert) const noexcept;
+    void cutVertex(const std::string& vert);
 
     void addEdge(const std::string& fromVert, const std::string& toVert, unsigned long long weight);
-    void removeEdge(const std::string& fromVert, const std::string& toVert, unsigned long long weight);
+    void cutEdge(const std::string& fromVert, const std::string& toVert, unsigned long long weight);
 
     Vector< std::string > getVertexes() const;
+
+    Vector< std::pair< std::string, Vector< unsigned long long > > >
+    getOutbound(const std::string& fromVert) const;
+
+    Vector< std::pair< std::string, Vector< unsigned long long > > >
+    getInbound(const std::string& toVert) const;
 
     Graph merge(const Graph& other) const;
     Graph extract(const Vector< std::string >& vertices) const;

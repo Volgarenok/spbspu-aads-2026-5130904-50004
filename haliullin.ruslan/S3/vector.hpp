@@ -12,6 +12,7 @@ namespace haliullin
   public:
     ~Vector();
     Vector();
+    explicit Vector(size_t size);
     Vector(size_t size, const T& value);
 
     Vector(const Vector< T >& rhs);
@@ -67,7 +68,6 @@ namespace haliullin
   private:
     T* data_;
     size_t size_, capacity_;
-    explicit Vector(size_t size);
     friend class VIter< T >;
     friend class VCIter< T >;
   };
