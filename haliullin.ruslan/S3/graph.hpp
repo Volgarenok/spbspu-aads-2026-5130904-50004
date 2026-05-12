@@ -16,20 +16,28 @@ namespace haliullin
     ~Graph() = default;
     Graph();
 
-    void addVertex(const std::string& name);
-    bool hasVertex(const std::string& name) const;
-    void removeVertex(const std::string& name);
+    Graph(const Graph& other);
+    Graph(Graph&& other) noexcept;
 
-    void addEdge(const std::string& from, const std::string& to, unsigned long long weight);
-    void removeEdge(const std::string& from, const std::string& to, unsigned long long weight);
+    Graph& operator=(const Graph& other);
+    Graph& operator=(Graph&& other) noexcept;
 
-    Vector< std::string > getVertices() const;
+    void swap(Graph& other) noexcept;
+
+    void addVertex(const std::string& vert);
+    bool hasVertex(const std::string& vert) const;
+    void removeVertex(const std::string& vert);
+
+    void addEdge(const std::string& fromVert, const std::string& toVert, unsigned long long weight);
+    void removeEdge(const std::string& fromVert, const std::string& toVert, unsigned long long weight);
+
+    Vector< std::string > getVertexes() const;
 
     Graph merge(const Graph& other) const;
     Graph extract(const Vector< std::string >& vertices) const;
 
   private:
-    Vector< std::string > vertices_;
+    Vector< std::string > vertexes_;
     HashTable< std::pair< std::string, std::string >, Vector< unsigned long long >, SipHash, Equal > edges_;
   };
 }
