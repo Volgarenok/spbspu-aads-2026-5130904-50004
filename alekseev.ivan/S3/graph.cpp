@@ -118,3 +118,19 @@ bool alekseev::Graph::has_edge(const str & vertex1, const str & vertex2) const
 {
   return edges_.contains(std::pair<str, str>(vertex1, vertex2));
 }
+
+void alekseev::Graph::remove_vertex(const str & vertex)
+{
+  List< str > * current = vertexes_;
+  while (current->next != vertexes_ && current->next->data != vertex) {
+    current = current->next;
+  }
+  if (current->next->data == vertex) {
+    erase_after(current);
+    current = vertexes_->next;
+    while (current != vertexes_) {
+      edges_.remove(std::pair< str, str >(vertex, current->data));
+      current = current->next;
+    }
+  }
+}

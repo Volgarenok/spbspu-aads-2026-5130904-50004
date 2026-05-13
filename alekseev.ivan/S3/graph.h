@@ -26,6 +26,7 @@ namespace alekseev {
     void add_edge(const str & vertex1, const str & vertex2, size_t weight);
     bool has_vertex(const str & vertex) const;
     bool has_edge(const str & vertex1, const str & vertex2) const;
+    void remove_vertex(const str & vertex);
 
     private:
       List< str > * vertexes_;
