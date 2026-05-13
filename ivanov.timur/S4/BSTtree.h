@@ -1,4 +1,3 @@
-
 #ifndef BSTTREE_H
 #define BSTTREE_H
 #include <stdexcept>
