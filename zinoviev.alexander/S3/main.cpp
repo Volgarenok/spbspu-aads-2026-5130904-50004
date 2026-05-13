@@ -148,9 +148,55 @@ int main(int argc,const char* argv[])
     }
     else if (command == "bind")
     {
+      if (tokens.getSize() != 5)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      zinoviev::Graph* g = graphs.find(tokens[1]);
+      if (!g)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      try
+      {
+        unsigned long long weight = std::stoull(tokens[4]);
+        g->add_edge(tokens[2], tokens[3], weight);
+      }
+      catch (...)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
     }
     else if (command == "cut")
     {
+      if (tokens.getSize() != 5)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      zinoviev::Graph* g = graphs.find(tokens[1]);
+      if (!g)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      try
+      {
+        unsigned long long weight = std::stoull(tokens[4]);
+        g->remove_edge({ tokens[2], tokens[3] }, weight);
+      }
+      catch (...)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
     }
     else if (command == "create")
     {
