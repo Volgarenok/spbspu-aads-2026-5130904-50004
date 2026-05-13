@@ -65,4 +65,77 @@ namespace kuchukbaeva {
     commands_.add("merge", &Application::cmdMerge);
     commands_.add("extract", &Application::cmdExtract);
   }
+  void Application::loadFromFile(const std::string& filename)
+  {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+      throw std::runtime_error("Cannot open file");
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+      Vector< std::string > tokens = splitString(line);
+      if (tokens.getSize() == 0) {
+        continue;
+      }
+      if (tokens.getSize() == 2) {
+        std::string graphName = tokens[0];
+        unsigned int edgeCount = stringToUInt(tokens[1]);
+        Graph g;
+        for (unsigned int i = 0; i < edgeCount; ++i) {
+          std::string edgeLine;
+          if (std::getline(file, edgeLine)) {
+            Vector< std::string > edgeTokens = splitString(edgeLine);
+            if (edgeTokens.getSize() >= 3) {
+              std::string src = edgeTokens[0];
+              std::string dest = edgeTokens[1];
+              unsigned int weight = stringToUInt(edgeTokens[2]);
+              bool srcFound = false;
+              bool destFound = false;
+              for (size_t v = 0; v < g.vertexes.getSize(); ++v) {
+                if (g.vertexes[v] == src) srcFound = true;
+                if (g.vertexes[v] == dest) destFound = true;
+              }
+              if (!srcFound) g.vertexes.pushBack(src);
+              if (!destFound) g.vertexes.pushBack(dest);
+
+              std::pair< std::string, std::string > key(src, dest);
+              Vector< unsigned int >* weights = g.edges.find(key);
+              if (weights) {
+                weights->pushBack(weight);
+              } else {
+                Vector< unsigned int > newWeights;
+                newWeights.pushBack(weight);
+                g.edges.add(key, newWeights);
+              }
+            }
+          }
+        }
+        graphs_.add(graphName, g);
+      }
+    }
+  }
+
+  void Application::run(const std::string& filename)
+  {
+    loadFromFile(filename);
+    std::string line;
+    while (std::getline(std::cin, line)) {
+      processLine(line);
+    }
+  }
+
+  void Application::processLine(const std::string& line)
+  {
+    Vector< std::string > tokens = splitString(line);
+    if (tokens.getSize() == 0) {
+      return;
+    }
+    CommandFunc* funcPtr = commands_.find(tokens[0]);
+    if (funcPtr) {
+      (*funcPtr)(this, tokens);
+    } else {
+      std::cout << "<INVALID COMMAND>\n";
+    }
+  }
 }
