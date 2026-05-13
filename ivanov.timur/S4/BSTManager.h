@@ -23,7 +23,7 @@ namespace ivanov {
     tree* getDataset(const std::string& name);
     const tree* getDatasetConst(const std::string& name) const;
 
-    const bool contains(const tree& tr, int key) const;
+    bool contains(const tree& tr, int key) const;
   };
 
   inline void BSTManager::loadFromFile(const std::string &filename) {

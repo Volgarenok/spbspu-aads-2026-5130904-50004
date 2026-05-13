@@ -72,7 +72,7 @@ public:
     return !operator==(other);
   }
 
-  std::pair<const Key&, Value&> operator*() const {
+  std::pair<const Key&, const Value&> operator*() const {
     return {ptr->key, ptr->val};
   }
 
@@ -99,11 +99,12 @@ public:
 
 template<class Key, class Value, class Compare>
 class BSTtree {
+public:
+  using const_iterator = BSTConstIterator<Key, Value, Compare>;
+  using iterator = BSTIterator<Key, Value, Compare>;
 private:
   friend class BSTIterator<Key, Value, Compare>;
-  using iterator = BSTIterator<Key, Value, Compare>;
   friend class BSTConstIterator<Key, Value, Compare>;
-  using const_iterator = BSTConstIterator<Key, Value, Compare>;
 
   Value val;
   Key key;
@@ -122,7 +123,7 @@ private:
   }
 
 public:
-  BSTtree(): left(&nil), right(&nil), parent(&nil), isFakeRoot(true) {}
+  BSTtree(): right(&nil), left(&nil), parent(&nil), isFakeRoot(true) {}
   BSTtree(std::pair<Value, Key> init): val(init.first), key(init.second),
   right(&nil), left(&nil), parent(&nil), isFakeRoot(false) {}
   BSTtree(std::pair<Value, Key> init, BSTtree *parnt = nullptr): val(init.first), key(init.second),
@@ -141,8 +142,8 @@ public:
         return;
       }
     }
-    BSTtree *nw = new BSTtree(k, v, p);
-    if (p == this || comp(p, p->key)) p->left = nw; //вставка
+    BSTtree *nw = new BSTtree({v, k}, p);
+    if (p == this || comp(k, p->key)) p->left = nw; //вставка
     else p->right = nw;
 
   }
