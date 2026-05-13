@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <stdexcept>
 #include "graph.hpp"
 #include "hash_table.hpp"
 #include "commands.hpp"
@@ -66,5 +67,101 @@ int main(int argc,const char* argv[])
       std::cout << "<INVALID COMMAND>\n";
       continue;
     }
+  }
+
+  std::string cmd_line;
+  while (std::getline(std::cin, cmd_line))
+  {
+    if (cmd_line.empty())
+      continue;
+
+    zinoviev::Vector<std::string> tokens = zinoviev::split(cmd_line);
+
+    if (tokens.is_empty())
+      continue;
+
+    const std::string& command = tokens[0];
+
+    if (command == "graphs")
+    {
+      if (tokens.getSize() != 1)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      auto cbegin = graphs.cbegin();
+      auto cend = graphs.cend();
+      zinoviev::print_name_graphs(std::cout, cbegin, cend);
+    }
+    else if (command == "vertexes")
+    {
+      if (tokens.getSize() != 2)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      zinoviev::Graph* g = graphs.find(tokens[1]);
+      if (!g)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      zinoviev::Vector<std::string> vertices = g->get_vertices();
+
+      for (size_t i = 0; i < vertices.getSize(); ++i)
+        std::cout << vertices[i] << '\n';
+    }
+    else if (command == "outbound" || command == "inbound")
+    {
+      if (tokens.getSize() != 3)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      zinoviev::Graph* g = graphs.find(tokens[1]);
+      if (!g || !g->has_vertex(tokens[2]))
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      zinoviev::Vector < std::pair<std::string, zinoviev::Vector<unsigned long long>>> v;
+
+      if (command == "outbound")
+        v = g->get_outbound(tokens[2]);
+      else
+        v = g->get_inbound(tokens[2]);
+
+      for (size_t i = 0; i < v.getSize(); ++i)
+      {
+        std::cout << v[i].first;
+        for (size_t j = 0; j < v[i].second.getSize(); ++j)
+        {
+          std::cout << " " << v[i].second[j];
+        }
+        std::cout << "\n";
+      }
+    }
+    else if (command == "bind")
+    {
+    }
+    else if (command == "cut")
+    {
+    }
+    else if (command == "create")
+    {
+    }
+    else if (command == "merge")
+    {
+    }
+    else if (command == "extract")
+    {
+    }
+    else
+      std::cout << "<INVALID COMMAND>\n";
   }
 }
