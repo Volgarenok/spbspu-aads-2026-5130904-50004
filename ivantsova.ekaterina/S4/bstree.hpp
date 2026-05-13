@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <cstddef>
+#include <stdexcept>
 #include "bstiterators.hpp"
 #include "treenode.hpp"
 
@@ -206,6 +207,73 @@ template < class Key, class Value, class Compare >
 typename ivantsova::BSTree< Key, Value, Compare >::iterator
 ivantsova::BSTree< Key, Value, Compare >::find(const Key &k) {
   return iterator(findNode(k));
+}
+
+template < class Key, class Value, class Compare >
+void ivantsova::BSTree< Key, Value, Compare >::push(const Key &k, const Value &v) {
+  if (getRealRoot() == nullptr) {
+    fake_root_->right_ = new Node(k, v, fake_root_);
+    ++size_;
+    return;
+  }
+  Node *cur = getRealRoot();
+  while (true) {
+    if (comp_(k, cur->data.first)) {
+      if (cur->left_ == nullptr) {
+        cur->left_ = new Node(k, v, cur);
+        ++size_;
+        return;
+      }
+      cur = cur->left_;
+    } else if (comp_(cur->data.first, k)) {
+      if (cur->right_ == nullptr) {
+        cur->right_ = new Node(k, v, cur);
+        ++size_;
+        return;
+      }
+      cur = cur->right_;
+    } else {
+      cur->data.second = v;
+      return;
+    }
+  }
+}
+
+template < class Key, class Value, class Compare >
+void ivantsova::BSTree< Key, Value, Compare >::removeNode(Node *node) {
+  if (node == nullptr || node == fake_root_) {
+    return;
+  }
+  if (node->left_ != nullptr && node->right_ != nullptr) {
+    Node *succ = fallLeft(node->right_);
+    const_cast<Key &>(node->data.first) = succ->data.first;
+    node->data.second = succ->data.second;
+    node = succ;
+  }
+  Node *child = (node->left_ != nullptr) ? node->left_ : node->right_;
+  if (child != nullptr) {
+    child->parent_ = node->parent_;
+  }
+  if (node->parent_ == fake_root_) {
+    fake_root_->right_ = child;
+  } else if (node->parent_->left_ == node) {
+    node->parent_->left_ = child;
+  } else {
+    node->parent_->right_ = child;
+  }
+  delete node;
+}
+
+template < class Key, class Value, class Compare >
+Value ivantsova::BSTree< Key, Value, Compare >::drop(const Key &k) {
+  Node *node = findNode(k);
+  if (node == nullptr) {
+    throw std::out_of_range("Key not found");
+  }
+  Value res = node->data.second;
+  removeNode(node);
+  --size_;
+  return res;
 }
 
 #endif
