@@ -132,4 +132,37 @@ ivantsova::BSTree< Key, Value, Compare >::clone(Node *src, Node *parent) {
   return n;
 }
 
+template < class Key, class Value, class Compare >
+void ivantsova::BSTree< Key, Value, Compare >::clearImpl(Node *node) noexcept {
+  if (node == nullptr) {
+    return;
+  }
+  clearImpl(node->left_);
+  clearImpl(node->right_);
+  delete node;
+}
+
+template < class Key, class Value, class Compare >
+void ivantsova::BSTree< Key, Value, Compare >::clear() noexcept
+{
+  clearImpl(getRealRoot());
+  fake_root_->right_ = nullptr;
+  size_ = 0;
+}
+
+template < class Key, class Value, class Compare >
+void ivantsova::BSTree< Key, Value, Compare >::swap(BSTree &other) noexcept {
+  Node *tmp_root = fake_root_;
+  fake_root_ = other.fake_root_;
+  other.fake_root_ = tmp_root;
+
+  size_t tmp_size = size_;
+  size_ = other.size_;
+  other.size_ = tmp_size;
+
+  Compare tmp_comp = comp_;
+  comp_ = other.comp_;
+  other.comp_ = tmp_comp;
+}
+
 #endif
