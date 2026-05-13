@@ -321,4 +321,56 @@ ivantsova::BSTree< Key, Value, Compare >::cend() const noexcept {
   return const_iterator(nullptr);
 }
 
+template < class Key, class Value, class Compare >
+typename ivantsova::BSTree< Key, Value, Compare >::const_iterator
+ivantsova::BSTree< Key, Value, Compare >::rotateLeft(const_iterator it) {
+  Node *child = const_cast<Node *>(it.node_);
+  if (child == nullptr || child->right_ == nullptr || child->parent_ == fake_root_) {
+    return it;
+  }
+  Node *parent = child->parent_;
+  Node *rightChild = child->right_;
+  child->right_ = rightChild->left_;
+  if (rightChild->left_ != nullptr) {
+    rightChild->left_->parent_ = child;
+  }
+  rightChild->parent_ = parent;
+  if (parent == fake_root_) {
+    fake_root_->right_ = rightChild;
+  } else if (parent->left_ == child) {
+    parent->left_ = rightChild;
+  } else {
+    parent->right_ = rightChild;
+  }
+  rightChild->left_ = child;
+  child->parent_ = rightChild;
+  return const_iterator(rightChild);
+}
+
+template < class Key, class Value, class Compare >
+typename ivantsova::BSTree< Key, Value, Compare >::const_iterator
+ivantsova::BSTree< Key, Value, Compare >::rotateRight(const_iterator it) {
+  Node *child = const_cast<Node *>(it.node_);
+  if (child == nullptr || child->left_ == nullptr || child->parent_ == fake_root_) {
+    return it;
+  }
+  Node *parent = child->parent_;
+  Node *leftChild = child->left_;
+  child->left_ = leftChild->right_;
+  if (leftChild->right_ != nullptr) {
+    leftChild->right_->parent_ = child;
+  }
+  leftChild->parent_ = parent;
+  if (parent == fake_root_) {
+    fake_root_->right_ = leftChild;
+  } else if (parent->left_ == child) {
+    parent->left_ = leftChild;
+  } else {
+    parent->right_ = leftChild;
+  }
+  leftChild->right_ = child;
+  child->parent_ = leftChild;
+  return const_iterator(leftChild);
+}
+
 #endif
