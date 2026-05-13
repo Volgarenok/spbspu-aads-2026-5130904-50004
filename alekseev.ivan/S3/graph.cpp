@@ -16,15 +16,15 @@ size_t alekseev::hasher(const std::pair< str, str > & key)
 
   size_t result = 0;
   for (int i = 0; i < 5; i++) {
-    result += digest1[i] + digest2[i];
+    result ^= digest1[i];
+    result ^= digest2[i];
   }
   return result;
 }
 
 bool alekseev::is_equal(const std::pair< str, str > & lhs, const std::pair< str, str > & rhs)
 {
-  return lhs.first == rhs.first && lhs.second == rhs.second || lhs.first == rhs.second && lhs.second
-      == rhs.first;
+  return lhs.first == rhs.first && lhs.second == rhs.second;
 }
 
 alekseev::Graph::~Graph()
@@ -116,7 +116,7 @@ bool alekseev::Graph::has_vertex(const str & vertex) const
 
 bool alekseev::Graph::has_edge(const str & vertex1, const str & vertex2) const
 {
-  return edges_.contains(std::pair<str, str>(vertex1, vertex2));
+  return edges_.contains(std::pair< str, str >(vertex1, vertex2));
 }
 
 void alekseev::Graph::remove_vertex(const str & vertex)
