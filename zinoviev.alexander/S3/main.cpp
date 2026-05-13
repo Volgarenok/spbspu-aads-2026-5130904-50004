@@ -273,6 +273,72 @@ int main(int argc,const char* argv[])
     }
     else if (command == "extract")
     {
+      if (tokens.getSize() < 4)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      unsigned long long count = 0;
+      try
+      {
+        count = std::stoull(tokens[3]);
+        if (count != tokens.getSize() - 4)
+        {
+          std::cout << "<INVALID COMMAND>\n";
+          continue;
+        }
+      }
+      catch (...)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      zinoviev::Graph* g = graphs.find(tokens[1]);
+      zinoviev::Graph* old_g = graphs.find(tokens[2]);
+      if (g || !old_g)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      bool all_exist = true;
+      for (size_t i = 0; i < count; ++i)
+        if (!old_g->has_vertex(tokens[4 + i]))
+        {
+          all_exist = false;
+          break;
+        }
+
+      if (!all_exist)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      try
+      {
+        zinoviev::Graph new_graph(tokens[1]);
+        for (size_t i = 0; i < count; ++i)
+          new_graph.add_vertex(tokens[4 + i]);
+
+        for (size_t i = 0; i < count; ++i)
+          for (size_t j = 0; j < count; ++j)
+          {
+            const auto* weights = old_g->get_weights(tokens[4 + i], tokens[4 + j]);
+            if (weights)
+              for (size_t k = 0; k < weights->getSize(); ++k)
+                new_graph.add_edge(tokens[4 + i], tokens[4 + j], (*weights)[k]);
+          }
+
+        graphs.add(tokens[1], new_graph);
+      }
+      catch (...)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
     }
     else
       std::cout << "<INVALID COMMAND>\n";
