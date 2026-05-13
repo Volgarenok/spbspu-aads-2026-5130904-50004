@@ -3,11 +3,9 @@
 
 #include <utility>
 
-namespace ivantsova
-{
+namespace ivantsova {
   template < class Key, class Value >
-  struct TreeNode
-  {
+  struct TreeNode {
     std::pair< const Key, Value > data;
     TreeNode *left_;
     TreeNode *right_;
@@ -19,7 +17,7 @@ namespace ivantsova
 
 template < class Key, class Value >
 ivantsova::TreeNode< Key, Value >::TreeNode(const Key &key, const Value &value,
-                                            ivantsova::TreeNode< Key, Value > *parent):
+ivantsova::TreeNode< Key, Value > *parent):
   data(key, value),
   left_(nullptr),
   right_(nullptr),
