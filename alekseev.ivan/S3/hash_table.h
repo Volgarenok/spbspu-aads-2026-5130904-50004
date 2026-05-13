@@ -177,7 +177,7 @@ namespace alekseev {
   template< class Key, class Value, class Hash, class Equal >
   const Value & HashTable< Key, Value, Hash, Equal >::at(const Key & key) const
   {
-    List< Pair > * found = find_previous_node(key);
+    const List< Pair > * found = find_previous_node(key);
     if (found) {
       return found->next->data.second;
     }

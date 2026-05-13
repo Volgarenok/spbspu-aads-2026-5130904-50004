@@ -63,7 +63,7 @@ inline alekseev::Graph & alekseev::Graph::operator=(Graph && rhs) noexcept
 
 alekseev::Graph::Graph():
   vertexes_(fake< str >()),
-  edges_(HashTable< std::pair< str, str >, List< size_t >, hasher_ptr, is_equal_ptr >(hasher,
+  edges_(HashTable< std::pair< str, str >, List< size_t > *, hasher_ptr, is_equal_ptr >(hasher,
       is_equal, 1024))
 {
 }
@@ -74,7 +74,7 @@ void alekseev::Graph::swap(Graph & rhs) noexcept
   edges_.swap(rhs.edges_);
 }
 
-void alekseev::Graph::ins_vertex(str vertex)
+void alekseev::Graph::ins_vertex(const str & vertex)
 {
   LIter< str > fake = before_begin(vertexes_);
   LIter< str > current = fake;
@@ -86,7 +86,18 @@ void alekseev::Graph::ins_vertex(str vertex)
   add_vertex(vertex);
 }
 
-void alekseev::Graph::add_vertex(str vertex)
+void alekseev::Graph::add_vertex(const str & vertex)
 {
   insert_after(vertexes_, vertex);
+}
+
+void alekseev::Graph::add_edge(const str & vertex1, const str & vertex2, size_t weight)
+{
+  List< size_t > * weights = nullptr;
+  try {
+    weights = edges_.at(std::pair< str, str >(vertex1, vertex2));
+  } catch (...) {
+    weights = fake< size_t >();
+  }
+  insert_after(weights, weight);
 }
