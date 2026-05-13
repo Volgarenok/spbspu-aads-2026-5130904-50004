@@ -200,9 +200,76 @@ int main(int argc,const char* argv[])
     }
     else if (command == "create")
     {
+      if (tokens.getSize() < 3)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      unsigned long long count = 0;
+      try
+      {
+        count = std::stoull(tokens[2]);
+        if (count != tokens.getSize() - 3)
+        {
+          std::cout << "<INVALID COMMAND>\n";
+          continue;
+        }
+      }
+      catch (...)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      if (graphs.find(tokens[1]))
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      try
+      {
+        zinoviev::Graph new_graph(tokens[1]);
+        for (size_t i = 3; i < tokens.getSize(); ++i)
+          new_graph.add_vertex(tokens[i]);
+        graphs.add(tokens[1], new_graph);
+      }
+      catch (...)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
     }
     else if (command == "merge")
     {
+      if (tokens.getSize() != 4)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      zinoviev::Graph* new_graph_name = graphs.find(tokens[1]);
+      zinoviev::Graph* old_g1 = graphs.find(tokens[2]);
+      zinoviev::Graph* old_g2 = graphs.find(tokens[3]);
+      if (new_graph_name || !old_g1 || !old_g2)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      try
+      {
+        zinoviev::Graph new_graph(tokens[1]);
+        new_graph.add_graph(*old_g1);
+        new_graph.add_graph(*old_g2);
+        graphs.add(tokens[1], new_graph);
+      }
+      catch (...)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
     }
     else if (command == "extract")
     {
