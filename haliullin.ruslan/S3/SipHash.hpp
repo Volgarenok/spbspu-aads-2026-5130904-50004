@@ -1,17 +1,19 @@
 #ifndef SIPHASH_HPP
 #define SIPHASH_HPP
 
-#include <boost/container_hash/hash.hpp>
-#include <cstddef>
+#include <boost/hash2/siphash.hpp>
+#include <boost/hash2/hash_append.hpp>
 
 namespace haliullin
 {
   struct SipHash
   {
     template< class T >
-    size_t operator()(const T& key) const noexcept
+    std::size_t operator()(const T& key) const noexcept
     {
-      return boost::hash< T >()(key);
+      boost::hash2::siphash_64 hasher;
+      boost::hash2::hash_append(hasher, {}, key);
+      return hasher.result();
     }
   };
 }
