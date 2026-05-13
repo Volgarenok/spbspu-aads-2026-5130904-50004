@@ -6,24 +6,27 @@
 #include <string>
 #include <vector>
 #include "BSTtree.h"
+
 namespace ivanov {
   inline void invalid() {
     std::cout << "<INVALID COMMAND>\n";
   }
 
   class BSTManager {
-    using tree = BSTtree<int, std::string, std::less<int>>;
   public:
-    void loadFromFile(const std::string& filename);
-    void execute(const std::string& line, bool& isAnything, bool silent);
+    using tree = BSTtree<int, std::string, std::less<int> >;
+    void loadFromFile(const std::string &filename);
+
+    void execute(const std::string &line, bool &isAnything, bool silent);
 
   private:
-    std::vector<std::pair<std::string, tree>> datasets;
+    std::vector<std::pair<std::string, tree> > datasets;
 
-    tree* getDataset(const std::string& name);
-    const tree* getDatasetConst(const std::string& name) const;
+    tree *getDataset(const std::string &name);
 
-    bool contains(const tree& tr, int key) const;
+    const tree *getDatasetConst(const std::string &name) const;
+
+    static bool contains(const tree &tr, int key);
   };
 
   inline void BSTManager::loadFromFile(const std::string &filename) {
@@ -40,7 +43,7 @@ namespace ivanov {
       std::string dname;
       if (!(iss >> dname)) continue;
 
-      tree* tr = getDataset(dname);
+      tree *tr = getDataset(dname);
       if (!tr) {
         datasets.push_back(std::make_pair(dname, tree()));
         tr = &datasets.back().second;
@@ -66,7 +69,7 @@ namespace ivanov {
         return;
       }
 
-      const tree* tr = getDatasetConst(dname);
+      const tree *tr = getDatasetConst(dname);
       if (!tr) {
         if (!silent) invalid();
         return;
@@ -87,20 +90,19 @@ namespace ivanov {
 
       std::cout << dname << ' ';
       for (tree::const_iterator it = begin; it != end; ++it) {
-        std::pair<const int&, std::string&> kv = *it;
+        std::pair<const int &, const std::string &> kv = *it;
         std::cout << kv.first << ' ' << kv.second;
       }
       std::cout << '\n';
-    }
-    else if (cmd == "complement" || cmd == "intersect" || cmd == "union") {
+    } else if (cmd == "complement" || cmd == "intersect" || cmd == "union") {
       std::string name, name1, name2;
       if (!(iss >> name >> name1 >> name2)) {
         if (!silent) invalid();
         return;
       }
 
-      const tree* tr1 = getDatasetConst(name1);
-      const tree* tr2 = getDatasetConst(name2);
+      const tree *tr1 = getDatasetConst(name1);
+      const tree *tr2 = getDatasetConst(name2);
       if (!tr1 || !tr2) {
         if (!silent) invalid();
         return;
@@ -110,47 +112,46 @@ namespace ivanov {
 
       if (cmd == "complement") {
         for (tree::const_iterator it = tr1->begin(); it != tr1->end(); ++it) {
-          std::pair<const int&, std::string&> kv = *it;
+          std::pair<const int &, const std::string &> kv = *it;
           if (!contains(*tr2, kv.first)) newtree.push(kv.first, kv.second);
         }
       } else if (cmd == "intersect") {
         for (tree::const_iterator it = tr1->begin(); it != tr1->end(); ++it) {
-          std::pair<const int&, std::string&> kv = *it;
+          std::pair<const int &, const std::string &> kv = *it;
           if (contains(*tr2, kv.first)) newtree.push(kv.first, kv.second);
         }
       } else {
         for (tree::const_iterator it = tr1->begin(); it != tr1->end(); ++it) {
-          std::pair<const int&, std::string&> kv = *it;
+          std::pair<const int &, const std::string &> kv = *it;
           newtree.push(kv.first, kv.second);
         }
         for (tree::const_iterator it = tr2->begin(); it != tr2->end(); ++it) {
-          std::pair<const int&, std::string&> kv = *it;
+          std::pair<const int &, const std::string &> kv = *it;
           if (!contains(*tr1, kv.first)) newtree.push(kv.first, kv.second);
         }
       }
 
-      tree* existing = getDataset(name);
+      tree *existing = getDataset(name);
       if (existing) *existing = std::move(newtree);
       else datasets.push_back(std::make_pair(name, std::move(newtree)));
 
       if (silent) isAnything = false;
-    }
-    else if (!silent) invalid();
+    } else if (!silent) invalid();
   }
 
-  inline BSTManager::tree * BSTManager::getDataset(const std::string &name) {
+  inline BSTManager::tree *BSTManager::getDataset(const std::string &name) {
     for (size_t i = 0; i < datasets.size(); ++i)
       if (datasets[i].first == name) return &datasets[i].second;
     return nullptr;
   }
 
-  inline const BSTManager::tree * BSTManager::getDatasetConst(const std::string &name) const {
+  inline const BSTManager::tree *BSTManager::getDatasetConst(const std::string &name) const {
     for (size_t i = 0; i < datasets.size(); ++i)
       if (datasets[i].first == name) return &datasets[i].second;
     return nullptr;
   }
 
-  inline const bool BSTManager::contains(const tree &tr, int key) const {
+  inline bool BSTManager::contains(const tree &tr, int key) {
     try {
       tr.get(key);
       return true;
