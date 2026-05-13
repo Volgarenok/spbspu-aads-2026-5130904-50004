@@ -35,8 +35,8 @@ namespace alekseev {
       Hash hasher_;
       Equal is_equal_;
 
-      List< std::pair< Key, Value > > * find_previous_node(const Key & key);
-      const List< std::pair< Key, Value > > * find_previous_node(const Key & key) const;
+      List< Pair > * find_previous_node(const Key & key);
+      const List< Pair > * find_previous_node(const Key & key) const;
   };
 
   template< class Key, class Value, class Hash, class Equal >
@@ -187,7 +187,7 @@ namespace alekseev {
   template< class Key, class Value, class Hash, class Equal >
   bool HashTable< Key, Value, Hash, Equal >::contains(const Key & key) const
   {
-    return find_previous_node(key) != nullptr;
+    return const_cast< const HashTable >(*this).find_previous_node(key) != nullptr;
   }
 
   template< class Key, class Value, class Hash, class Equal >
@@ -233,8 +233,8 @@ namespace alekseev {
   List< std::pair< Key, Value > > * HashTable< Key, Value, Hash, Equal >::find_previous_node(
       const Key & key)
   {
-    return const_cast< List< std::pair< Key, Value > > * >(static_cast< const HashTable * >(this)->
-      at(key));
+    return const_cast< List< Pair > * >(static_cast< const HashTable * >(this)->
+      find_previous_node(key));
   }
 
   template< class Key, class Value, class Hash, class Equal >

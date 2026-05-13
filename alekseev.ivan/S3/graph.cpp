@@ -101,3 +101,20 @@ void alekseev::Graph::add_edge(const str & vertex1, const str & vertex2, size_t 
   }
   insert_after(weights, weight);
 }
+
+bool alekseev::Graph::has_vertex(const str & vertex) const
+{
+  LIter< str > fake = before_begin(vertexes_);
+  LIter< str > current = fake;
+  while (current++ != fake) {
+    if (*current == vertex) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool alekseev::Graph::has_edge(const str & vertex1, const str & vertex2) const
+{
+  return edges_.contains(std::pair<str, str>(vertex1, vertex2));
+}
