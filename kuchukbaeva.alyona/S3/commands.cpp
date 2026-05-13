@@ -5,29 +5,27 @@
 namespace kuchukbaeva {
 
   template< typename T >
-  void sortVector(Vector< T >& vec)
-  {
+  void sortVector(Vector< T >& vec) {
     size_t n = vec.getSize();
-    if (n == 0) {
+    if (n <= 1) {
       return;
     }
     for (size_t i = 0; i < n - 1; ++i) {
-      for (size_t j = 0; j < n - i - 1; ++j) {
-        if (vec[j + 1] < vec[j]) {
-          T temp = vec[j];
-          vec[j] = vec[j + 1];
-          vec[j + 1] = temp;
+      for (size_t j = i + 1; j < n; ++j) {
+        if (vec[j] < vec[i]) {
+          T temp = vec[i];
+          vec[i] = vec[j];
+          vec[j] = temp;
         }
       }
     }
   }
 
-  Vector< std::string > splitString(const std::string& str)
-  {
+  Vector< std::string > splitString(const std::string& str) {
     Vector< std::string > res;
     std::string current = "";
     for (size_t i = 0; i < str.length(); ++i) {
-      if (str[i] == ' ') {
+      if (str[i] == ' ' || str[i] == '\r' || str[i] == '\n' || str[i] == '\t') {
         if (!current.empty()) {
           res.pushBack(current);
           current = "";
@@ -42,13 +40,22 @@ namespace kuchukbaeva {
     return res;
   }
 
-  unsigned int stringToUInt(const std::string& str)
-  {
-    unsigned int res = 0;
-    for (size_t i = 0; i < str.length(); ++i) {
-      res = res * 10 + (str[i] - '0');
+  bool tryParseUInt(const std::string& str, unsigned int& out) {
+    if (str.empty()) {
+      return false;
     }
-    return res;
+    unsigned long long res = 0;
+    for (size_t i = 0; i < str.length(); ++i) {
+      if (str[i] < '0' || str[i] > '9') {
+        return false;
+      }
+      res = res * 10 + (str[i] - '0');
+      if (res > 4294967295ULL) {
+        return false;
+      }
+    }
+    out = static_cast<unsigned int>(res);
+    return true;
   }
 
   Application::Application() :
@@ -65,8 +72,7 @@ namespace kuchukbaeva {
     commands_.add("merge", &Application::cmdMerge);
     commands_.add("extract", &Application::cmdExtract);
   }
-  void Application::loadFromFile(const std::string& filename)
-  {
+  void Application::loadFromFile(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
       throw std::runtime_error("Cannot open file");
@@ -80,7 +86,10 @@ namespace kuchukbaeva {
       }
       if (tokens.getSize() == 2) {
         std::string graphName = tokens[0];
-        unsigned int edgeCount = stringToUInt(tokens[1]);
+        unsigned int edgeCount;
+        if (!tryParseUInt(tokens[1], edgeCount)) {
+          continue;
+        }
         Graph g;
         for (unsigned int i = 0; i < edgeCount; ++i) {
           std::string edgeLine;
@@ -89,15 +98,26 @@ namespace kuchukbaeva {
             if (edgeTokens.getSize() >= 3) {
               std::string src = edgeTokens[0];
               std::string dest = edgeTokens[1];
-              unsigned int weight = stringToUInt(edgeTokens[2]);
+              unsigned int weight;
+              if (!tryParseUInt(edgeTokens[2], weight)) {
+                continue;
+              }
               bool srcFound = false;
               bool destFound = false;
               for (size_t v = 0; v < g.vertexes.getSize(); ++v) {
-                if (g.vertexes[v] == src) srcFound = true;
-                if (g.vertexes[v] == dest) destFound = true;
+                if (g.vertexes[v] == src) {
+                  srcFound = true;
+                }
+                if (g.vertexes[v] == dest) {
+                  destFound = true;
+                }
               }
-              if (!srcFound) g.vertexes.pushBack(src);
-              if (!destFound) g.vertexes.pushBack(dest);
+              if (!srcFound) {
+                g.vertexes.pushBack(src);
+              }
+              if (!destFound) {
+                g.vertexes.pushBack(dest);
+              }
 
               std::pair< std::string, std::string > key(src, dest);
               Vector< unsigned int >* weights = g.edges.find(key);
@@ -148,6 +168,10 @@ namespace kuchukbaeva {
     for (auto it = app->graphs_.begin(); it != app->graphs_.end(); ++it) {
       names.pushBack(it->first);
     }
+    if (names.getSize() == 0) {
+      std::cout << "\n";
+      return;
+    }
     sortVector(names);
     for (size_t i = 0; i < names.getSize(); ++i) {
       std::cout << names[i] << "\n";
@@ -166,6 +190,10 @@ namespace kuchukbaeva {
       return;
     }
     Vector< std::string > verts = g->vertexes;
+    if (verts.getSize() == 0) {
+      std::cout << "\n";
+      return;
+    }
     sortVector(verts);
     for (size_t i = 0; i < verts.getSize(); ++i) {
       std::cout << verts[i] << "\n";
@@ -201,6 +229,10 @@ namespace kuchukbaeva {
         dests.pushBack(it->first.second);
       }
     }
+    if (dests.getSize() == 0) {
+      std::cout << "\n";
+      return;
+    }
     sortVector(dests);
 
     for (size_t i = 0; i < dests.getSize(); ++i) {
@@ -209,9 +241,11 @@ namespace kuchukbaeva {
       if (weights) {
         Vector< unsigned int > wCopy = *weights;
         sortVector(wCopy);
+        std::cout << dests[i];
         for (size_t w = 0; w < wCopy.getSize(); ++w) {
-          std::cout << dests[i] << " " << wCopy[w] << "\n";
+          std::cout << " " << wCopy[w];
         }
+        std::cout << "\n";
       }
     }
   }
@@ -245,6 +279,10 @@ namespace kuchukbaeva {
         srcs.pushBack(it->first.first);
       }
     }
+    if (srcs.getSize() == 0) {
+      std::cout << "\n";
+      return;
+    }
     sortVector(srcs);
 
     for (size_t i = 0; i < srcs.getSize(); ++i) {
@@ -253,9 +291,11 @@ namespace kuchukbaeva {
       if (weights) {
         Vector< unsigned int > wCopy = *weights;
         sortVector(wCopy);
+        std::cout << srcs[i];
         for (size_t w = 0; w < wCopy.getSize(); ++w) {
-          std::cout << srcs[i] << " " << wCopy[w] << "\n";
+          std::cout << " " << wCopy[w];
         }
+        std::cout << "\n";
       }
     }
   }
@@ -273,16 +313,28 @@ namespace kuchukbaeva {
     }
     std::string src = args[2];
     std::string dest = args[3];
-    unsigned int weight = stringToUInt(args[4]);
+    unsigned int weight;
+    if (!tryParseUInt(args[4], weight)) {
+      std::cout << "<INVALID COMMAND>\n";
+      return;
+    }
 
     bool srcFound = false;
     bool destFound = false;
     for (size_t i = 0; i < g->vertexes.getSize(); ++i) {
-      if (g->vertexes[i] == src) srcFound = true;
-      if (g->vertexes[i] == dest) destFound = true;
+      if (g->vertexes[i] == src) {
+        srcFound = true;
+      }
+      if (g->vertexes[i] == dest) {
+        destFound = true;
+      }
     }
-    if (!srcFound) g->vertexes.pushBack(src);
-    if (!destFound) g->vertexes.pushBack(dest);
+    if (!srcFound) {
+      g->vertexes.pushBack(src);
+    }
+    if (!destFound) {
+      g->vertexes.pushBack(dest);
+    }
 
     std::pair< std::string, std::string > key(src, dest);
     Vector< unsigned int >* weights = g->edges.find(key);
@@ -306,8 +358,24 @@ namespace kuchukbaeva {
       std::cout << "<INVALID COMMAND>\n";
       return;
     }
-    std::pair< std::string, std::string > key(args[2], args[3]);
-    unsigned int weight = stringToUInt(args[4]);
+    std::string src = args[2];
+    std::string dest = args[3];
+    unsigned int weight;
+    if (!tryParseUInt(args[4], weight)) {
+      std::cout << "<INVALID COMMAND>\n";
+      return;
+    }
+    bool srcFound = false;
+    bool destFound = false;
+    for (size_t i = 0; i < g->vertexes.getSize(); ++i) {
+      if (g->vertexes[i] == src) srcFound = true;
+      if (g->vertexes[i] == dest) destFound = true;
+    }
+    if (!srcFound || !destFound) {
+      std::cout << "<INVALID COMMAND>\n";
+      return;
+    }
+    std::pair< std::string, std::string > key(src, dest);
     Vector< unsigned int >* weights = g->edges.find(key);
     if (!weights) {
       std::cout << "<INVALID COMMAND>\n";
@@ -340,10 +408,22 @@ namespace kuchukbaeva {
       std::cout << "<INVALID COMMAND>\n";
       return;
     }
-    unsigned int count = stringToUInt(args[2]);
+    unsigned int count;
+    if (!tryParseUInt(args[2], count)) {
+      std::cout << "<INVALID COMMAND>\n";
+      return;
+    }
     if (args.getSize() != 3 + count) {
       std::cout << "<INVALID COMMAND>\n";
       return;
+    }
+    for (unsigned int i = 0; i < count; ++i) {
+      for (unsigned int j = i + 1; j < count; ++j) {
+        if (args[3 + i] == args[3 + j]) {
+          std::cout << "<INVALID COMMAND>\n";
+          return;
+        }
+      }
     }
     Graph g;
     for (unsigned int i = 0; i < count; ++i) {
@@ -409,8 +489,11 @@ namespace kuchukbaeva {
       std::cout << "<INVALID COMMAND>\n";
       return;
     }
-
-    unsigned int count = stringToUInt(args[3]);
+    unsigned int count;
+    if (!tryParseUInt(args[3], count)) {
+      std::cout << "<INVALID COMMAND>\n";
+      return;
+    }
     if (args.getSize() != 4 + count) {
       std::cout << "<INVALID COMMAND>\n";
       return;
@@ -418,6 +501,12 @@ namespace kuchukbaeva {
     Vector< std::string > vToExtract;
     for (unsigned int i = 0; i < count; ++i) {
       std::string v = args[4 + i];
+      for (unsigned int j = i + 1; j < count; ++j) {
+        if (v == args[4 + j]) {
+          std::cout << "<INVALID COMMAND>\n";
+          return;
+        }
+      }
       bool existsInOld = false;
       for (size_t j = 0; j < oldG->vertexes.getSize(); ++j) {
         if (oldG->vertexes[j] == v) {
@@ -437,8 +526,12 @@ namespace kuchukbaeva {
       bool srcIn = false;
       bool destIn = false;
       for (size_t i = 0; i < vToExtract.getSize(); ++i) {
-        if (vToExtract[i] == it->first.first) srcIn = true;
-        if (vToExtract[i] == it->first.second) destIn = true;
+        if (vToExtract[i] == it->first.first) {
+          srcIn = true;
+        }
+        if (vToExtract[i] == it->first.second) {
+          destIn = true;
+        }
       }
       if (srcIn && destIn) {
         newG.edges.add(it->first, it->second);
@@ -446,5 +539,4 @@ namespace kuchukbaeva {
     }
     app->graphs_.add(args[1], newG);
   }
-
 }

@@ -1,8 +1,6 @@
 #include <boost/test/included/unit_test.hpp>
 #include "hashTable.hpp"
 
-BOOST_AUTO_TEST_SUITE(HashTableTestSuite)
-
 BOOST_AUTO_TEST_CASE(testAddAndHas)
 {
   kuchukbaeva::HashTable< std::string, int > ht(16);
@@ -65,5 +63,3 @@ BOOST_AUTO_TEST_CASE(testExceptionSafetyCopyAndSwap)
   BOOST_CHECK(!ht2.has("B"));
   BOOST_CHECK(ht1.has("B"));
 }
-
-BOOST_AUTO_TEST_SUITE_END
