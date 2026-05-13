@@ -19,6 +19,106 @@ namespace zinoviev
     return boost::hash2::get_integral_result(hasher.result());
   }
 
+  template <class T>
+  void sort(T& v, size_t begin, size_t end)
+  {
+    if (end - begin <= 1)
+      return;
+
+    size_t id = end - 1;
+    T pivot = v[id];
+
+    size_t i = begin;
+    for (size_t j = i; j < end; ++j)
+    {
+      if (v[j] < pivot)
+      {
+        std::swap(v[i], v[j]);
+        ++i;
+      }
+    }
+    std::swap(v[i], v[id]);
+
+    sort(v, begin, i);
+    sort(v, i + 1, end);
+  }
+
+  void sort_pair(Vector<std::pair<std::string, Vector<unsigned long long>>>& p, size_t begin, size_t end)
+  {
+    if (end - begin <= 1)
+      return;
+
+    size_t id = end - 1;
+    auto pivot = p[id];
+
+    size_t i = begin;
+    for (size_t j = i; j < end; ++j)
+    {
+      if (p[j].first < pivot.first)
+      {
+        std::swap(p[i], p[j]);
+        ++i;
+      }
+    }
+    std::swap(p[i], p[id]);
+
+    sort_pair(p, begin, i);
+    sort_pair(p, i + 1, end);
+  }
+
+  template <class T>
+  void sortVector(T& v)
+  {
+    sort(v, 0, v.getSize());
+  }
+
+  void sortPair(Vector<std::pair<std::string, Vector<unsigned long long>>>& p)
+  {
+    sort_pair(p, 0, p.getSize());
+  }
+
+  Graph::Graph(const std::string name) :
+    name_(name),
+    vertexes_(16, 6, 16),
+    edges_(18, 6, 16)
+  {}
+
+  Graph::Graph(const Graph& g) :
+    name_(g.name_),
+    vertexes_(g.vertexes_),
+    edges_(g.edges_)
+  {}
+
+  void Graph::add_vertex(const std::string& v)
+  {
+    vertexes_.add(v, true);
+  }
+
+  void Graph::add_edge(const std::string& from, const std::string& to, unsigned long long weight)
+  {
+    auto vertices_copy = vertexes_;
+    auto edges_copy = edges_;
+
+    auto key = std::make_pair(from, to);
+    Vector<unsigned long long>* existing = edges_copy.find(key);
+
+    Vector<unsigned long long> new_weights;
+    if (existing) {
+      new_weights = *existing;
+      new_weights.push_back(weight);
+    }
+    else
+      new_weights.push_back(weight);
+
+    vertices_copy.add(from, true);
+    vertices_copy.add(to, true);
+
+    edges_copy.add(key, new_weights);
+
+    vertexes_.swap(vertices_copy);
+    edges_.swap(edges_copy);
+  }
+
   bool Graph::has_vertex(const std::string& v) const
   {
     return vertexes_.has(v);
@@ -117,5 +217,25 @@ namespace zinoviev
 
     if (ptr->is_empty())
       edges_.erase(p);
+  }
+
+  void Graph::add_graph(const Graph& other)
+  {
+    Graph tmp(*this);
+
+    Vector<std::string> ver = other.get_vertices();
+    for (size_t i = 0; i < ver.getSize(); ++i)
+      tmp.add_vertex(ver[i]);
+
+    auto citer = other.edges_.cbegin();
+    auto cend = other.edges_.cend();
+    while (citer != cend)
+    {
+      for (size_t i = 0; i < (*citer).second.getSize(); ++i)
+        tmp.add_edge((*citer).first.first, (*citer).first.second, (*citer).second[i]);
+      ++citer;
+    }
+
+    swap(tmp);
   }
 }

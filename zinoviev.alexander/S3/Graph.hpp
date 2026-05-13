@@ -18,6 +18,16 @@ namespace zinoviev
     std::size_t operator()(const std::pair<std::string, std::string>& p) const;
   };
 
+  template <class T>
+  void sort(T& v, size_t begin, size_t end);
+
+  void sort_pair(Vector<std::pair<std::string, Vector<unsigned long long>>>& p, size_t begin, size_t end);
+
+  template <class T>
+  void sortVector(T& v);
+
+  void sortPair(Vector<std::pair<std::string, Vector<unsigned long long>>>& p);
+
   class Graph
   {
     std::string name_;
@@ -40,6 +50,8 @@ namespace zinoviev
     void remove_edge(const std::pair<std::string, std::string>& p, unsigned long long weight);
 
     void swap(Graph& other) noexcept;
+
+    void add_graph(const Graph& other);
   };
 }
 #endif
