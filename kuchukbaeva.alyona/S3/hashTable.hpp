@@ -2,6 +2,7 @@
 #define HASHTABLE_HPP
 #include "vector.hpp"
 #include "../common/list.hpp"
+#include "hashTableIter.hpp"
 #include <utility>
 #include <stdexcept>
 #include <string>
@@ -29,9 +30,6 @@ namespace kuchukbaeva {
   };
 
   template< class Key, class Value, class Hash = SipHashFunctor< Key >, class Equal = EqualFunctor< Key > >
-  class HTIter;
-
-  template< class Key, class Value, class Hash = SipHashFunctor< Key >, class Equal = EqualFunctor< Key > >
   class HashTable {
   public:
     explicit HashTable(size_t slots = 16);
@@ -55,217 +53,197 @@ namespace kuchukbaeva {
     HTIter< Key, Value, Hash, Equal > begin();
     HTIter< Key, Value, Hash, Equal > end();
 
+    HTCiter< Key, Value, Hash, Equal > begin() const;
+    HTCiter< Key, Value, Hash, Equal > end() const;
+    HTCiter< Key, Value, Hash, Equal > cbegin() const;
+    HTCiter< Key, Value, Hash, Equal > cend() const;
+
   private:
     friend class HTIter< Key, Value, Hash, Equal >;
+    friend class HTCiter< Key, Value, Hash, Equal >;
     Vector< List< std::pair< Key, Value > > > mass_;
     size_t size_;
     Hash hashFn_;
     Equal equalFn_;
   };
+}
+template< class Key, class Value, class Hash, class Equal >
+kuchukbaeva::HashTable< Key, Value, Hash, Equal >::HashTable(size_t slots) :
+  mass_(slots, List< std::pair< Key, Value > >()),
+  size_(0),
+  hashFn_(),
+  equalFn_()
+{}
 
-  template< class Key, class Value, class Hash, class Equal >
-  class HTIter {
-  public:
-    HTIter(Vector< List< std::pair< Key, Value > > >* mass, size_t idx, LIter< std::pair< Key, Value > > listIt) :
-      mass_(mass),
-      massIdx_(idx),
-      listIt_(listIt)
-    {
-    }
-
-    std::pair< Key, Value >& operator*()
-    {
-      return *listIt_;
-    }
-
-    std::pair< Key, Value >* operator->()
-    {
-      return &(*listIt_);
-    }
-
-    HTIter& operator++()
-    {
-      ++listIt_;
-      if (listIt_ == (*mass_)[massIdx_].end()) {
-        ++massIdx_;
-        while (massIdx_ < mass_->getSize() && (*mass_)[massIdx_].isEmpty()) {
-          ++massIdx_;
-        }
-        if (massIdx_ < mass_->getSize()) {
-          listIt_ = (*mass_)[massIdx_].begin();
-        } else {
-          listIt_ = LIter< std::pair< Key, Value > >();
-        }
-      }
-      return *this;
-    }
-
-    bool operator!=(const HTIter& other) const
-    {
-      return massIdx_ != other.massIdx_ || listIt_ != other.listIt_;
-    }
-
-    bool operator==(const HTIter& other) const
-    {
-      return !(*this != other);
-    }
-
-  private:
-    Vector< List< std::pair< Key, Value > > >* mass_;
-    size_t massIdx_;
-    LIter< std::pair< Key, Value > > listIt_;
-  };
-  template< class Key, class Value, class Hash, class Equal >
-  HashTable< Key, Value, Hash, Equal >::HashTable(size_t slots) :
-    mass_(slots, List< std::pair< Key, Value > >()),
-    size_(0),
-    hashFn_(),
-    equalFn_()
-  {
-  }
-
-  template< class Key, class Value, class Hash, class Equal >
-  HashTable< Key, Value, Hash, Equal >::HashTable(const HashTable& other) :
-    mass_(other.mass_.getSize(), List< std::pair< Key, Value > >()),
-    size_(0),
-    hashFn_(other.hashFn_),
-    equalFn_(other.equalFn_)
-  {
-    for (size_t i = 0; i < other.mass_.getSize(); ++i) {
-      for (auto it = other.mass_[i].cbegin(); it != other.mass_[i].cend(); ++it) {
-        this->add(it->first, it->second);
-      }
+template< class Key, class Value, class Hash, class Equal >
+kuchukbaeva::HashTable< Key, Value, Hash, Equal >::HashTable(const HashTable& other) :
+  mass_(other.mass_.getSize(), List< std::pair< Key, Value > >()),
+  size_(0),
+  hashFn_(other.hashFn_),
+  equalFn_(other.equalFn_)
+{
+  for (size_t i = 0; i < other.mass_.getSize(); ++i) {
+    for (LCIter< std::pair< Key, Value > > it = other.mass_[i].cbegin(); it != other.mass_[i].cend(); ++it) {
+      this->add(it->first, it->second);
     }
   }
+}
 
-  template< class Key, class Value, class Hash, class Equal >
-  HashTable< Key, Value, Hash, Equal >::HashTable(HashTable&& other) noexcept :
-    HashTable(1)
-  {
-    swap(other);
-  }
+template< class Key, class Value, class Hash, class Equal >
+kuchukbaeva::HashTable< Key, Value, Hash, Equal >::HashTable(HashTable&& other) noexcept :
+  HashTable(1)
+{
+  swap(other);
+}
 
-  template< class Key, class Value, class Hash, class Equal >
-  HashTable< Key, Value, Hash, Equal >& HashTable< Key, Value, Hash, Equal >::operator=(const HashTable& other)
-  {
-    if (this != &other) {
-      HashTable tmp(other);
-      swap(tmp);
-    }
-    return *this;
-  }
-
-  template< class Key, class Value, class Hash, class Equal >
-  HashTable< Key, Value, Hash, Equal >& HashTable< Key, Value, Hash, Equal >::operator=(HashTable&& other) noexcept
-  {
-    if (this != &other) {
-      HashTable tmp(std::move(other));
-      swap(tmp);
-    }
-    return *this;
-  }
-
-  template< class Key, class Value, class Hash, class Equal >
-  void HashTable< Key, Value, Hash, Equal >::swap(HashTable& other) noexcept
-  {
-    mass_.swap(other.mass_);
-    std::swap(size_, other.size_);
-  }
-
-  template< class Key, class Value, class Hash, class Equal >
-  void HashTable< Key, Value, Hash, Equal >::add(const Key& k, const Value& v)
-  {
-    size_t idx = hashFn_(k) % mass_.getSize();
-    for (auto it = mass_[idx].begin(); it != mass_[idx].end(); ++it) {
-      if (equalFn_(it->first, k)) {
-        it->second = v;
-        return;
-      }
-    }
-    mass_[idx].push_front(std::make_pair(k, v));
-    ++size_;
-  }
-
-  template< class Key, class Value, class Hash, class Equal >
-  bool HashTable< Key, Value, Hash, Equal >::drop(const Key& k)
-  {
-    size_t idx = hashFn_(k) % mass_.getSize();
-    auto beforeIt = mass_[idx].beforeBegin();
-    auto it = mass_[idx].begin();
-    while (it != mass_[idx].end()) {
-      if (equalFn_(it->first, k)) {
-        mass_[idx].eraseAfter(beforeIt);
-        --size_;
-        return true;
-      }
-      ++it;
-      ++beforeIt;
-    }
-    return false;
-  }
-
-  template< class Key, class Value, class Hash, class Equal >
-  bool HashTable< Key, Value, Hash, Equal >::has(const Key& k) const
-  {
-    size_t idx = hashFn_(k) % mass_.getSize();
-    for (auto it = mass_[idx].cbegin(); it != mass_[idx].cend(); ++it) {
-      if (equalFn_(it->first, k)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  template< class Key, class Value, class Hash, class Equal >
-  Value* HashTable< Key, Value, Hash, Equal >::find(const Key& k)
-  {
-    size_t idx = hashFn_(k) % mass_.getSize();
-    for (auto it = mass_[idx].begin(); it != mass_[idx].end(); ++it) {
-      if (equalFn_(it->first, k)) {
-        return &(it->second);
-      }
-    }
-    return nullptr;
-  }
-
-  template< class Key, class Value, class Hash, class Equal >
-  void HashTable< Key, Value, Hash, Equal >::rehash(size_t slots)
-  {
-    if (slots == 0) {
-      slots = 1;
-    }
-    HashTable tmp(slots);
-    for (size_t i = 0; i < mass_.getSize(); ++i) {
-      for (auto it = mass_[i].begin(); it != mass_[i].end(); ++it) {
-        tmp.add(it->first, it->second);
-      }
-    }
+template< class Key, class Value, class Hash, class Equal >
+kuchukbaeva::HashTable< Key, Value, Hash, Equal >& kuchukbaeva::HashTable< Key, Value, Hash, Equal >::operator=(const HashTable& other)
+{
+  if (this != &other) {
+    HashTable tmp(other);
     swap(tmp);
   }
+  return *this;
+}
 
-  template< class Key, class Value, class Hash, class Equal >
-  size_t HashTable< Key, Value, Hash, Equal >::getSize() const
-  {
-    return size_;
+template< class Key, class Value, class Hash, class Equal >
+kuchukbaeva::HashTable< Key, Value, Hash, Equal >& kuchukbaeva::HashTable< Key, Value, Hash, Equal >::operator=(HashTable&& other) noexcept
+{
+  if (this != &other) {
+    HashTable tmp(std::move(other));
+    swap(tmp);
   }
+  return *this;
+}
 
-  template< class Key, class Value, class Hash, class Equal >
-  HTIter< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::begin()
-  {
-    for (size_t i = 0; i < mass_.getSize(); ++i) {
-      if (!mass_[i].isEmpty()) {
-        return HTIter< Key, Value, Hash, Equal >(&mass_, i, mass_[i].begin());
-      }
+template< class Key, class Value, class Hash, class Equal >
+void kuchukbaeva::HashTable< Key, Value, Hash, Equal >::swap(HashTable& other) noexcept
+{
+  mass_.swap(other.mass_);
+  std::swap(size_, other.size_);
+}
+
+template< class Key, class Value, class Hash, class Equal >
+void kuchukbaeva::HashTable< Key, Value, Hash, Equal >::add(const Key& k, const Value& v)
+{
+  size_t idx = hashFn_(k) % mass_.getSize();
+  for (LIter< std::pair< Key, Value > > it = mass_[idx].begin(); it != mass_[idx].end(); ++it) {
+    if (equalFn_(it->first, k)) {
+      it->second = v;
+      return;
     }
-    return end();
   }
+  mass_[idx].push_front(std::make_pair(k, v));
+  ++size_;
+}
 
-  template< class Key, class Value, class Hash, class Equal >
-  HTIter< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::end()
-  {
-    return HTIter< Key, Value, Hash, Equal >(&mass_, mass_.getSize(), LIter< std::pair< Key, Value > >());
+template< class Key, class Value, class Hash, class Equal >
+bool kuchukbaeva::HashTable< Key, Value, Hash, Equal >::drop(const Key& k)
+{
+  size_t idx = hashFn_(k) % mass_.getSize();
+  LIter< std::pair< Key, Value > > beforeIt = mass_[idx].beforeBegin();
+  LIter< std::pair< Key, Value > > it = mass_[idx].begin();
+  while (it != mass_[idx].end()) {
+    if (equalFn_(it->first, k)) {
+      mass_[idx].eraseAfter(beforeIt);
+      --size_;
+      return true;
+    }
+    ++it;
+    ++beforeIt;
   }
+  return false;
+}
 
+template< class Key, class Value, class Hash, class Equal >
+bool kuchukbaeva::HashTable< Key, Value, Hash, Equal >::has(const Key& k) const
+{
+  size_t idx = hashFn_(k) % mass_.getSize();
+  for (LCIter< std::pair< Key, Value > > it = mass_[idx].cbegin(); it != mass_[idx].cend(); ++it) {
+    if (equalFn_(it->first, k)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+template< class Key, class Value, class Hash, class Equal >
+Value* kuchukbaeva::HashTable< Key, Value, Hash, Equal >::find(const Key& k)
+{
+  size_t idx = hashFn_(k) % mass_.getSize();
+  for (LIter< std::pair< Key, Value > > it = mass_[idx].begin(); it != mass_[idx].end(); ++it) {
+    if (equalFn_(it->first, k)) {
+      return &(it->second);
+    }
+  }
+  return nullptr;
+}
+
+template< class Key, class Value, class Hash, class Equal >
+void kuchukbaeva::HashTable< Key, Value, Hash, Equal >::rehash(size_t slots)
+{
+  if (slots == 0) {
+    slots = 1;
+  }
+  HashTable tmp(slots);
+  for (size_t i = 0; i < mass_.getSize(); ++i) {
+    for (LIter< std::pair< Key, Value > > it = mass_[i].begin(); it != mass_[i].end(); ++it) {
+      tmp.add(it->first, it->second);
+    }
+  }
+  swap(tmp);
+}
+
+template< class Key, class Value, class Hash, class Equal >
+size_t kuchukbaeva::HashTable< Key, Value, Hash, Equal >::getSize() const
+{
+  return size_;
+}
+
+template< class Key, class Value, class Hash, class Equal >
+kuchukbaeva::HTIter< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::begin()
+{
+  for (size_t i = 0; i < mass_.getSize(); ++i) {
+    if (!mass_[i].isEmpty()) {
+      return HTIter< Key, Value, Hash, Equal >(&mass_, i, mass_[i].begin());
+    }
+  }
+  return end();
+}
+
+template< class Key, class Value, class Hash, class Equal >
+kuchukbaeva::HTIter< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::end()
+{
+  return HTIter< Key, Value, Hash, Equal >(&mass_, mass_.getSize(), LIter< std::pair< Key, Value > >());
+}
+
+template< class Key, class Value, class Hash, class Equal >
+kuchukbaeva::HTCiter< Key, Value, Hash, Equal > kuchukbaeva::HashTable< Key, Value, Hash, Equal >::begin() const
+{
+  return cbegin();
+}
+
+template< class Key, class Value, class Hash, class Equal >
+kuchukbaeva::HTCiter< Key, Value, Hash, Equal > kuchukbaeva::HashTable< Key, Value, Hash, Equal >::end() const
+{
+  return cend();
+}
+
+template< class Key, class Value, class Hash, class Equal >
+kuchukbaeva::HTCiter< Key, Value, Hash, Equal > kuchukbaeva::HashTable< Key, Value, Hash, Equal >::cbegin() const
+{
+  for (size_t i = 0; i < mass_.getSize(); ++i) {
+    if (!mass_[i].isEmpty()) {
+      return HTCiter< Key, Value, Hash, Equal >(&mass_, i, mass_[i].cbegin());
+    }
+  }
+  return cend();
+}
+
+template< class Key, class Value, class Hash, class Equal >
+kuchukbaeva::HTCiter< Key, Value, Hash, Equal > kuchukbaeva::HashTable< Key, Value, Hash, Equal >::cend() const
+{
+  return HTCiter< Key, Value, Hash, Equal >(&mass_, mass_.getSize(), LCIter< std::pair< Key, Value > >());
 }
 
 #endif
