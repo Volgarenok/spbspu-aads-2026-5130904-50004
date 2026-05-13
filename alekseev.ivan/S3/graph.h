@@ -28,10 +28,16 @@ namespace alekseev {
 
     size_t result = 0;
     for (int i = 0; i < 5; i++) {
-      result ^= digest1[i];
-      result ^= digest2[i];
+      result += digest1[i] + digest2[i];
     }
     return result;
+  }
+
+  bool is_equal(std::pair< std::string, std::string > lhs,
+      std::pair< std::string, std::string > rhs)
+  {
+    return lhs.first == rhs.first && lhs.second == rhs.second || lhs.first == rhs.second && lhs.
+        second == rhs.first;
   }
 }
 
