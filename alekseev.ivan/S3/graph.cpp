@@ -1,5 +1,6 @@
 #include "graph.h"
 #include <boost/uuid/sha1.hpp>
+#include "../common/ListIterators.h"
 
 size_t alekseev::hasher(const std::pair< str, str > & key)
 {
@@ -60,16 +61,32 @@ inline alekseev::Graph & alekseev::Graph::operator=(Graph && rhs) noexcept
   return *this;
 }
 
- alekseev::Graph::Graph():
+alekseev::Graph::Graph():
   vertexes_(fake< str >()),
-  edges_(HashTable< std::pair< str, str >, List< size_t >, hasher_ptr, is_equal_ptr >(hasher, is_equal, 1024))
+  edges_(HashTable< std::pair< str, str >, List< size_t >, hasher_ptr, is_equal_ptr >(hasher,
+      is_equal, 1024))
 {
 }
 
- void alekseev::Graph::swap(Graph & rhs) noexcept
+void alekseev::Graph::swap(Graph & rhs) noexcept
 {
   std::swap(vertexes_, rhs.vertexes_);
   edges_.swap(rhs.edges_);
 }
 
+void alekseev::Graph::ins_vertex(str vertex)
+{
+  LIter< str > fake = before_begin(vertexes_);
+  LIter< str > current = fake;
+  while (current++ != fake) {
+    if (*current == vertex) {
+      return;
+    }
+  }
+  add_vertex(vertex);
+}
+
+void alekseev::Graph::add_vertex(str vertex)
+{
+  insert_after(vertexes_, vertex);
 }

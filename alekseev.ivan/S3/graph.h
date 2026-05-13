@@ -21,9 +21,12 @@ namespace alekseev {
 
     void swap(Graph & rhs) noexcept;
 
+    void ins_vertex(str vertex);
+    void add_vertex(str vertex);
+
     private:
       List< str > * vertexes_;
-      HashTable< std::pair< str, str >, List< size_t >, hasher_ptr, is_equal_ptr > edges_;
+      HashTable< std::pair< str, str >, List< size_t > *, hasher_ptr, is_equal_ptr > edges_;
   };
 }
 
