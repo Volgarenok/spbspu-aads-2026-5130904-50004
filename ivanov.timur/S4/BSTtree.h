@@ -282,5 +282,6 @@ public:
   }
 };
 
-
+template<class Key, class Value, class Compare>
+BSTtree<Key, Value, Compare> BSTtree<Key, Value, Compare>::nil;
 #endif //BSTTREE_H
