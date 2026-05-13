@@ -22,6 +22,7 @@ namespace alekseev {
     void insert(const Key & key, const Value & value);
     void remove(const Key & key);
     Value & at(const Key & key);
+    const Value & at(const Key & key) const;
     bool contains(const Key & key) const;
     double load_factor() const;
     void rehash(size_t new_capacity);
@@ -35,6 +36,7 @@ namespace alekseev {
       Equal is_equal_;
 
       List< std::pair< Key, Value > > * find_previous_node(const Key & key);
+      const List< std::pair< Key, Value > > * find_previous_node(const Key & key) const;
   };
 
   template< class Key, class Value, class Hash, class Equal >
@@ -169,6 +171,12 @@ namespace alekseev {
   template< class Key, class Value, class Hash, class Equal >
   Value & HashTable< Key, Value, Hash, Equal >::at(const Key & key)
   {
+    return const_cast< Value & >(static_cast< const HashTable * >(this)->at(key));
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  const Value & HashTable< Key, Value, Hash, Equal >::at(const Key & key) const
+  {
     List< Pair > * found = find_previous_node(key);
     if (found) {
       return found->next->data.second;
@@ -222,8 +230,16 @@ namespace alekseev {
   }
 
   template< class Key, class Value, class Hash, class Equal >
-  List< std::pair< Key, Value > > * HashTable< Key, Value, Hash,
-    Equal >::find_previous_node(const Key & key)
+  List< std::pair< Key, Value > > * HashTable< Key, Value, Hash, Equal >::find_previous_node(
+      const Key & key)
+  {
+    return const_cast< List< std::pair< Key, Value > > * >(static_cast< const HashTable * >(this)->
+      at(key));
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  const List< std::pair< Key, Value > > * HashTable< Key, Value, Hash, Equal >::find_previous_node(
+      const Key & key) const
   {
     Hash hash = hasher_(key);
     size_t index = hash % capacity_;
