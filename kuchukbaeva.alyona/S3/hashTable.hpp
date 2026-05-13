@@ -201,7 +201,7 @@ size_t kuchukbaeva::HashTable< Key, Value, Hash, Equal >::getSize() const
 }
 
 template< class Key, class Value, class Hash, class Equal >
-kuchukbaeva::HTIter< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::begin()
+kuchukbaeva::HTIter< Key, Value, Hash, Equal > kuchukbaeva::HashTable< Key, Value, Hash, Equal >::begin()
 {
   for (size_t i = 0; i < mass_.getSize(); ++i) {
     if (!mass_[i].isEmpty()) {
@@ -212,7 +212,7 @@ kuchukbaeva::HTIter< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equa
 }
 
 template< class Key, class Value, class Hash, class Equal >
-kuchukbaeva::HTIter< Key, Value, Hash, Equal > HashTable< Key, Value, Hash, Equal >::end()
+kuchukbaeva::HTIter< Key, Value, Hash, Equal > kuchukbaeva::HashTable< Key, Value, Hash, Equal >::end()
 {
   return HTIter< Key, Value, Hash, Equal >(&mass_, mass_.getSize(), LIter< std::pair< Key, Value > >());
 }
