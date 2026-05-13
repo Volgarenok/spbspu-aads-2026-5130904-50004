@@ -23,7 +23,7 @@ private:
   tree* getDataset(const std::string& name);
   const tree* getDatasetConst(const std::string& name) const;
 
-  bool contains(const tree& tr, int key) const;
+  const bool contains(const tree& tr, int key) const;
 };
 
 inline void BSTManager::loadFromFile(const std::string &filename) {
@@ -93,6 +93,27 @@ inline void BSTManager::execute(const std::string &line, bool &isAnything, bool 
     std::cout << '\n';
   }
   else if (...)
+}
+
+inline BSTManager::tree * BSTManager::getDataset(const std::string &name) {
+  for (size_t i = 0; i < datasets.size(); ++i)
+    if (datasets[i].first == name) return &datasets[i].second;
+  return nullptr;
+}
+
+inline const BSTManager::tree * BSTManager::getDatasetConst(const std::string &name) const {
+  for (size_t i = 0; i < datasets.size(); ++i)
+    if (datasets[i].first == name) return &datasets[i].second;
+  return nullptr;
+}
+
+inline const bool BSTManager::contains(const tree &tr, int key) const {
+  try {
+    tr.get(key);
+    return true;
+  } catch (...) {
+    return false;
+  }
 }
 
 #endif
