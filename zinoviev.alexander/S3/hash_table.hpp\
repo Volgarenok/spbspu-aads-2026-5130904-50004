@@ -422,5 +422,4 @@ namespace zinoviev
     return ConstIterator(this, slots_.getSize());
   }
 }
-
 #endif
