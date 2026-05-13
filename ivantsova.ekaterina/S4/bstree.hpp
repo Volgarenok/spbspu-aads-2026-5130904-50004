@@ -373,4 +373,26 @@ ivantsova::BSTree< Key, Value, Compare >::rotateRight(const_iterator it) {
   return const_iterator(leftChild);
 }
 
+template < class Key, class Value, class Compare >
+typename ivantsova::BSTree< Key, Value, Compare >::const_iterator
+ivantsova::BSTree< Key, Value, Compare >::rotateLargeLeft(const_iterator it) {
+  Node *node = const_cast<Node *>(it.node_);
+  if (node == nullptr || node->left_ == nullptr || node->left_->right_ == nullptr) {
+    return it;
+  }
+  rotateRight(const_iterator(node->left_));
+  return rotateLeft(it);
+}
+
+template < class Key, class Value, class Compare >
+typename ivantsova::BSTree< Key, Value, Compare >::const_iterator
+ivantsova::BSTree< Key, Value, Compare >::rotateLargeRight(const_iterator it) {
+  Node *node = const_cast<Node *>(it.node_);
+  if (node == nullptr || node->right_ == nullptr || node->right_->left_ == nullptr) {
+    return it;
+  }
+  rotateLeft(const_iterator(node->right_));
+  return rotateRight(it);
+}
+
 #endif
