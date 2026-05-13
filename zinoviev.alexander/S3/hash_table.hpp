@@ -64,6 +64,99 @@ namespace zinoviev
     class Iterator;
     class ConstIterator;
 
+    class Iterator
+    {
+      HashTable< Key, Value, Hash, Equal >* ptr_;
+      size_t id_;
+    public:
+
+      Iterator() :
+        ptr_(nullptr),
+        id_(0)
+      {}
+
+      Iterator(HashTable< Key, Value, Hash, Equal >* x, size_t i) :
+        ptr_(x),
+        id_(i)
+      {}
+
+      std::pair<const Key&, Value&> operator*() const
+      {
+        return std::pair<const Key&, Value&>(ptr_->slots_[id_].key, ptr_->slots_[id_].value);
+      }
+
+      Iterator& operator++()
+      {
+        ++id_;
+        while (id_ < ptr_->slots_.getSize() && !ptr_->slots_[id_].occupied)
+          ++id_;
+        return *this;
+      }
+
+      Iterator operator++(int)
+      {
+        Iterator tmp = *this; ++(*this); return tmp;
+      }
+
+      bool operator==(const Iterator& other) const
+      {
+        return ptr_ == other.ptr_ && id_ == other.id_;
+      }
+
+      bool operator!=(const Iterator& other) const
+      {
+        return !(*this == other);
+      }
+    };
+
+    class ConstIterator
+    {
+      const HashTable< Key, Value, Hash, Equal >* ptr_;
+      size_t id_;
+    public:
+
+      ConstIterator() :
+        ptr_(nullptr),
+        id_(0)
+      {}
+
+      ConstIterator(const HashTable< Key, Value, Hash, Equal >* x, size_t i) :
+        ptr_(x),
+        id_(i)
+      {}
+
+      std::pair<const Key&, const Value&> operator*() const
+      {
+        return std::pair<const Key&, const Value&>(ptr_->slots_[id_].key, ptr_->slots_[id_].value);;
+      }
+
+      ConstIterator& operator++()
+      {
+        ++id_;
+        while (id_ < ptr_->slots_.getSize() && !ptr_->slots_[id_].occupied)
+          ++id_;
+        return *this;
+      }
+
+      ConstIterator operator++(int)
+      {
+        ConstIterator tmp = *this; ++(*this); return tmp;
+      }
+
+      bool operator==(const ConstIterator& other) const
+      {
+        return ptr_ == other.ptr_ && id_ == other.id_;
+      }
+
+      bool operator!=(const ConstIterator& other) const
+      {
+        return !(*this == other);
+      }
+    };
+
+    friend class Iterator;
+    friend class ConstIterator;
+
     HashTable();
     HashTable(size_t buckets, size_t bucket_capacity, size_t overflow_capacity, const Hash& hash = Hash(), const Equal& equal = Equal());
     HashTable(const HashTable& other);
@@ -300,5 +393,4 @@ namespace zinoviev
     return ConstIterator(this, slots_.getSize());
   }
 }
-
 #endif
