@@ -81,6 +81,30 @@ ivantsova::BSTree< Key, Value, Compare >::~BSTree() {
 }
 
 template < class Key, class Value, class Compare >
+ivantsova::BSTree< Key, Value, Compare >::BSTree(const BSTree &other) :
+  fake_root_(new Node(Key(), Value())),
+  size_(0),
+  comp_(other.comp_)
+{
+  fake_root_->left_ = nullptr;
+  fake_root_->right_ = nullptr;
+  fake_root_->parent_ = nullptr;
+  if (other.getRealRoot() != nullptr) {
+    fake_root_->right_ = clone(other.getRealRoot(), fake_root_);
+    size_ = other.size_;
+  }
+}
+
+template < class Key, class Value, class Compare >
+ivantsova::BSTree< Key, Value, Compare > &ivantsova::BSTree< Key, Value, Compare >::operator=(const BSTree &other) {
+  if (this != &other) {
+    BSTree temp(other);
+    swap(temp);
+  }
+  return *this;
+}
+
+template < class Key, class Value, class Compare >
 bool ivantsova::BSTree< Key, Value, Compare >::empty() const {
   return size_ == 0;
 }
