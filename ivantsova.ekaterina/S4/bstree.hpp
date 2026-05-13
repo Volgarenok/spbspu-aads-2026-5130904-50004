@@ -165,4 +165,47 @@ void ivantsova::BSTree< Key, Value, Compare >::swap(BSTree &other) noexcept {
   other.comp_ = tmp_comp;
 }
 
+template < class Key, class Value, class Compare >
+typename ivantsova::BSTree< Key, Value, Compare >::Node *
+ivantsova::BSTree< Key, Value, Compare >::findNode(const Key &k) const {
+  Node *cur = getRealRoot();
+  while (cur != nullptr) {
+    if (comp_(k, cur->data.first)) {
+      cur = cur->left_;
+    } else if (comp_(cur->data.first, k)) {
+      cur = cur->right_;
+    } else {
+      return cur;
+    }
+  }
+  return nullptr;
+}
+
+template < class Key, class Value, class Compare >
+typename ivantsova::BSTree< Key, Value, Compare >::Node *
+ivantsova::BSTree< Key, Value, Compare >::findNode(const Key &k) {
+  return const_cast<Node *>(static_cast<const BSTree &>(*this).findNode(k));
+}
+
+template < class Key, class Value, class Compare >
+Value ivantsova::BSTree< Key, Value, Compare >::get(const Key &k) const {
+  Node *n = findNode(k);
+  if (n == nullptr) {
+    throw std::out_of_range("Key not found");
+  }
+  return n->data.second;
+}
+
+template < class Key, class Value, class Compare >
+typename ivantsova::BSTree< Key, Value, Compare >::const_iterator
+ivantsova::BSTree< Key, Value, Compare >::find(const Key &k) const {
+  return const_iterator(findNode(k));
+}
+
+template < class Key, class Value, class Compare >
+typename ivantsova::BSTree< Key, Value, Compare >::iterator
+ivantsova::BSTree< Key, Value, Compare >::find(const Key &k) {
+  return iterator(findNode(k));
+}
+
 #endif
