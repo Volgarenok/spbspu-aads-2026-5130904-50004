@@ -130,6 +130,7 @@ void alekseev::Graph::remove_vertex(const str & vertex)
     current = vertexes_->next;
     while (current != vertexes_) {
       edges_.remove(std::pair< str, str >(vertex, current->data));
+      edges_.remove(std::pair< str, str >(current->data, vertex));
       current = current->next;
     }
   }
