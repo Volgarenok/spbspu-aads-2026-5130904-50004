@@ -7,6 +7,9 @@
 #include <vector>
 #include "BSTtree.h"
 
+inline void invalid() {
+  std::cout << "<INVALID COMMAND>\n";
+}
 
 class BSTManager {
   using tree = BSTtree<int, std::string, std::less<int>>;
@@ -49,6 +52,47 @@ inline void BSTManager::loadFromFile(const std::string &filename) {
       tr->push(key, val);
     }
   }
+}
+
+inline void BSTManager::execute(const std::string &line, bool &isAnything, bool silent) {
+  std::istringstream iss(line);
+  std::string cmd;
+  if (!(iss >> cmd)) return;
+
+  if (cmd == "print") {
+    std::string dname;
+    if (!(iss >> dname)) {
+      if (!silent) invalid();
+      return;
+    }
+
+    const tree* tr = getDatasetConst(dname);
+    if (!tr) {
+      if (!silent) invalid();
+      return;
+    }
+
+    tree::const_iterator begin = tr->begin();
+    tree::const_iterator end = tr->end();
+
+    if (begin == end) {
+      if (!silent) invalid();
+      else isAnything = false;
+      return;
+    }
+    if (silent) {
+      isAnything = true;
+      return;
+    }
+
+    std::cout << dname << ' ';
+    for (tree::const_iterator it = begin; it != end; ++it) {
+      std::pair<const int&, std::string&> kv = *it;
+      std::cout << kv.first << ' ' << kv.second;
+    }
+    std::cout << '\n';
+  }
+  else if (...)
 }
 
 #endif
