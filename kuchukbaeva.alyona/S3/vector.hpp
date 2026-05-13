@@ -336,7 +336,7 @@ kuchukbaeva::Vector< T >::Vector(const Vector< T >& rhs):
 }
 
 template< class T >
-kuchukbaeva::Vector< T >& knk::Vector< T >::operator=(const Vector< T >& rhs)
+kuchukbaeva::Vector< T >& kuchukbaeva::Vector< T >::operator=(const Vector< T >& rhs)
 {
   if (this == std::addressof(rhs)) {
     return *this;
