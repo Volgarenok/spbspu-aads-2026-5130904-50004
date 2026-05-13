@@ -90,4 +90,22 @@ size_t ivantsova::BSTree< Key, Value, Compare >::size() const {
   return size_;
 }
 
+template < class Key, class Value, class Compare >
+typename ivantsova::BSTree< Key, Value, Compare >::Node *
+ivantsova::BSTree< Key, Value, Compare >::getRealRoot() const {
+  return fake_root_->right_;
+}
+
+template < class Key, class Value, class Compare >
+typename ivantsova::BSTree< Key, Value, Compare >::Node *
+ivantsova::BSTree< Key, Value, Compare >::clone(Node *src, Node *parent) {
+  if (src == nullptr) {
+    return nullptr;
+  }
+  Node *n = new Node(src->data.first, src->data.second, parent);
+  n->left_ = clone(src->left_, n);
+  n->right_ = clone(src->right_, n);
+  return n;
+}
+
 #endif
