@@ -265,5 +265,40 @@ namespace zinoviev
     std::swap(hasher_, other.hasher_);
     std::swap(equal_, other.equal_);
   }
+
+  template <class Key, class Value, class Hash, class Equal>
+  typename HashTable<Key, Value, Hash, Equal>::Iterator
+    HashTable<Key, Value, Hash, Equal>::begin()
+  {
+    size_t id = 0;
+    while (id < slots_.getSize() && !slots_[id].occupied)
+      ++id;
+    return Iterator(this, id);
+  }
+
+  template <class Key, class Value, class Hash, class Equal>
+  typename HashTable<Key, Value, Hash, Equal>::Iterator
+    HashTable<Key, Value, Hash, Equal>::end()
+  {
+    return Iterator(this, slots_.getSize());
+  }
+
+  template <class Key, class Value, class Hash, class Equal>
+  typename HashTable<Key, Value, Hash, Equal>::ConstIterator
+    HashTable<Key, Value, Hash, Equal>::cbegin() const
+  {
+    size_t id = 0;
+    while (id < slots_.getSize() && !slots_[id].occupied)
+      ++id;
+    return ConstIterator(this, id);
+  }
+
+  template <class Key, class Value, class Hash, class Equal>
+  typename HashTable<Key, Value, Hash, Equal>::ConstIterator
+    HashTable<Key, Value, Hash, Equal>::cend() const
+  {
+    return ConstIterator(this, slots_.getSize());
+  }
 }
+
 #endif
