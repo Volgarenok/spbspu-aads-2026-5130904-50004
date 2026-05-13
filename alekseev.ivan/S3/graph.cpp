@@ -134,3 +134,15 @@ void alekseev::Graph::remove_vertex(const str & vertex)
     }
   }
 }
+
+void alekseev::Graph::remove_edge(const str & vertex1, const str & vertex2, size_t weight)
+{
+  List< size_t > * fake = edges_.at(std::pair< str, str >(vertex1, vertex2));
+  List< size_t > * current = fake;
+  while (current->next != fake && current->next->data != weight) {
+    current = current->next;
+  }
+  if (current->next->data == weight) {
+    erase_after(current);
+  }
+}
