@@ -147,7 +147,7 @@ public:
     else p->right = nw;
 
   }
-  Value get(Key k) {
+  Value get(Key k) const{
     BSTtree *curr = left; //первый же фейк?
     while (curr != &nil) {
       if (comp(k, curr->key)) curr = curr->left;
