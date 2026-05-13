@@ -4,6 +4,8 @@
 #include <string>
 #include <boost/hash2/sha1.hpp>
 #include <boost/hash2/hash_append.hpp>
+#include <utility>
+#include "vector.hpp"
 #include "hash_table.hpp"
 
 namespace zinoviev
