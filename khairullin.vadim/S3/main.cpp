@@ -4,6 +4,10 @@
 
 int main(int argc, char ** argv)
 {
+  if (argc == 1) {
+    std::cerr << "No file\n";
+    return 1;
+  }
   const char * filename = argv[1];
   std::ifstream input(filename);
   khairullin::Vector< std::string > lines;
