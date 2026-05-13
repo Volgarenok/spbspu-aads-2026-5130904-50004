@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <utility>
 
-namespace knk
+namespace kuchukbaeva
 {
   template< class T > struct Viter;
   template< class T > struct Vciter;
@@ -102,187 +102,187 @@ namespace knk
 }
 
 template< class T >
-knk::Viter< T >::Viter(T* ptr):
+kuchukbaeva::Viter< T >::Viter(T* ptr):
   p(ptr)
 {}
 
 template< class T >
-T& knk::Viter< T >::operator*() const {
+T& kuchukbaeva::Viter< T >::operator*() const {
   return *p;
 }
 
 template< class T >
-knk::Viter< T >& knk::Viter< T >::operator++() {
+kuchukbaeva::Viter< T >& kuchukbaeva::Viter< T >::operator++() {
   ++p;
   return *this;
 }
 
 template< class T >
-knk::Viter< T > knk::Viter< T >::operator++(int) {
+kuchukbaeva::Viter< T > kuchukbaeva::Viter< T >::operator++(int) {
   Viter tmp = *this;
   ++p;
   return tmp;
 }
 
 template< class T >
-knk::Viter< T >& knk::Viter< T >::operator--() {
+kuchukbaeva::Viter< T >& kuchukbaeva::Viter< T >::operator--() {
   --p;
   return *this;
 }
 
 template< class T >
-knk::Viter< T > knk::Viter< T >::operator--(int) {
+kuchukbaeva::Viter< T > kuchukbaeva::Viter< T >::operator--(int) {
   Viter tmp = *this;
   --p;
   return tmp;
 }
 
 template< class T >
-knk::Viter< T >& knk::Viter< T >::operator+=(size_t n) {
+kuchukbaeva::Viter< T >& kuchukbaeva::Viter< T >::operator+=(size_t n) {
   p += n;
   return *this;
 }
 
 template< class T >
-knk::Viter< T >& knk::Viter< T >::operator-=(size_t n) {
+kuchukbaeva::Viter< T >& kuchukbaeva::Viter< T >::operator-=(size_t n) {
   p -= n;
   return *this;
 }
 
 template< class T >
-knk::Viter< T > knk::Viter< T >::operator+(size_t n) const {
+kuchukbaeva::Viter< T > kuchukbaeva::Viter< T >::operator+(size_t n) const {
   return Viter(p + n);
 }
 
 template< class T >
-knk::Viter< T > knk::Viter< T >::operator-(size_t n) const {
+kuchukbaeva::Viter< T > kuchukbaeva::Viter< T >::operator-(size_t n) const {
   return Viter(p - n);
 }
 
 template< class T >
-long long knk::Viter< T >::operator-(const Viter< T >& other) const {
+long long kuchukbaeva::Viter< T >::operator-(const Viter< T >& other) const {
   return p - other.p;
 }
 
 template< class T >
-bool knk::Viter< T >::operator==(const Viter< T >& other) const {
+bool kuchukbaeva::Viter< T >::operator==(const Viter< T >& other) const {
   return p == other.p;
 }
 
 template< class T >
-bool knk::Viter< T >::operator!=(const Viter< T >& other) const {
+bool kuchukbaeva::Viter< T >::operator!=(const Viter< T >& other) const {
   return p != other.p;
 }
 
 template< class T >
-bool knk::Viter< T >::operator<(const Viter< T >& other) const {
+bool kuchukbaeva::Viter< T >::operator<(const Viter< T >& other) const {
   return p < other.p;
 }
 
 template< class T >
-knk::Vciter< T >::Vciter(const T* ptr):
+kuchukbaeva::Vciter< T >::Vciter(const T* ptr):
   p(ptr)
 {}
 
 template< class T >
-knk::Vciter< T >::Vciter(const Viter< T >& other):
+kuchukbaeva::Vciter< T >::Vciter(const Viter< T >& other):
   p(other.p)
 {}
 
 template< class T >
-const T& knk::Vciter< T >::operator*() const {
+const T& kuchukbaeva::Vciter< T >::operator*() const {
   return *p;
 }
 
 template< class T >
-knk::Vciter< T >& knk::Vciter< T >::operator++() {
+kuchukbaeva::Vciter< T >& kuchukbaeva::Vciter< T >::operator++() {
   ++p;
   return *this;
 }
 
 template< class T >
-knk::Vciter< T > knk::Vciter< T >::operator++(int) {
+kuchukbaeva::Vciter< T > kuchukbaeva::Vciter< T >::operator++(int) {
   Vciter tmp = *this;
   ++p;
   return tmp;
 }
 
 template< class T >
-knk::Vciter< T >& knk::Vciter< T >::operator--() {
+kuchukbaeva::Vciter< T >& kuchukbaeva::Vciter< T >::operator--() {
   --p;
   return *this;
 }
 
 template< class T >
-knk::Vciter< T > knk::Vciter< T >::operator--(int) {
+kuchukbaeva::Vciter< T > kuchukbaeva::Vciter< T >::operator--(int) {
   Vciter tmp = *this;
   --p;
   return tmp;
 }
 
 template< class T >
-knk::Vciter< T >& knk::Vciter< T >::operator+=(size_t n) {
+kuchukbaeva::Vciter< T >& kuchukbaeva::Vciter< T >::operator+=(size_t n) {
   p += n;
   return *this;
 }
 
 template< class T >
-knk::Vciter< T >& knk::Vciter< T >::operator-=(size_t n) {
+kuchukbaeva::Vciter< T >& kuchukbaeva::Vciter< T >::operator-=(size_t n) {
   p -= n;
   return *this;
 }
 
 template< class T >
-knk::Vciter< T > knk::Vciter< T >::operator+(size_t n) const {
+kuchukbaeva::Vciter< T > kuchukbaeva::Vciter< T >::operator+(size_t n) const {
   return Vciter(p + n);
 }
 
 template< class T >
-knk::Vciter< T > knk::Vciter< T >::operator-(size_t n) const {
+kuchukbaeva::Vciter< T > kuchukbaeva::Vciter< T >::operator-(size_t n) const {
   return Vciter(p - n);
 }
 
 template< class T >
-long long knk::Vciter< T >::operator-(const Vciter< T >& other) const {
+long long kuchukbaeva::Vciter< T >::operator-(const Vciter< T >& other) const {
   return p - other.p;
 }
 
 template< class T >
-bool knk::Vciter< T >::operator==(const Vciter< T >& other) const {
+bool kuchukbaeva::Vciter< T >::operator==(const Vciter< T >& other) const {
   return p == other.p;
 }
 
 template< class T >
-bool knk::Vciter< T >::operator!=(const Vciter< T >& other) const {
+bool kuchukbaeva::Vciter< T >::operator!=(const Vciter< T >& other) const {
   return p != other.p;
 }
 
 template< class T >
-bool knk::Vciter< T >::operator<(const Vciter< T >& other) const {
+bool kuchukbaeva::Vciter< T >::operator<(const Vciter< T >& other) const {
   return p < other.p;
 }
 
 template< class T >
-knk::Vector< T >::Vector():
+kuchukbaeva::Vector< T >::Vector():
   data_(nullptr),
   size_(0),
   capacity_(0)
 {}
 
 template< class T >
-knk::Vector< T >::~Vector() {
+kuchukbaeva::Vector< T >::~Vector() {
   delete[] data_;
 }
 
 template< class T >
-knk::Vector< T >::Vector(Vector < T >&& rhs) noexcept:
+kuchukbaeva::Vector< T >::Vector(Vector < T >&& rhs) noexcept:
   Vector()
 {
   swap(rhs);
 }
 
 template< class T >
-knk::Vector< T >& knk::Vector < T >::operator=(Vector< T >&& rhs) noexcept
+kuchukbaeva::Vector< T >& kuchukbaeva::Vector < T >::operator=(Vector< T >&& rhs) noexcept
 {
   Vector< T > cpy(std::move(rhs));
   swap(cpy);
@@ -290,7 +290,7 @@ knk::Vector< T >& knk::Vector < T >::operator=(Vector< T >&& rhs) noexcept
 }
 
 template< class T >
-void knk::Vector< T >::pushFront(const T& v)
+void kuchukbaeva::Vector< T >::pushFront(const T& v)
 {
   Vector< T > tmp(getSize() + 1);
   tmp[0] = v;
@@ -301,17 +301,17 @@ void knk::Vector< T >::pushFront(const T& v)
 }
 
 template< class T >
-T& knk::Vector< T >::operator[](size_t id) noexcept {
+T& kuchukbaeva::Vector< T >::operator[](size_t id) noexcept {
   return const_cast< T& >((*static_cast< const Vector< T >* >(this))[id]);
 }
 
 template< class T >
-const T& knk::Vector< T >::operator[](size_t id) const noexcept {
+const T& kuchukbaeva::Vector< T >::operator[](size_t id) const noexcept {
   return data_[id];
 }
 
 template< class T>
-T& knk::Vector< T >::at(size_t id) {
+T& kuchukbaeva::Vector< T >::at(size_t id) {
   const Vector< T >* cthis = this;
   const T& cr = cthis->at(id);
   T& r = const_cast< T& >(cr);
@@ -319,7 +319,7 @@ T& knk::Vector< T >::at(size_t id) {
 }
 
 template< class T >
-const T& knk::Vector< T >::at(size_t id) const {
+const T& kuchukbaeva::Vector< T >::at(size_t id) const {
   if (id < getSize()) {
     return (*this)[id];
   }
@@ -327,7 +327,7 @@ const T& knk::Vector< T >::at(size_t id) const {
 }
 
 template< class T >
-knk::Vector< T >::Vector(const Vector< T >& rhs):
+kuchukbaeva::Vector< T >::Vector(const Vector< T >& rhs):
   Vector(rhs.getSize())
 {
   for (size_t i = 0; i < rhs.getSize(); ++i) {
@@ -336,7 +336,7 @@ knk::Vector< T >::Vector(const Vector< T >& rhs):
 }
 
 template< class T >
-knk::Vector< T >& knk::Vector< T >::operator=(const Vector< T >& rhs)
+kuchukbaeva::Vector< T >& knk::Vector< T >::operator=(const Vector< T >& rhs)
 {
   if (this == std::addressof(rhs)) {
     return *this;
@@ -347,7 +347,7 @@ knk::Vector< T >& knk::Vector< T >::operator=(const Vector< T >& rhs)
 }
 
 template< class T >
-void knk::Vector< T >::swap(Vector< T >& rhs) noexcept
+void kuchukbaeva::Vector< T >::swap(Vector< T >& rhs) noexcept
 {
   std::swap(data_, rhs.data_);
   std::swap(size_, rhs.size_);
@@ -355,14 +355,14 @@ void knk::Vector< T >::swap(Vector< T >& rhs) noexcept
 }
 
 template< class T >
-knk::Vector< T >::Vector(size_t size):
+kuchukbaeva::Vector< T >::Vector(size_t size):
   data_(size ? new T[size] : nullptr),
   size_(size),
   capacity_(size)
 {}
 
 template< class T >
-knk::Vector< T >::Vector(size_t size, const T& value):
+kuchukbaeva::Vector< T >::Vector(size_t size, const T& value):
   Vector(size)
 {
   for (size_t i = 0; i < size; ++i) {
@@ -371,22 +371,22 @@ knk::Vector< T >::Vector(size_t size, const T& value):
 }
 
 template< class T >
-size_t knk::Vector< T >::getSize() const noexcept {
+size_t kuchukbaeva::Vector< T >::getSize() const noexcept {
   return size_;
 }
 
 template< class T >
-bool knk::Vector< T >::isEmpty() const noexcept {
+bool kuchukbaeva::Vector< T >::isEmpty() const noexcept {
   return !size_;
 }
 
 template< class T >
-size_t knk::Vector< T >::getCapacity() const noexcept {
+size_t kuchukbaeva::Vector< T >::getCapacity() const noexcept {
   return capacity_;
 }
 
 template< class T >
-void knk::Vector< T >::pushBack(const T& value) {
+void kuchukbaeva::Vector< T >::pushBack(const T& value) {
   if (size_ == capacity_) {
     size_t new_capacity = (capacity_ == 0) ? 1 : capacity_ * 2;
     T* new_data = new T[new_capacity];
@@ -411,14 +411,14 @@ void knk::Vector< T >::pushBack(const T& value) {
 }
 
 template< class T >
-void knk::Vector< T >::popBack() {
+void kuchukbaeva::Vector< T >::popBack() {
   if (size_ > 0) {
     --size_;
   }
 }
 
 template< class T >
-void knk::Vector< T >::pushBackRepeat(const T& t, size_t k)
+void kuchukbaeva::Vector< T >::pushBackRepeat(const T& t, size_t k)
 {
   Vector< T > cpy(*this);
   for (size_t i = 0; i < k; ++i) {
@@ -428,7 +428,7 @@ void knk::Vector< T >::pushBackRepeat(const T& t, size_t k)
 }
 
 template< class T >
-void knk::Vector< T >::insert(size_t id, const T& t) {
+void kuchukbaeva::Vector< T >::insert(size_t id, const T& t) {
   if (id > getSize()) {
     throw std::out_of_range("id out of bound");
   }
@@ -444,7 +444,7 @@ void knk::Vector< T >::insert(size_t id, const T& t) {
 }
 
 template< class T >
-void knk::Vector< T >::insert(size_t id, const Vector< T >& rhs, size_t beg, size_t end_idx) {
+void kuchukbaeva::Vector< T >::insert(size_t id, const Vector< T >& rhs, size_t beg, size_t end_idx) {
   if (id > getSize() || beg > end_idx || end_idx > rhs.getSize()) {
     throw std::out_of_range("id out of bound");
   }
@@ -463,7 +463,7 @@ void knk::Vector< T >::insert(size_t id, const Vector< T >& rhs, size_t beg, siz
 }
 
 template< class T >
-void knk::Vector< T >::erase(size_t id) {
+void kuchukbaeva::Vector< T >::erase(size_t id) {
   if (id >= getSize()) {
     throw std::out_of_range("id out of bound");
   }
@@ -478,7 +478,7 @@ void knk::Vector< T >::erase(size_t id) {
 }
 
 template< class T >
-void knk::Vector< T >::erase(size_t beg, size_t end_idx) {
+void kuchukbaeva::Vector< T >::erase(size_t beg, size_t end_idx) {
   if (beg > end_idx || end_idx > getSize()) {
     throw std::out_of_range("id out of bound");
   }
@@ -494,42 +494,42 @@ void knk::Vector< T >::erase(size_t beg, size_t end_idx) {
 }
 
 template< class T >
-knk::Viter< T > knk::Vector< T >::begin() noexcept {
+kuchukbaeva::Viter< T > kuchukbaeva::Vector< T >::begin() noexcept {
   return Viter< T >(data_);
 }
 
 template< class T >
-knk::Viter< T > knk::Vector< T >::end() noexcept {
+kuchukbaeva::Viter< T > kuchukbaeva::Vector< T >::end() noexcept {
   return Viter< T >(data_ + size_);
 }
 
 template< class T >
-knk::Vciter< T > knk::Vector< T >::begin() const noexcept {
+kuchukbaeva::Vciter< T > kuchukbaeva::Vector< T >::begin() const noexcept {
   return Vciter< T >(data_);
 }
 
 template< class T >
-knk::Vciter< T > knk::Vector< T >::end() const noexcept {
+kuchukbaeva::Vciter< T > kuchukbaeva::Vector< T >::end() const noexcept {
   return Vciter< T >(data_ + size_);
 }
 
 template< class T >
-knk::Vciter< T > knk::Vector< T >::cbegin() const noexcept {
+kuchukbaeva::Vciter< T > kuchukbaeva::Vector< T >::cbegin() const noexcept {
   return Vciter< T >(data_);
 }
 
 template< class T >
-knk::Vciter< T > knk::Vector< T >::cend() const noexcept {
+kuchukbaeva::Vciter< T > kuchukbaeva::Vector< T >::cend() const noexcept {
   return Vciter< T >(data_ + size_);
 }
 
 template< class T >
-void knk::Vector< T >::insert(Vciter< T > pos, const T& value) {
+void kuchukbaeva::Vector< T >::insert(Vciter< T > pos, const T& value) {
   insert(pos.p - data_, value);
 }
 
 template< class T >
-void knk::Vector< T >::insert(Vciter< T > pos, size_t count, const T& value) {
+void kuchukbaeva::Vector< T >::insert(Vciter< T > pos, size_t count, const T& value) {
   size_t id = pos.p - data_;
   Vector< T > tmp(getSize() + count);
   for (size_t i = 0; i < id; ++i) {
@@ -545,7 +545,7 @@ void knk::Vector< T >::insert(Vciter< T > pos, size_t count, const T& value) {
 }
 
 template< class T >
-void knk::Vector< T >::insert(Vciter< T > pos, Vciter< T > first, Vciter< T > last) {
+void kuchukbaeva::Vector< T >::insert(Vciter< T > pos, Vciter< T > first, Vciter< T > last) {
   size_t id = pos.p - data_;
   size_t count = 0;
   for (Vciter< T > it = first; it != last; ++it) {
@@ -567,17 +567,17 @@ void knk::Vector< T >::insert(Vciter< T > pos, Vciter< T > first, Vciter< T > la
 }
 
 template< class T >
-void knk::Vector< T >::erase(Vciter< T > pos) {
+void kuchukbaeva::Vector< T >::erase(Vciter< T > pos) {
   erase(pos.p - data_);
 }
 
 template< class T >
-void knk::Vector< T >::erase(Vciter< T > first, Vciter< T > last) {
+void kuchukbaeva::Vector< T >::erase(Vciter< T > first, Vciter< T > last) {
   erase(first.p - data_, last.p - data_);
 }
 
 template< class T >
-void knk::Vector< T >::erase(Vciter< T > pos, size_t count) {
+void kuchukbaeva::Vector< T >::erase(Vciter< T > pos, size_t count) {
   erase(pos.p - data_, pos.p - data_ + count);
 }
 
