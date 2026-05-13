@@ -180,6 +180,90 @@ namespace zinoviev
   {
     return find_slot(k) != nullptr;
   }
-}
 
+  template < class Key, class Value, class Hash, class Equal >
+  void HashTable< Key, Value, Hash, Equal >::add(const Key& k, const Value& val)
+  {
+    Slot* slot = find_slot(k);
+    if (slot)
+    {
+      slot->value = val;
+      return;
+    }
+
+    size_t id = bucket_start(bucket_index(k));
+    for (size_t i = id; i < id + bucket_capacity_; ++i)
+    {
+      if (!slots_[i].occupied)
+      {
+        Slot new_slot(k, val);
+        slots_[i].swap_slots(new_slot);
+        ++size_;
+        return;
+      }
+    }
+
+    id = buckets_ * bucket_capacity_;
+    for (size_t i = id; i < id + overflow_capacity_; ++i)
+    {
+      if (!slots_[i].occupied)
+      {
+        Slot new_slot(k, val);
+        slots_[i].swap_slots(new_slot);
+        ++size_;
+        return;
+      }
+    }
+
+    throw std::overflow_error("HashTable overflow capacity exceeded");
+  }
+
+  template <class Key, class Value, class Hash, class Equal>
+  void HashTable<Key, Value, Hash, Equal>::drop(const Key& k, Value& out)
+  {
+    Slot* slot = find_slot(k);
+    if (!slot)
+      throw std::out_of_range("Key not found");
+
+    out = slot->value;
+    Slot empty;
+    slot->swap_slots(empty);
+    --size_;
+  }
+
+  template <class Key, class Value, class Hash, class Equal>
+  void HashTable< Key, Value, Hash, Equal >::rehash(size_t new_buckets)
+  {
+    HashTable< Key, Value, Hash, Equal > new_table{ new_buckets, bucket_capacity_, overflow_capacity_, hasher_, equal_ };
+    for (size_t i = 0; i < slots_.getSize(); ++i)
+      if (slots_[i].occupied)
+        new_table.add(slots_[i].key, slots_[i].value);
+    swap(new_table);
+  }
+
+  template <class Key, class Value, class Hash, class Equal>
+  void HashTable< Key, Value, Hash, Equal >::erase(const Key& k) noexcept
+  {
+    Slot* s = find_slot(k);
+
+    if (!s)
+      return;
+
+    Slot empty;
+    s->swap_slots(empty);
+    --size_;
+  }
+
+  template <class Key, class Value, class Hash, class Equal>
+  void HashTable<Key, Value, Hash, Equal>::swap(HashTable& other) noexcept
+  {
+    slots_.swap(other.slots_);
+    std::swap(buckets_, other.buckets_);
+    std::swap(bucket_capacity_, other.bucket_capacity_);
+    std::swap(overflow_capacity_, other.overflow_capacity_);
+    std::swap(size_, other.size_);
+    std::swap(hasher_, other.hasher_);
+    std::swap(equal_, other.equal_);
+  }
+}
 #endif
