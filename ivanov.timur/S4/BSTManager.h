@@ -92,7 +92,50 @@ inline void BSTManager::execute(const std::string &line, bool &isAnything, bool 
     }
     std::cout << '\n';
   }
-  else if (...)
+  else if (cmd == "complement" || cmd == "intersect" || cmd == "union") {
+    std::string name, name1, name2;
+    if (!(iss >> name >> name1 >> name2)) {
+      if (!silent) invalid();
+      return;
+    }
+
+    const tree* tr1 = getDatasetConst(name1);
+    const tree* tr2 = getDatasetConst(name2);
+    if (!tr1 || !tr2) {
+      if (!silent) invalid();
+      return;
+    }
+
+    tree newtree;
+
+    if (cmd == "complement") {
+      for (tree::const_iterator it = tr1->begin(); it != tr1->end(); ++it) {
+        std::pair<const int&, std::string&> kv = *it;
+        if (!contains(*tr2, kv.first)) newtree.push(kv.first, kv.second);
+      }
+    } else if (cmd == "intersect") {
+      for (tree::const_iterator it = tr1->begin(); it != tr1->end(); ++it) {
+        std::pair<const int&, std::string&> kv = *it;
+        if (contains(*tr2, kv.first)) newtree.push(kv.first, kv.second);
+      }
+    } else {
+      for (tree::const_iterator it = tr1->begin(); it != tr1->end(); ++it) {
+        std::pair<const int&, std::string&> kv = *it;
+        newtree.push(kv.first, kv.second);
+      }
+      for (tree::const_iterator it = tr2->begin(); it != tr2->end(); ++it) {
+        std::pair<const int&, std::string&> kv = *it;
+        if (!contains(*tr1, kv.first)) newtree.push(kv.first, kv.second);
+      }
+    }
+
+    tree* existing = getDataset(name);
+    if (existing) *existing = std::move(newtree);
+    else datasets.push_back(std::make_pair(name, std::move(newtree)));
+
+    if (silent) isAnything = false;
+  }
+  else if (!silent) invalid();
 }
 
 inline BSTManager::tree * BSTManager::getDataset(const std::string &name) {
