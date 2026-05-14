@@ -9,7 +9,7 @@ namespace alekseev {
   size_t graph_name_hasher(const str & name);
   Graph input_graph(std::ifstream & input);
 
-  std::ostream & graphs(std::ostream & output, Vector< str > & names);
+  std::ostream & graphs(std::ostream & output, Vector< str > names);
   std::ostream & vertexes(std::ostream & output, List< str > * names);
   std::ostream & outbounds(std::ostream & output,
       Vector< std::pair< str, Vector< size_t > > > * edges);
@@ -44,4 +44,20 @@ size_t alekseev::graph_name_hasher(const str & name)
     result ^= digest[i];
   }
   return result;
+}
+
+std::ostream & alekseev::graphs(std::ostream & output, Vector< str > names)
+{
+  if (names.isEmpty()) {
+    return output;
+  }
+  names.bubbleSort([](str s1, str s2) {
+    return s1 < s2;
+  });
+
+  output << names[0];
+  for (size_t i = 1; i < names.getSize(); ++i) {
+    output << "\n" << names[i];
+  }
+  return output;
 }
