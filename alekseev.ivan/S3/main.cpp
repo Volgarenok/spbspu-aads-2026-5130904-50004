@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <boost/uuid/sha1.hpp>
 #include "hash_table.h"
 #include "graph.h"
 
@@ -29,4 +30,18 @@ namespace alekseev {
 
 int main()
 {
+}
+
+size_t alekseev::graph_name_hasher(const str & name)
+{
+  boost::uuids::detail::sha1 h;
+  h.process_bytes(name.c_str(), name.size());
+  unsigned int digest[5];
+  h.get_digest(digest);
+
+  size_t result = 0;
+  for (int i = 0; i < 5; i++) {
+    result ^= digest[i];
+  }
+  return result;
 }
