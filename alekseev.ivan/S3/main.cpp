@@ -6,11 +6,23 @@
 
 namespace alekseev {
   using str = std::string;
+  using ht_graphs = HashTable< str, Graph, size_t (*)(const str &), bool (*)(str, str) >;
   size_t str_hasher(const str & name);
   Graph input_graph(std::ifstream & input);
   bool str_less(str a, str b);
 
+  using command_type = void(*)(ht_graphs &, Vector< str >);
+  void graphs(ht_graphs & graphs, Vector< str > args);
+  void vertexes(ht_graphs & graphs, Vector< str > args);
+  void outbound(ht_graphs & graphs, Vector< str > args);
+  void inbound(ht_graphs & graphs, Vector< str > args);
 
+  void bind(ht_graphs & graphs, Vector< str > args);
+  void cut(ht_graphs & graphs, Vector< str > args);
+
+  void create(ht_graphs & graphs, Vector< str > args);
+  void merge(ht_graphs & graphs, Vector< str > args);
+  void extract(ht_graphs & graphs, Vector< str > args);
 }
 
 int main()
@@ -36,60 +48,72 @@ bool alekseev::str_less(str a, str b)
   return a < b;
 }
 
-std::ostream & alekseev::graphs(std::ostream & output, Vector< str > names)
+void alekseev::graphs(ht_graphs & graphs, Vector< str > args)
 {
-  if (names.isEmpty()) {
-    return output;
-  }
+  Vector< str > names = graphs.keys();
   names.bubbleSort(str_less);
 
-  output << names[0];
+  std::cout << names[0];
   for (size_t i = 1; i < names.getSize(); ++i) {
-    output << "\n" << names[i];
+    std::cout << "\n" << names[i];
   }
-  return output;
 }
 
-std::ostream & alekseev::vertexes(std::ostream & output, List< str > * names)
+void alekseev::vertexes(ht_graphs & graphs, Vector< str > args)
 {
-  List< str > * current = names->next;
-  Vector< str > vect;
-  while (current != names) {
-    vect.pushBack(current->data);
+  if (args.isEmpty()) {
+    throw std::invalid_argument("Invalid arguments");
   }
-  vect.bubbleSort(str_less);
-  output << vect[0];
-  for (size_t i = 1; i < vect.getSize(); ++i) {
-    output << "\n" << vect[i];
+  if (!graphs.contains(args[0])) {
+    throw std::invalid_argument("Invalid arguments");
   }
-  return output;
+  List< str > * names = graphs.at(args[0]).vertexes();
+  List< str > * current = names;
+  Vector< str > vect_names;
+  while (current->next != names) {
+    current = current->next;
+    vect_names.pushBack(current->data);
+  }
+  vect_names.bubbleSort(str_less);
+  if (vect_names.isEmpty()) {
+    return;
+  }
+  std::cout << vect_names[0];
+  for (size_t i = 1; i < vect_names.getSize(); ++i) {
+    std::cout << "\n" << vect_names[i];
+  }
 }
 
-std::ostream & alekseev::outbounds(std::ostream & output,
-    Vector< std::pair< str, Vector< size_t > > > edges)
+void alekseev::outbound(ht_graphs & graphs, Vector< str > args)
 {
+  if (args.getSize() != 2) {
+    throw std::invalid_argument("Invalid arguments");
+  }
+  if (!graphs.contains(args[0])) {
+    throw std::invalid_argument("Invalid arguments");
+  }
+  const Graph & graph = graphs.at(args[0]);
+  if (!graph.has_vertex(args[1])) {
+    throw std::invalid_argument("Invalid arguments");
+  }
+  Vector< std::pair< str, Vector< size_t > > > edges = graph.outbounds(args[1]);
   edges.bubbleSort(
       [](std::pair< str, Vector< size_t > > p1, std::pair< str, Vector< size_t > > p2) {
         return str_less(p1.first, p2.first);
       });
   for (size_t i = 0; i < edges.getSize(); ++i) {
     Vector< size_t > & weights = edges[i].second;
-    if (weights.isEmpty()) {
-      output << edges[i].first << "\n";
-      continue;
-    }
-    output << edges[i].first << " ";
+    std::cout << edges[i].first << " ";
 
     weights.bubbleSort([](size_t a, size_t b) {
       return a < b;
     });
-    output << weights[0];
+    std::cout << weights[0];
     for (size_t j = 1; j < weights.getSize(); ++i) {
-      output << " " << weights[j];
+      std::cout << " " << weights[j];
     }
     if (i < edges.getSize() - 1) {
-      output << "\n";
+      std::cout << "\n";
     }
   }
-  return output;
 }
