@@ -23,7 +23,10 @@ namespace alekseev {
 
     void ins_vertex(const str & vertex);
     void add_vertex(const str & vertex);
+    void add_vertexes(const List< str > * vertex);
     void add_edge(const str & vertex1, const str & vertex2, size_t weight);
+    void ins_edge(const str & vertex1, const str & vertex2, size_t weight);
+    void add_edges(const str & vertex1, const str & vertex2, Vector< size_t > weights);
     bool has_vertex(const str & vertex) const;
     bool has_some_edge(const str & vertex1, const str & vertex2) const;
     bool has_edge(const str & vertex1, const str & vertex2, size_t weight) const;
@@ -39,7 +42,6 @@ namespace alekseev {
   };
 
   Graph merge_graphs(const Graph & graph1, const Graph & graph2);
-
 }
 
 #endif

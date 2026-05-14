@@ -90,12 +90,39 @@ void alekseev::Graph::add_vertex(const str & vertex)
   insert_after(vertexes_, vertex);
 }
 
+void alekseev::Graph::add_vertexes(const List< str > * vertexes)
+{
+  List< str > * current = vertexes->next;
+  while (current != vertexes) {
+    insert_after(vertexes_, current->data);
+    current = current->next;
+  }
+}
+
 void alekseev::Graph::add_edge(const str & vertex1, const str & vertex2, size_t weight)
 {
   try {
     edges_.at(std::pair< str, str >(vertex1, vertex2)).pushBack(weight);
   } catch (std::out_of_range & e) {
     edges_.insert(std::pair< str, str >(vertex1, vertex2), Vector< size_t >(1, weight));
+  }
+}
+
+void alekseev::Graph::ins_edge(const str & vertex1, const str & vertex2, size_t weight)
+{
+  if (!has_vertex(vertex1) || !has_vertex(vertex2)) {
+    throw std::invalid_argument("Invalid vertex");
+  }
+  if (has_edge(vertex1, vertex2, weight)) {
+    return;
+  }
+  add_edge(vertex1, vertex2, weight);
+}
+
+void alekseev::Graph::add_edges(const str & vertex1, const str & vertex2, Vector< size_t > weights)
+{
+  for (size_t i = 0; i < weights.getSize(); ++i) {
+    add_edge(vertex1, vertex2, weights[i]);
   }
 }
 
