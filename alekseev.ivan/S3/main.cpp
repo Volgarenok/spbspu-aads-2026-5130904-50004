@@ -134,7 +134,7 @@ void alekseev::inbound(ht_graphs & graphs, Vector< str > args)
   bounds(graphs, args, false);
 }
 
-void alekseev::bind(ht_graphs & graphs, Vector<str> args)
+void alekseev::bind(ht_graphs & graphs, Vector< str > args)
 {
   if (args.getSize() != 4) {
     throw std::invalid_argument("Invalid arguments");
@@ -164,4 +164,21 @@ void alekseev::bind(ht_graphs & graphs, Vector<str> args)
       graph.remove_vertex(args[2]);
     }
   }
+}
+
+void alekseev::cut(ht_graphs & graphs, Vector< str > args)
+{
+  if (args.getSize() != 4) {
+    throw std::invalid_argument("Invalid arguments");
+  }
+  if (!graphs.contains(args[0])) {
+    throw std::invalid_argument("Invalid arguments");
+  }
+  size_t weight = std::stoull(args[3]);
+  Graph & graph = graphs.at(args[0]);
+  if (!graph.has_vertex(args[1]) || !graph.has_vertex(args[2]) || !graph.has_edge(args[1], args[2],
+      weight)) {
+    throw std::invalid_argument("Invalid arguments");
+  }
+  graph.remove_edge(args[1], args[2], weight);
 }
