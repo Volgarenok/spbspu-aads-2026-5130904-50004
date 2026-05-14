@@ -8,6 +8,7 @@ namespace alekseev {
   using str = std::string;
   size_t graph_name_hasher(const str & name);
   Graph input_graph(std::ifstream & input);
+  bool str_less(str a, str b);
 
   std::ostream & graphs(std::ostream & output, Vector< str > names);
   std::ostream & vertexes(std::ostream & output, List< str > * names);
@@ -46,18 +47,35 @@ size_t alekseev::graph_name_hasher(const str & name)
   return result;
 }
 
+bool alekseev::str_less(str a, str b)
+{
+  return a < b;
+}
+
 std::ostream & alekseev::graphs(std::ostream & output, Vector< str > names)
 {
   if (names.isEmpty()) {
     return output;
   }
-  names.bubbleSort([](str s1, str s2) {
-    return s1 < s2;
-  });
+  names.bubbleSort(str_less);
 
   output << names[0];
   for (size_t i = 1; i < names.getSize(); ++i) {
     output << "\n" << names[i];
   }
   return output;
+}
+
+std::ostream & alekseev::vertexes(std::ostream & output, List< str > * names)
+{
+  List< str > * current = names->next;
+  Vector< str > vect;
+  while (current != names) {
+    vect.pushBack(current->data);
+  }
+  vect.bubbleSort(str_less);
+  output << vect[0];
+  for (size_t i = 1; i < vect.getSize(); ++i) {
+    output << "\n" << vect[i];
+  }
 }
