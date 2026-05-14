@@ -13,7 +13,7 @@ namespace alekseev {
   std::ostream & graphs(std::ostream & output, Vector< str > names);
   std::ostream & vertexes(std::ostream & output, List< str > * names);
   std::ostream & outbounds(std::ostream & output,
-      Vector< std::pair< str, Vector< size_t > > > * edges);
+      Vector< std::pair< str, Vector< size_t > > > edges);
   std::ostream & inbounds(std::ostream & output,
       Vector< std::pair< str, Vector< size_t > > > * edges);
   void bound(Graph & graph, const str & vertex1, const str & vertex2, size_t weight);
@@ -78,4 +78,34 @@ std::ostream & alekseev::vertexes(std::ostream & output, List< str > * names)
   for (size_t i = 1; i < vect.getSize(); ++i) {
     output << "\n" << vect[i];
   }
+  return output;
+}
+
+std::ostream & alekseev::outbounds(std::ostream & output,
+    Vector< std::pair< str, Vector< size_t > > > edges)
+{
+  edges.bubbleSort(
+      [](std::pair< str, Vector< size_t > > p1, std::pair< str, Vector< size_t > > p2) {
+        return str_less(p1.first, p2.first);
+      });
+  for (size_t i = 0; i < edges.getSize(); ++i) {
+    Vector< size_t > & weights = edges[i].second;
+    if (weights.isEmpty()) {
+      output << edges[i].first << "\n";
+      continue;
+    }
+    output << edges[i].first << " ";
+
+    weights.bubbleSort([](size_t a, size_t b) {
+      return a < b;
+    });
+    output << weights[0];
+    for (size_t j = 1; j < weights.getSize(); ++i) {
+      output << " " << weights[j];
+    }
+    if (i < edges.getSize() - 1) {
+      output << "\n";
+    }
+  }
+  return output;
 }
