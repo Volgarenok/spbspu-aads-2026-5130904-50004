@@ -2,6 +2,7 @@
 #define HASH_TABLE_H
 
 #include "../common/List.h"
+#include "../common/vector.h"
 #include <cstddef>
 #include <stdexcept>
 
@@ -24,6 +25,7 @@ namespace alekseev {
     Value & at(const Key & key);
     const Value & at(const Key & key) const;
     bool contains(const Key & key) const;
+    Vector< Key > keys() const;
     double load_factor() const;
     void rehash(size_t new_capacity);
     size_t capacity() const;
@@ -199,6 +201,21 @@ namespace alekseev {
   {
  // return const_cast< T & >((*static_cast< const Vector< T > * >(this))[id]);
     return (*static_cast< const HashTable * >(this)).find_previous_node(key) != nullptr;
+  }
+
+  template< class Key, class Value, class Hash, class Equal >
+  Vector<Key> HashTable<Key, Value, Hash, Equal>::keys() const
+  {
+    Vector< Key > res;
+    for (size_t i = 0; i < capacity_; ++i) {
+      if (slots_[i]) {
+        List< Pair > * current = slots_[i]->next;
+        while (current != slots_[i]) {
+          res.pushBack(current->data.first);
+        }
+      }
+    }
+    return res;
   }
 
   template< class Key, class Value, class Hash, class Equal >
