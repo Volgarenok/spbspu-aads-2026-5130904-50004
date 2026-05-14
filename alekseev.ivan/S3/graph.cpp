@@ -178,3 +178,8 @@ inbounds(const str & vertex) const
   }
   return res;
 }
+
+alekseev::List<std::string> * alekseev::Graph::vertexes() const
+{
+  return deep_copy(vertexes_);
+}

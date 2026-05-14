@@ -30,6 +30,7 @@ namespace alekseev {
     void remove_edge(const str & vertex1, const str & vertex2, size_t weight);
     Vector< std::pair< str, Vector< size_t > > > outbounds(const str & vertex) const;
     Vector< std::pair< str, Vector< size_t > > > inbounds(const str & vertex) const;
+    List< str > * vertexes() const;
 
     private:
       List< str > * vertexes_;
