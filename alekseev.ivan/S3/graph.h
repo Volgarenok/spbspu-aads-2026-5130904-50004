@@ -23,7 +23,6 @@ namespace alekseev {
 
     void ins_vertex(const str & vertex);
     void add_vertex(const str & vertex);
-    void add_vertexes(const List< str > * vertex);
     void add_edge(const str & vertex1, const str & vertex2, size_t weight);
     void ins_edge(const str & vertex1, const str & vertex2, size_t weight);
     void add_edges(const str & vertex1, const str & vertex2, Vector< size_t > weights);

@@ -112,7 +112,7 @@ alekseev::Vector< T >::Vector(std::initializer_list< T > init):
   Vector(init.size())
 {
   size_t j = 0;
-  for (auto i = init.begin; i != init.end(); ++i) {
+  for (auto i = init.begin(); i != init.end(); ++i) {
     data_[j++] = *i;
   }
 }

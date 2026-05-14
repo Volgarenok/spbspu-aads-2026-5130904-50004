@@ -84,6 +84,8 @@ namespace alekseev {
     hasher_(rhs.hasher_),
     is_equal_(rhs.is_equal_)
   {
+    rhs.size_ = 0;
+    rhs.capacity_ = 0;
     rhs.slots_ = nullptr;
   }
 
@@ -154,6 +156,7 @@ namespace alekseev {
     } catch (...) {
       if (tail->next == tail) {
         rmfake(tail);
+        slots_[index] = nullptr;
       }
       throw;
     }
