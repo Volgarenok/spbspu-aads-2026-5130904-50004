@@ -94,7 +94,7 @@ void alekseev::Graph::add_edge(const str & vertex1, const str & vertex2, size_t 
 {
   try {
     edges_.at(std::pair< str, str >(vertex1, vertex2)).pushBack(weight);
-  } catch (...) {
+  } catch (std::out_of_range & e) {
     edges_.insert(std::pair< str, str >(vertex1, vertex2), Vector< size_t >(1, weight));
   }
 }
@@ -111,9 +111,24 @@ bool alekseev::Graph::has_vertex(const str & vertex) const
   return false;
 }
 
-bool alekseev::Graph::has_edge(const str & vertex1, const str & vertex2) const
+bool alekseev::Graph::has_some_edge(const str & vertex1, const str & vertex2) const
 {
   return edges_.contains(std::pair< str, str >(vertex1, vertex2));
+}
+
+bool alekseev::Graph::has_edge(const str & vertex1, const str & vertex2, size_t weight) const
+{
+  try {
+    Vector< size_t > weights = edges_.at(std::pair< str, str >(vertex1, vertex2));
+    for (size_t i = 0; i < weights.getSize(); ++i) {
+      if (weights[i] == weight) {
+        return true;
+      }
+    }
+    return false;
+  } catch (std::out_of_range & e) {
+    return false;
+  }
 }
 
 void alekseev::Graph::remove_vertex(const str & vertex)
@@ -165,8 +180,8 @@ alekseev::Graph::outbounds(const str & vertex) const
   return res;
 }
 
-alekseev::Vector<std::pair<std::string, alekseev::Vector<unsigned long long>>> alekseev::Graph::
-inbounds(const str & vertex) const
+alekseev::Vector< std::pair< std::string, alekseev::Vector< unsigned long long > > >
+alekseev::Graph::inbounds(const str & vertex) const
 {
   Vector< std::pair< str, Vector< size_t > > > res;
   List< str > * current = vertexes_->next;
@@ -175,11 +190,42 @@ inbounds(const str & vertex) const
       Vector< size_t > edges = edges_.at(std::pair< str, str >(current->data, vertex));
       res.pushBack(std::pair< str, Vector< size_t > >(current->data, edges));
     }
+    current = current->next;
   }
   return res;
 }
 
-alekseev::List<std::string> * alekseev::Graph::vertexes() const
+alekseev::List< std::string > * alekseev::Graph::vertexes() const
 {
   return deep_copy(vertexes_);
+}
+
+alekseev::Graph alekseev::merge_graphs(const Graph & graph1, const Graph & graph2)
+{
+  Graph merged = graph1;
+  List< str > * vertexes2 = graph2.vertexes();
+  List< str > * current2 = vertexes2->next;
+  while (current2 != vertexes2) {
+    merged.ins_vertex(current2->data);
+    Vector< std::pair< str, Vector< size_t > > > inbounds = graph2.inbounds(current2->data);
+    for (size_t i = 0; i < inbounds.getSize(); ++i) {
+      Vector< size_t > weights = inbounds[i].second;
+      for (size_t j = 0; j < weights.getSize(); ++j) {
+        if (!merged.has_edge(inbounds[i].first, current2->data, weights[j])) {
+          merged.add_edge(inbounds[i].first, current2->data, weights[j]);
+        }
+      }
+    }
+    Vector< std::pair< str, Vector< size_t > > > outbounds = graph2.outbounds(current2->data);
+    for (size_t i = 0; i < outbounds.getSize(); ++i) {
+      Vector< size_t > weights = outbounds[i].second;
+      for (size_t j = 0; j < weights.getSize(); ++j) {
+        if (!merged.has_edge(outbounds[i].first, current2->data, weights[j])) {
+          merged.add_edge(outbounds[i].first, current2->data, weights[j]);
+        }
+      }
+    }
+    current2 = current2->next;
+  }
+  return merged;
 }
