@@ -133,3 +133,35 @@ void alekseev::inbound(ht_graphs & graphs, Vector< str > args)
 {
   bounds(graphs, args, false);
 }
+
+void alekseev::bind(ht_graphs & graphs, Vector<str> args)
+{
+  if (args.getSize() != 4) {
+    throw std::invalid_argument("Invalid arguments");
+  }
+  if (!graphs.contains(args[0])) {
+    throw std::invalid_argument("Invalid arguments");
+  }
+  size_t weight = std::stoull(args[3]);
+
+  Graph & graph = graphs.at(args[0]);
+  bool added1 = false, added2 = false;
+  try {
+    if (!graph.has_vertex(args[1])) {
+      graph.add_vertex(args[1]);
+      added1 = true;
+    }
+    if (!graph.has_vertex(args[2])) {
+      graph.add_vertex(args[2]);
+      added2 = true;
+    }
+    graph.add_edge(args[1], args[2], weight);
+  } catch (...) {
+    if (added1) {
+      graph.remove_vertex(args[1]);
+    }
+    if (added2) {
+      graph.remove_vertex(args[2]);
+    }
+  }
+}
