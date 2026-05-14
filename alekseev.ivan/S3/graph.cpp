@@ -63,8 +63,7 @@ inline alekseev::Graph & alekseev::Graph::operator=(Graph && rhs) noexcept
 
 alekseev::Graph::Graph():
   vertexes_(fake< str >()),
-  edges_(HashTable< std::pair< str, str >, Vector< size_t >, hasher_ptr, is_equal_ptr >(hasher,
-      is_equal, 1024))
+  edges_(&hasher, &is_equal, 1024)
 {
 }
 

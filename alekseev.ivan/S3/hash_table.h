@@ -55,8 +55,9 @@ namespace alekseev {
   HashTable< Key, Value, Hash, Equal >::HashTable(const HashTable & rhs):
     capacity_(rhs.capacity_),
     size_(rhs.size_),
-    is_equal_(rhs.is_equal_),
-    hasher_(rhs.hasher_)
+    hasher_(rhs.hasher_),
+    is_equal_(rhs.is_equal_)
+
   {
     slots_ = new List< Pair > *[capacity_]{nullptr};
     for (size_t i = 0; i < rhs.capacity_; ++i) {
@@ -79,9 +80,9 @@ namespace alekseev {
   HashTable< Key, Value, Hash, Equal >::HashTable(HashTable && rhs) noexcept:
     capacity_(rhs.capacity_),
     size_(rhs.size_),
-    is_equal_(rhs.is_equal_),
+    slots_(rhs.slots_),
     hasher_(rhs.hasher_),
-    slots_(rhs.slots_)
+    is_equal_(rhs.is_equal_)
   {
     rhs.slots_ = nullptr;
   }
@@ -98,9 +99,9 @@ namespace alekseev {
   HashTable< Key, Value, Hash, Equal >::HashTable(Hash hasher, Equal is_equal, size_t capacity):
     capacity_(capacity),
     size_(0),
-    is_equal_(is_equal),
+    slots_(new List< Pair > *[capacity]{nullptr}),
     hasher_(hasher),
-    slots_(new List< Pair > *[capacity]{nullptr})
+    is_equal_(is_equal)
   {
   }
 
@@ -130,15 +131,14 @@ namespace alekseev {
   template< class Key, class Value, class Hash, class Equal >
   void HashTable< Key, Value, Hash, Equal >::insert(const Key & key, const Value & value)
   {
-    Hash hash = hasher_(key);
-    size_t index = hash % capacity_;
+    size_t index = hasher_(key) % capacity_;
     List< Pair > * tail = nullptr;
     if (slots_[index]) {
       List< Pair > * fake = slots_[index];
       List< Pair > * current = fake;
       while (current->next != fake) {
         current = current->next;
-        if (is_equal(current->data.first, key)) {
+        if (is_equal_(current->data.first, key)) {
           current->data.second = value;
           return;
         }
@@ -194,7 +194,8 @@ namespace alekseev {
   template< class Key, class Value, class Hash, class Equal >
   bool HashTable< Key, Value, Hash, Equal >::contains(const Key & key) const
   {
-    return const_cast< const HashTable >(*this).find_previous_node(key) != nullptr;
+ // return const_cast< T & >((*static_cast< const Vector< T > * >(this))[id]);
+    return (*static_cast< const HashTable * >(this)).find_previous_node(key) != nullptr;
   }
 
   template< class Key, class Value, class Hash, class Equal >
@@ -210,7 +211,7 @@ namespace alekseev {
   template< class Key, class Value, class Hash, class Equal >
   void HashTable< Key, Value, Hash, Equal >::rehash(size_t new_capacity)
   {
-    HashTable< Key, Value, Hash, Equal > temp(hasher_, is_equal_, new_capacity);
+    HashTable temp(hasher_, is_equal_, new_capacity);
     for (size_t i = 0; i < capacity_; ++i) {
       if (slots_[i]) {
         List< Pair > * fake = slots_[i];
@@ -248,15 +249,14 @@ namespace alekseev {
   const List< std::pair< Key, Value > > * HashTable< Key, Value, Hash, Equal >::find_previous_node(
       const Key & key) const
   {
-    Hash hash = hasher_(key);
-    size_t index = hash % capacity_;
+    size_t index = hasher_(key) % capacity_;
     if (!slots_[index]) {
       return nullptr;
     }
     List< Pair > * fake = slots_[index];
     List< Pair > * current = fake;
     while (current->next != fake) {
-      if (is_equal(current->next->data.first, key)) {
+      if (is_equal_(current->next->data.first, key)) {
         return current;
       }
       current = current->next;
