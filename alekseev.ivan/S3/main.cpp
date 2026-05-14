@@ -14,6 +14,7 @@ namespace alekseev {
   using command_type = void(*)(ht_graphs &, Vector< str >);
   void graphs(ht_graphs & graphs, Vector< str > args);
   void vertexes(ht_graphs & graphs, Vector< str > args);
+  void bounds(ht_graphs & graphs, const Vector< str > & args, bool out);
   void outbound(ht_graphs & graphs, Vector< str > args);
   void inbound(ht_graphs & graphs, Vector< str > args);
 
@@ -84,7 +85,7 @@ void alekseev::vertexes(ht_graphs & graphs, Vector< str > args)
   }
 }
 
-void alekseev::outbound(ht_graphs & graphs, Vector< str > args)
+void alekseev::bounds(ht_graphs & graphs, const Vector< str > & args, bool out)
 {
   if (args.getSize() != 2) {
     throw std::invalid_argument("Invalid arguments");
@@ -96,7 +97,12 @@ void alekseev::outbound(ht_graphs & graphs, Vector< str > args)
   if (!graph.has_vertex(args[1])) {
     throw std::invalid_argument("Invalid arguments");
   }
-  Vector< std::pair< str, Vector< size_t > > > edges = graph.outbounds(args[1]);
+  Vector< std::pair< str, Vector< size_t > > > edges;
+  if (out) {
+    edges = graph.outbounds(args[1]);
+  } else {
+    edges = graph.inbounds(args[1]);
+  }
   edges.bubbleSort(
       [](std::pair< str, Vector< size_t > > p1, std::pair< str, Vector< size_t > > p2) {
         return str_less(p1.first, p2.first);
@@ -116,4 +122,14 @@ void alekseev::outbound(ht_graphs & graphs, Vector< str > args)
       std::cout << "\n";
     }
   }
+}
+
+void alekseev::outbound(ht_graphs & graphs, Vector< str > args)
+{
+  bounds(graphs, args, true);
+}
+
+void alekseev::inbound(ht_graphs & graphs, Vector< str > args)
+{
+  bounds(graphs, args, false);
 }
