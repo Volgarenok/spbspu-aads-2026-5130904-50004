@@ -264,7 +264,7 @@ void alekseev::Vector< T >::insert(size_t id, const Vector< T > & rhs, size_t be
       temp[i] = (*this)[i];
     } else if (i == id) {
       for (size_t j = 0; j < len; ++j) {
-        temp(i + j) = rhs[begin + j];
+        temp[i + j] = rhs[begin + j];
       }
     } else {
       temp[i + len] = (*this)[i - 1];

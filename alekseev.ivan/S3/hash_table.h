@@ -148,8 +148,15 @@ namespace alekseev {
       slots_[index] = fake< Pair >();
       tail = slots_[index];
     }
-    insert_after(tail, std::pair< Key, Value >(key, value));
-    ++size_;
+    try {
+      insert_after(tail, std::pair< Key, Value >(key, value));
+      ++size_;
+    } catch (...) {
+      if (tail->next == tail) {
+        rmfake(tail);
+      }
+      throw;
+    }
   }
 
   template< class Key, class Value, class Hash, class Equal >

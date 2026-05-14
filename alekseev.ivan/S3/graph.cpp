@@ -10,7 +10,7 @@ size_t alekseev::hasher(const std::pair< str, str > & key)
   first.get_digest(digest1);
 
   boost::uuids::detail::sha1 second;
-  second.process_bytes(key.first.c_str(), key.first.size());
+  second.process_bytes(key.second.c_str(), key.second.size());
   size_t digest2[5];
   first.get_digest(digest2);
 
@@ -123,7 +123,7 @@ void alekseev::Graph::remove_vertex(const str & vertex)
   while (current->next != vertexes_ && current->next->data != vertex) {
     current = current->next;
   }
-  if (current->next->data == vertex) {
+  if (current->next != vertexes_) {
     erase_after(current);
     current = vertexes_->next;
     while (current != vertexes_) {
@@ -136,12 +136,18 @@ void alekseev::Graph::remove_vertex(const str & vertex)
 
 void alekseev::Graph::remove_edge(const str & vertex1, const str & vertex2, size_t weight)
 {
-  Vector< size_t > edges = edges_.at(std::pair< str, str >(vertex1, vertex2));
+  Vector< size_t > & edges = edges_.at(std::pair< str, str >(vertex1, vertex2));
   size_t id = 0;
-  while (edges[id] != weight && id < edges.getSize()) {
+  while (id < edges.getSize()) {
+    if (edges[id] == weight) {
+      break;
+    }
     ++id;
   }
-  if (edges[id] == weight) {
+  if (id < edges.getSize()) {
     edges.erase(id);
+    if (edges.isEmpty()) {
+      edges_.remove(std::pair< str, str >(vertex1, vertex2));
+    }
   }
 }
