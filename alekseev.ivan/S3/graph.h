@@ -28,6 +28,8 @@ namespace alekseev {
     bool has_edge(const str & vertex1, const str & vertex2) const;
     void remove_vertex(const str & vertex);
     void remove_edge(const str & vertex1, const str & vertex2, size_t weight);
+    Vector< std::pair< str, Vector< size_t > > > outbounds(const str & vertex) const;
+    Vector< std::pair< str, Vector< size_t > > > inbounds(const str & vertex) const;
 
     private:
       List< str > * vertexes_;

@@ -150,3 +150,31 @@ void alekseev::Graph::remove_edge(const str & vertex1, const str & vertex2, size
     }
   }
 }
+
+alekseev::Vector< std::pair< alekseev::str, alekseev::Vector< size_t > > >
+alekseev::Graph::outbounds(const str & vertex) const
+{
+  Vector< std::pair< str, Vector< size_t > > > res;
+  List< str > * current = vertexes_->next;
+  while (current != vertexes_) {
+    if (edges_.contains(std::pair< str, str >(vertex, current->data))) {
+      Vector< size_t > edges = edges_.at(std::pair< str, str >(vertex, current->data));
+      res.pushBack(std::pair< str, Vector< size_t > >(current->data, edges));
+    }
+  }
+  return res;
+}
+
+alekseev::Vector<std::pair<std::string, alekseev::Vector<unsigned long long>>> alekseev::Graph::
+inbounds(const str & vertex) const
+{
+  Vector< std::pair< str, Vector< size_t > > > res;
+  List< str > * current = vertexes_->next;
+  while (current != vertexes_) {
+    if (edges_.contains(std::pair< str, str >(current->data, vertex))) {
+      Vector< size_t > edges = edges_.at(std::pair< str, str >(current->data, vertex));
+      res.pushBack(std::pair< str, Vector< size_t > >(current->data, edges));
+    }
+  }
+  return res;
+}
