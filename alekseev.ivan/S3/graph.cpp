@@ -63,7 +63,7 @@ inline alekseev::Graph & alekseev::Graph::operator=(Graph && rhs) noexcept
 
 alekseev::Graph::Graph():
   vertexes_(fake< str >()),
-  edges_(HashTable< std::pair< str, str >, List< size_t > *, hasher_ptr, is_equal_ptr >(hasher,
+  edges_(HashTable< std::pair< str, str >, Vector< size_t >, hasher_ptr, is_equal_ptr >(hasher,
       is_equal, 1024))
 {
 }
@@ -78,7 +78,7 @@ void alekseev::Graph::ins_vertex(const str & vertex)
 {
   LIter< str > fake = before_begin(vertexes_);
   LIter< str > current = fake;
-  while (current++ != fake) {
+  while (++current != fake) {
     if (*current == vertex) {
       return;
     }
@@ -93,20 +93,18 @@ void alekseev::Graph::add_vertex(const str & vertex)
 
 void alekseev::Graph::add_edge(const str & vertex1, const str & vertex2, size_t weight)
 {
-  List< size_t > * weights = nullptr;
   try {
-    weights = edges_.at(std::pair< str, str >(vertex1, vertex2));
+    edges_.at(std::pair< str, str >(vertex1, vertex2)).pushBack(weight);
   } catch (...) {
-    weights = fake< size_t >();
+    edges_.insert(std::pair< str, str >(vertex1, vertex2), Vector< size_t >(1, weight));
   }
-  insert_after(weights, weight);
 }
 
 bool alekseev::Graph::has_vertex(const str & vertex) const
 {
   LIter< str > fake = before_begin(vertexes_);
   LIter< str > current = fake;
-  while (current++ != fake) {
+  while (++current != fake) {
     if (*current == vertex) {
       return true;
     }
@@ -138,12 +136,12 @@ void alekseev::Graph::remove_vertex(const str & vertex)
 
 void alekseev::Graph::remove_edge(const str & vertex1, const str & vertex2, size_t weight)
 {
-  List< size_t > * fake = edges_.at(std::pair< str, str >(vertex1, vertex2));
-  List< size_t > * current = fake;
-  while (current->next != fake && current->next->data != weight) {
-    current = current->next;
+  Vector< size_t > edges = edges_.at(std::pair< str, str >(vertex1, vertex2));
+  size_t id = 0;
+  while (edges[id] != weight && id < edges.getSize()) {
+    ++id;
   }
-  if (current->next->data == weight) {
-    erase_after(current);
+  if (edges[id] == weight) {
+    edges.erase(id);
   }
 }
