@@ -42,6 +42,7 @@ namespace alekseev {
   };
 
   Graph merge_graphs(const Graph & graph1, const Graph & graph2);
+  Graph extract_graph(const Graph & source, const List< str > * vertexes);
 }
 
 #endif

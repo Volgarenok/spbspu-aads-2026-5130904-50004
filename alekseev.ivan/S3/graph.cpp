@@ -247,12 +247,42 @@ alekseev::Graph alekseev::merge_graphs(const Graph & graph1, const Graph & graph
     for (size_t i = 0; i < outbounds.getSize(); ++i) {
       Vector< size_t > weights = outbounds[i].second;
       for (size_t j = 0; j < weights.getSize(); ++j) {
-        if (!merged.has_edge(outbounds[i].first, current2->data, weights[j])) {
-          merged.add_edge(outbounds[i].first, current2->data, weights[j]);
+        if (!merged.has_edge(current2->data, outbounds[i].first, weights[j])) {
+          merged.add_edge(current2->data, outbounds[i].first, weights[j]);
         }
       }
     }
     current2 = current2->next;
   }
   return merged;
+}
+
+alekseev::Graph alekseev::extract_graph(const Graph & source, const List< str > * vertexes)
+{
+  Graph extracted;
+  List< str > * current_vertex = vertexes->next;
+  while (current_vertex != vertexes) {
+    if (source.has_vertex(current_vertex->data)) {
+      extracted.add_vertex(current_vertex->data);
+    } else {
+      throw std::invalid_argument("No such vertex");
+    }
+    current_vertex = current_vertex->next;
+  }
+  current_vertex = current_vertex->next;
+  while (current_vertex != vertexes) {
+    Vector< std::pair< str, Vector< size_t > > > inbounds = source.inbounds(current_vertex->data);
+    for (size_t i = 0; i < inbounds.getSize(); ++i) {
+      if (extracted.has_vertex(inbounds[i].first)) {
+        extracted.add_edges(inbounds[i].first, current_vertex->data, inbounds[i].second);
+      }
+    }
+    Vector< std::pair< str, Vector< size_t > > > outbounds = source.outbounds(current_vertex->data);
+    for (size_t i = 0; i < outbounds.getSize(); ++i) {
+      if (extracted.has_vertex(outbounds[i].first)) {
+        extracted.add_edges(current_vertex->data, outbounds[i].first, outbounds[i].second);
+      }
+    }
+  }
+  return extracted;
 }
