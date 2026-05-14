@@ -3,6 +3,7 @@
 
 #include "hash_table.h"
 
+
 namespace alekseev {
   using str = std::string;
   size_t hasher(const std::pair< str, str > & key);
