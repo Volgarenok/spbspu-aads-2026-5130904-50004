@@ -246,6 +246,10 @@ void kuchukbaeva::Application::cmdOutbound(Application* app, const Vector< std::
     }
     std::cout << "\n";
   }
+  else
+  {
+    std::cout << "\n";
+  }
 }
 
 void kuchukbaeva::Application::cmdInbound(Application* app, const Vector< std::string >& args)
@@ -279,6 +283,10 @@ void kuchukbaeva::Application::cmdInbound(Application* app, const Vector< std::s
         std::cout << "\n" << current_v << " " << res[i].second;
       }
     }
+    std::cout << "\n";
+  }
+  else
+  {
     std::cout << "\n";
   }
 }

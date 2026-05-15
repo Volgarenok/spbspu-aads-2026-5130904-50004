@@ -12,10 +12,10 @@ int main(int argc, char* argv[])
     app.run(argv[1]);
   } catch (const std::exception& e) {
     std::cerr << "Error: " << e.what() << "\n";
-    return 0;
+    return 2;
   } catch (...) {
     std::cerr << "Unknown error\n";
-    return 0;
+    return 2;
   }
 
   return 0;
