@@ -214,3 +214,31 @@ void alekseev::merge(ht_graphs & graphs, Vector< str > args)
   Graph new_graph = merge_graphs(graphs.at(args[1]), graphs.at(args[2]));
   graphs.insert(args[0], new_graph);
 }
+
+void alekseev::extract(ht_graphs & graphs, Vector< str > args)
+{
+  if (args.getSize() < 3) {
+    throw std::invalid_argument("Invalid arguments");
+  }
+  if (graphs.contains(args[0]) || !graphs.contains(args[1])) {
+    throw std::invalid_argument("Invalid arguments");
+  }
+
+  Graph graph;
+  size_t number = std::stoull(args[2]);
+  if (number > 0 && args.getSize() == number + 3) {
+    List< str > * vertexes = fake< str >();
+    try {
+      for (size_t i = 3; i < args.getSize(); ++i) {
+        vertexes = insert_after(vertexes, args[i]);
+      }
+      vertexes = vertexes->next;
+      graph = extract_graph(graphs.at(args[1]), vertexes);
+    } catch (...) {
+      clear(vertexes->next, vertexes);
+      rmfake(vertexes);
+      throw;
+    }
+  }
+  graphs.insert(args[0], graph);
+}
