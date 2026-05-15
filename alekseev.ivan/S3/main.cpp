@@ -26,6 +26,13 @@ namespace alekseev {
   void create(Ht_Graphs & graphs, Vector< str > args);
   void merge(Ht_Graphs & graphs, Vector< str > args);
   void extract(Ht_Graphs & graphs, Vector< str > args);
+
+  struct Exec {
+    Exec();
+    HashTable< str, command_type, size_t (*)(const str &), bool (*)(str, str) > cmds;
+
+    void operator()(Ht_Graphs & graphs, Vector< str > words);
+  };
 }
 
 int main()
@@ -289,4 +296,33 @@ void alekseev::extract(Ht_Graphs & graphs, Vector< str > args)
     }
   }
   graphs.insert(args[0], graph);
+}
+
+alekseev::Exec::Exec():
+  cmds((str_hasher, [](str s1, str s2) {
+    return s1 == s2;
+  }, 16))
+{
+  cmds.insert("graphs", graphs);
+  cmds.insert("vertexes", vertexes);
+  cmds.insert("outbound", outbound);
+  cmds.insert("inbound", inbound);
+  cmds.insert("bind", bind);
+  cmds.insert("cut", cut);
+  cmds.insert("create", create);
+  cmds.insert("merge", merge);
+  cmds.insert("extract", extract);
+}
+
+void alekseev::Exec::operator()(Ht_Graphs & graphs, Vector< str > words)
+{
+  if (words.isEmpty()) {
+    throw std::invalid_argument("Invalid arguments");
+  }
+  if (!cmds.contains(words[0])) {
+    throw std::invalid_argument("Invalid arguments");
+  }
+  Vector< str > args;
+  args.insert(0, words, 1, words.getSize());
+  cmds.at(words[0])(graphs, args);
 }
