@@ -183,6 +183,26 @@ void alekseev::cut(ht_graphs & graphs, Vector< str > args)
   graph.remove_edge(args[1], args[2], weight);
 }
 
+void alekseev::create(ht_graphs & graphs, Vector< str > args)
+{
+  if (args.isEmpty()) {
+    throw std::invalid_argument("Invalid arguments");
+  }
+  if (graphs.contains(args[0])) {
+    throw std::invalid_argument("Invalid arguments");
+  }
+  Graph graph;
+  if (args.getSize() > 1) {
+    if (args.getSize() != std::stoull(args[1]) + 2) {
+      throw std::invalid_argument("Invalid arguments");
+    }
+    for (size_t i = 2; i < args.getSize(); ++i) {
+      graph.add_vertex(args[i]);
+    }
+  }
+  graphs.insert(args[0], graph);
+}
+
 void alekseev::merge(ht_graphs & graphs, Vector< str > args)
 {
   if (args.getSize() != 3) {
