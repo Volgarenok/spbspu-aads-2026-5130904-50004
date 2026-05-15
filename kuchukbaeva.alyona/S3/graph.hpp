@@ -29,21 +29,21 @@ namespace kuchukbaeva {
   public:
     Graph();
     void addVertex(const std::string& v);
-    bool hasVertex(const std::string& v) const;
+    bool hasVertex(const std::string& v) const noexcept;
     void addEdge(const std::string& src, const std::string& dest, unsigned int weight);
     bool cutEdge(const std::string& src, const std::string& dest, unsigned int weight);
 
     Graph merge(const Graph& other) const;
-    Graph extract(const Vector<std::string>& vertices) const;
+    Graph extract(const Vector< std::string >& vertices) const;
 
-    const Vector<std::string>& getVertexes() const;
-    void getOutbound(const std::string& v, Vector<std::pair<std::string, unsigned int>>& out) const;
-    void getInbound(const std::string& v, Vector<std::pair<std::string, unsigned int>>& out) const;
+    const Vector< std::string >& getVertexes() const noexcept;
+    void getOutbound(const std::string& v, Vector< std::pair < std::string, unsigned int > >& out) const;
+    void getInbound(const std::string& v, Vector< std::pair < std::string, unsigned int > >& out) const;
 
   private:
-    Vector<std::string> vertexes_;
-    HashTable<std::pair<std::string, std::string>, Vector<unsigned int>, EdgeHash, EdgeEqual> edges_;
-    static void sortResults(Vector<std::pair<std::string, unsigned int>>& res);
+    Vector< std::string > vertexes_;
+    HashTable< std::pair< std::string, std::string >, Vector< unsigned int >, EdgeHash, EdgeEqual > edges_;
+    void sortPairs(Vector< std::pair< std::string, unsigned int > >& vec) const;
   };
 }
 

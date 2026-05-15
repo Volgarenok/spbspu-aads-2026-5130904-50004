@@ -132,22 +132,22 @@ void kuchukbaeva::Application::loadFromFile(const std::string& filename)
             bool destFound = false;
             for (size_t v = 0; v < g.vertexes.getSize(); ++v)
             {
-              if (g.vertexes[v] == src)
+              if (g.getVertexes()[v] == src)
               {
                 srcFound = true;
               }
-              if (g.vertexes[v] == dest)
+              if (g.getVertexes()[v] == dest)
               {
                 destFound = true;
               }
             }
             if (!srcFound)
             {
-              g.vertexes.pushBack(src);
+              g.addVertex(src);
             }
             if (!destFound)
             {
-              g.vertexes.pushBack(dest);
+              g.addVertex(dest);
             }
 
             std::pair< std::string, std::string > key(src, dest);
@@ -160,7 +160,7 @@ void kuchukbaeva::Application::loadFromFile(const std::string& filename)
             {
               Vector< unsigned int > newWeights;
               newWeights.pushBack(weight);
-              g.edges.add(key, newWeights);
+              g.addEdge(src, dest, weight);
             }
           }
         }
@@ -255,7 +255,7 @@ void kuchukbaeva::Application::cmdOutbound(Application* app, const Vector< std::
     return;
   }
   Graph* g = app->graphs_.find(args[1]);
-  if (!g || !g->hasVertexes(args[2]))
+  if (!g || !g->hasVertex(args[2]))
   {
     std::cout << "<INVALID COMMAND>\n";
     return;
@@ -337,7 +337,7 @@ void kuchukbaeva::Application::cmdCreate(Application* app, const Vector< std::st
   app->graphs_.add(args[1], newG);
 }
 
-void Application::cmdMerge(Application* app, const Vector< std::string >& args)
+void kuchukbaeva::Application::cmdMerge(Application* app, const Vector< std::string >& args)
 {
   if (args.getSize() != 4 || app->graphs_.has(args[1]))
   {

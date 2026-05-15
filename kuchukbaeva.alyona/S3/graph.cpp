@@ -149,7 +149,7 @@ void kuchukbaeva::Graph::getInbound(const std::string& v, Vector< std::pair< std
   sortPairs(out);
 }
 
-void kuchukbaeva::Graph::sortPairs(Vector< std::pair< std::string, unsigned int > >& vec)
+void kuchukbaeva::Graph::sortPairs(Vector< std::pair< std::string, unsigned int > >& vec) const
 {
   for (size_t i = 0; i < vec.getSize(); ++i)
   {

@@ -6,6 +6,11 @@
 #include <string>
 
 namespace kuchukbaeva {
+  template< typename T >
+  void sortVector(Vector< T >& vec);
+
+  Vector< std::string > splitString(const std::string& str);
+  bool tryParseUInt(const std::string& str, unsigned int& out);
 
   class Application {
   public:
