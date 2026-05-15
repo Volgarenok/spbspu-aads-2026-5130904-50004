@@ -43,7 +43,7 @@ namespace kuchukbaeva {
     void swap(HashTable& other) noexcept;
 
     void add(const Key& k, const Value& v);
-    bool drop(const Key& k);
+    Value drop(const Key& k);
     bool has(const Key& k) const;
     Value* find(const Key& k);
     void rehash(size_t slots);
@@ -138,21 +138,22 @@ void kuchukbaeva::HashTable< Key, Value, Hash, Equal >::add(const Key& k, const 
 }
 
 template< class Key, class Value, class Hash, class Equal >
-bool kuchukbaeva::HashTable< Key, Value, Hash, Equal >::drop(const Key& k)
+Value kuchukbaeva::HashTable< Key, Value, Hash, Equal >::drop(const Key& k)
 {
   size_t idx = hashFn_(k) % mass_.getSize();
   LIter< std::pair< Key, Value > > beforeIt = mass_[idx].beforeBegin();
   LIter< std::pair< Key, Value > > it = mass_[idx].begin();
   while (it != mass_[idx].end()) {
     if (equalFn_(it->first, k)) {
+      Value removedValue = std::move(it->second);
       mass_[idx].eraseAfter(beforeIt);
       --size_;
-      return true;
+      return removedValue;
     }
     ++it;
     ++beforeIt;
   }
-  return false;
+  throw std::out_of_range("Key not found in drop()");
 }
 
 template< class Key, class Value, class Hash, class Equal >
