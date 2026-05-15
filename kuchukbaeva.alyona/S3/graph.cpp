@@ -1,7 +1,7 @@
 #include "graph.hpp"
 #include <algorithm>
 
-Graph::Graph():
+kuchukbaeva::Graph::Graph():
   vertexes_(),
   edges_(16)
 {}

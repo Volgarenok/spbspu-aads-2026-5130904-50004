@@ -107,7 +107,7 @@ void kuchukbaeva::Application::loadFromFile(const std::string& filename)
     if (tokens.getSize() == 2)
     {
       std::string graphName = tokens[0];
-      unsigned int edgeCount;
+      unsigned int edgeCount = 0;
       if (!tryParseUInt(tokens[1], edgeCount))
       {
         continue;
@@ -124,42 +124,8 @@ void kuchukbaeva::Application::loadFromFile(const std::string& filename)
             std::string src = edgeTokens[0];
             std::string dest = edgeTokens[1];
             unsigned int weight;
-            if (!tryParseUInt(edgeTokens[2], weight))
+            if (tryParseUInt(edgeTokens[2], weight))
             {
-              continue;
-            }
-            bool srcFound = false;
-            bool destFound = false;
-            for (size_t v = 0; v < g.vertexes.getSize(); ++v)
-            {
-              if (g.getVertexes()[v] == src)
-              {
-                srcFound = true;
-              }
-              if (g.getVertexes()[v] == dest)
-              {
-                destFound = true;
-              }
-            }
-            if (!srcFound)
-            {
-              g.addVertex(src);
-            }
-            if (!destFound)
-            {
-              g.addVertex(dest);
-            }
-
-            std::pair< std::string, std::string > key(src, dest);
-            Vector< unsigned int >* weights = g.edges.find(key);
-            if (weights)
-            {
-              weights->pushBack(weight);
-            }
-            else
-            {
-              Vector< unsigned int > newWeights;
-              newWeights.pushBack(weight);
               g.addEdge(src, dest, weight);
             }
           }
