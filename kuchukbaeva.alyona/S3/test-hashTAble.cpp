@@ -30,12 +30,11 @@ BOOST_AUTO_TEST_CASE(testDrop)
   ht.add("removeMe", 99);
   BOOST_CHECK(ht.has("removeMe"));
 
-  bool result = ht.drop("removeMe");
-  BOOST_CHECK(result);
+  int result = ht.drop("removeMe");
+  BOOST_CHECK_EQUAL(result, 99);
   BOOST_CHECK(!ht.has("removeMe"));
 
-  bool resultFalse = ht.drop("notThere");
-  BOOST_CHECK(!resultFalse);
+  BOOST_CHECK_THROW(ht.drop("notThere"), std::out_of_range);
 }
 
 BOOST_AUTO_TEST_CASE(testRehash)

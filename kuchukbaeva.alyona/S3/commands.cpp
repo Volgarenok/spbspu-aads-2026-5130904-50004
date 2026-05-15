@@ -228,9 +228,23 @@ void kuchukbaeva::Application::cmdOutbound(Application* app, const Vector< std::
   }
   Vector< std::pair< std::string, unsigned int > > res;
   g->getOutbound(args[2], res);
-  for (size_t i = 0; i < res.getSize(); ++i)
+  if (res.getSize() > 0)
   {
-    std::cout << res[i].first << " " << res[i].second << "\n";
+    std::string current_v = res[0].first;
+    std::cout << current_v << " " << res[0].second;
+    for (size_t i = 1; i < res.getSize(); ++i)
+    {
+      if (res[i].first == current_v)
+      {
+        std::cout << " " << res[i].second;
+      }
+      else
+      {
+        current_v = res[i].first;
+        std::cout << "\n" << current_v << " " << res[i].second;
+      }
+    }
+    std::cout << "\n";
   }
 }
 
@@ -249,9 +263,23 @@ void kuchukbaeva::Application::cmdInbound(Application* app, const Vector< std::s
   }
   Vector< std::pair< std::string, unsigned int > > res;
   g->getInbound(args[2], res);
-  for (size_t i = 0; i < res.getSize(); ++i)
+  if (res.getSize() > 0)
   {
-    std::cout << res[i].first << " " << res[i].second << "\n";
+    std::string current_v = res[0].first;
+    std::cout << current_v << " " << res[0].second;
+    for (size_t i = 1; i < res.getSize(); ++i)
+    {
+      if (res[i].first == current_v)
+      {
+        std::cout << " " << res[i].second;
+      }
+      else
+      {
+        current_v = res[i].first;
+        std::cout << "\n" << current_v << " " << res[i].second;
+      }
+    }
+    std::cout << "\n";
   }
 }
 
@@ -264,7 +292,7 @@ void kuchukbaeva::Application::cmdBind(Application* app, const Vector< std::stri
     return;
   }
   Graph* g = app->graphs_.find(args[1]);
-  if (!g || !g->hasVertex(args[2]) || !g->hasVertex(args[3]))
+  if (!g)
   {
     std::cout << "<INVALID COMMAND>\n";
     return;
@@ -290,15 +318,32 @@ void kuchukbaeva::Application::cmdCut(Application* app, const Vector< std::strin
 
 void kuchukbaeva::Application::cmdCreate(Application* app, const Vector< std::string >& args)
 {
-  if (args.getSize() < 2 || app->graphs_.has(args[1]))
+  unsigned int count = 0;
+  if (args.getSize() < 3 || !tryParseUInt(args[2], count) || args.getSize() != 3 + count)
   {
     std::cout << "<INVALID COMMAND>\n";
     return;
   }
-  Graph newG;
-  for (size_t i = 2; i < args.getSize(); ++i)
+  if (app->graphs_.has(args[1]))
   {
-    newG.addVertex(args[i]);
+    std::cout << "<INVALID COMMAND>\n";
+    return;
+  }
+  for (unsigned int i = 0; i < count; ++i)
+  {
+    for (unsigned int j = i + 1; j < count; ++j)
+    {
+      if (args[3 + i] == args[3 + j])
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        return;
+      }
+    }
+  }
+  Graph newG;
+  for (unsigned int i = 0; i < count; ++i)
+  {
+    newG.addVertex(args[3 + i]);
   }
   app->graphs_.add(args[1], newG);
 }
