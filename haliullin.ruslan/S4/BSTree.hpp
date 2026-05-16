@@ -5,10 +5,11 @@
 #include <cstddef>
 #include <utility>
 #include <stdexcept>
+#include <functional>
 
 namespace haliullin
 {
-  template< class Key, class Value, class Compare >
+  template< class Key, class Value, class Compare = std::less< Key > >
   class BSTree
   {
   public:
@@ -106,7 +107,48 @@ void haliullin::BSTree< Key, Value, Compare >::swap(BSTree& other) noexcept
 template< class Key, class Value, class Compare >
 void haliullin::BSTree< Key, Value, Compare >::push(const Key& k, const Value& v)
 {
+  if (root_->isFake())
+  {
+    root_ = new Node(k, v);
+    return;
+  }
 
+  Node* cur = root_;
+  Node* parent = nullptr;
+
+  while(!cur->isFake())
+  {
+    parent = cur;
+    if (cmp_(k, cur->data_.first))
+    {
+      cur = cur->left_;
+    }
+    else if (cmp_(cur->data_.first, k))
+    {
+      cur = cur->right_;
+    }
+    else
+    {
+      cur->data_.second = v;
+      return;
+    }
+  }
+
+  Node* newNode = new Node(k, v, parent);
+  if (cmp_(k, parent->data_.first))
+  {
+    parent->left_ = newNode;
+  }
+  else
+  {
+    parent->right_ = newNode;
+  }
+}
+
+template< class Key, class Value, class Compare >
+size_t haliullin::BSTree< Key, Value, Compare >::height() const
+{
+  return heightNode(root_);
 }
 
 template< class Key, class Value, class Compare >
@@ -131,9 +173,9 @@ haliullin::BSTree< Key, Value, Compare >::findNode(const Key& k) const
   {
     if (cmp_(k, cur->data_.first))
     {
-      cur = cur->left;
+      cur = cur->left_;
     }
-    else if (cmp_(cur->data_.first))
+    else if (cmp_(cur->data_.first, k))
     {
       cur = cur->right_;
     }
@@ -162,7 +204,7 @@ size_t haliullin::BSTree< Key, Value, Compare >::heightNode(const Node* node) co
   if (node->isFake()) return 0;
   size_t leftH = heightNode(node->left_);
   size_t rightH = heightNode(node->right_);
-  return 1 + (leftH > rightH) ? leftH : rightH;
+  return std::max(leftH, rightH) + 1;
 }
 
 template< class Key, class Value, class Compare >
