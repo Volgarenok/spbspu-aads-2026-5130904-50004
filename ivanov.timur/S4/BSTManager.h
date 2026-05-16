@@ -89,10 +89,10 @@ namespace ivanov {
         return;
       }
 
-      std::cout << dname << ' ';
+      std::cout << dname;
       for (tree::const_iterator it = begin; it != end; ++it) {
         std::pair<const int &, const std::string &> kv = *it;
-        std::cout << kv.first << ' ' << kv.second << ' ';
+        std::cout << ' ' << kv.first << ' ' << kv.second;
       }
       std::cout << '\n';
     } else if (cmd == "complement" || cmd == "intersect" || cmd == "union") {
