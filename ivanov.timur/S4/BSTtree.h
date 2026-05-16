@@ -90,7 +90,7 @@ public:
     }
     return *this;
   }
-  BSTConstIterator& operator++(int) {
+  BSTConstIterator operator++(int) {
     BSTConstIterator tmp = *this;
     ++*this;
     return tmp;
@@ -128,7 +128,7 @@ public:
   right(&nil), left(&nil), parent(&nil), isFakeRoot(false) {}
   BSTtree(std::pair<Value, Key> init, BSTtree *parnt = nullptr): val(init.first), key(init.second),
   right(&nil), left(&nil), parent(parnt), isFakeRoot(false) {}
-  ~BSTtree() = default;
+  ~BSTtree();
 
   void push(const Key& k, const Value& v) {
     BSTtree *p = this;
@@ -171,12 +171,13 @@ public:
       BSTtree *mRight = curr->right;
       while (mRight->left != &nil) mRight = mRight->left;
       curr->val = mRight->val;
+      curr->key = mRight->key;
       curr = mRight;
       rmv = curr->val;
     }
 
     BSTtree *child = (curr->left != &nil) ? curr->left : curr->right;
-    child->parent = curr->parent;
+    if (child != &nil) child->parent = curr->parent;
     if (curr->parent->left == curr) curr->parent->left = child;
     else curr->parent->right = child;
 
@@ -234,11 +235,11 @@ public:
     x->left = y->right;
 
     if (y->right != &nil) y->right->parent = x;
-    y->right->parent = x;
+    y->parent = x->parent;
 
-    if (x->parent->isFakeRoot) x->parent->left = y;
-    else if (x == x->parent->left) x->parent->left = y;
-    else x->parent->right = y;
+    if (x->parent->isFakeRoot) x->parent->right = y;
+    else if (x == x->parent->left) x->parent->right = y;
+    else x->parent->left = y;
 
     y->right = x;
     x->parent = y;
@@ -281,6 +282,13 @@ public:
     return subHg(left);
   }
 };
+
+template<class Key, class Value, class Compare>
+BSTtree<Key, Value, Compare>::~BSTtree() {
+  if (isFakeRoot) {
+    clearSubtree(left);
+  }
+}
 
 template<class Key, class Value, class Compare>
 BSTtree<Key, Value, Compare> BSTtree<Key, Value, Compare>::nil;
