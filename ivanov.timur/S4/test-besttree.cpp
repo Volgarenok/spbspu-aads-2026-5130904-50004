@@ -12,8 +12,9 @@ BOOST_AUTO_TEST_CASE(default_construction)
 {
     BSTtree<int, std::string, std::less<int>> tree;
     BOOST_TEST(tree.height() == 0);
-    BOOST_TEST(tree.begin() == tree.end());
-    BOOST_TEST(tree.cbegin() == tree.cend());
+    // сравниваем итераторы, но не требуем их печати
+    BOOST_TEST(!!(tree.begin() == tree.end()));
+    BOOST_TEST(!!(tree.cbegin() == tree.cend()));
     BOOST_CHECK_THROW(tree.get(0), std::out_of_range);
 }
 
@@ -99,9 +100,8 @@ BOOST_AUTO_TEST_CASE(const_iterator_and_conversion)
     tree.push("pi", 3.14);
     tree.push("e", 2.71);
 
-    BSTtree<std::string, double, std::less<std::string>>::iterator it = tree.begin();
-    auto cit = static_cast<BSTtree<std::string, double, std::less<std::string>>::const_iterator>(it);
-    auto p = *cit;
+    auto it = tree.begin();
+    auto p = *it;
     BOOST_TEST(p.first == "e");
     BOOST_TEST(p.second == 2.71);
 
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(move_constructor)
     BOOST_TEST(moved.get(20) == 200);
     BOOST_TEST(moved.get(30) == 300);
 
-    BOOST_TEST(tree.begin() == tree.end());
+    BOOST_TEST(!!(tree.begin() == tree.end()));
     BOOST_TEST(tree.height() == 0);
 }
 
@@ -137,7 +137,6 @@ BOOST_AUTO_TEST_CASE(rotate_left_keeps_order)
     tree.push(2, 'b');
     tree.push(5, 'e');
 
-    auto it2 = tree.cbegin();
     auto it5 = ++tree.cbegin();
     BOOST_REQUIRE(it5 != tree.cend());
     tree.rotateLeft(it5);
