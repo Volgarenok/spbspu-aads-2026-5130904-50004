@@ -12,11 +12,13 @@ namespace zinoviev
     BSTree<int, std::string> tree_;
 
   public:
-    DictionaryEntry(std::string name) :
+    explicit DictionaryEntry(std::string name) :
       name_(name)
     {}
 
-
+    const std::string& getName() const;
+    BSTree<int, std::string>& getTree();
+    const BSTree<int, std::string>& getTree() const;
   };
 }
 
