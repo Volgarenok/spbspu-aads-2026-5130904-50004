@@ -35,8 +35,45 @@ namespace alekseev {
   };
 }
 
-int main()
+int main(int argc, char * argv[])
 {
+  if (argc != 2) {
+    std::cerr << "Usage: " << argv[0] << " input_file\n";
+    return 1;
+  }
+  std::ifstream input(argv[1]);
+  if (!input.is_open()) {
+    std::cerr << "Error opening file " << argv[1] << "\n";
+    return 1;
+  }
+  alekseev::Ht_Graphs graphs(alekseev::str_hasher, [](std::string s1, std::string s2) {
+    return s1 == s2;
+  }, 1);
+  try {
+    graphs = alekseev::input_graphs(input);
+  } catch (...) {
+    std::cerr << "Error while read file" << "\n";
+    input.close();
+    return 1;
+  }
+  input.close();
+  std::string command;
+  alekseev::Exec exec;
+  while (std::getline(std::cin, command)) {
+    try {
+      alekseev::Vector< std::string > words = alekseev::split(command, ' ');
+      exec(graphs, words);
+    } catch (std::invalid_argument & e) {
+      std::cerr << "<INVALID COMMAND>" << "\n";
+    } catch (std::exception & e) {
+      std::cerr << e.what() << "\n";
+      return 1;
+    }
+  }
+  if (!std::cin.eof()) {
+    std::cerr << "Input fail" << "\n";
+    return 1;
+  }
 }
 
 size_t alekseev::str_hasher(const str & name)
