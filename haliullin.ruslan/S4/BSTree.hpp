@@ -2,6 +2,7 @@
 #define BSTREE_HPP
 
 #include "TreeNode.hpp"
+#include <cstddef>
 #include <utility>
 #include <stdexcept>
 
@@ -37,11 +38,13 @@ namespace haliullin
     Node* root_;
     Compare cmp_;
 
+    Node* findNode(const Key& k) const;
     Node* copyNodes(Node* node, Node* parent);
+    size_t heightNode(const Node* node) const;
     void clearNodes(Node* node);
+
     Node* fallLeft(Node* node) const;
     Node* fallRight(Node* node) const;
-    size_t heightNode(const Node* node) const;
   };
 }
 
@@ -101,10 +104,45 @@ void haliullin::BSTree< Key, Value, Compare >::swap(BSTree& other) noexcept
 }
 
 template< class Key, class Value, class Compare >
+void haliullin::BSTree< Key, Value, Compare >::push(const Key& k, const Value& v)
+{
+
+}
+
+template< class Key, class Value, class Compare >
+bool haliullin::BSTree< Key, Value, Compare >::isEmpty() const noexcept
+{
+  return root_->isFake();
+}
+
+template< class Key, class Value, class Compare >
 void haliullin::BSTree< Key, Value, Compare >::clear()
 {
   clearNodes(root_);
   root_ = &Node::fakeLeaf_;
+}
+
+template< class Key, class Value, class Compare >
+haliullin::BSTree< Key, Value, Compare>::Node*
+haliullin::BSTree< Key, Value, Compare >::findNode(const Key& k) const
+{
+  Node* cur = root_;
+  while (!cur->isFake())
+  {
+    if (cmp_(k, cur->data_.first))
+    {
+      cur = cur->left;
+    }
+    else if (cmp_(cur->data_.first))
+    {
+      cur = cur->right_;
+    }
+    else
+    {
+      return cur;
+    }
+  }
+  return const_cast< Node* >(&Node::fakeLeaf_);
 }
 
 template< class Key, class Value, class Compare >
@@ -116,6 +154,15 @@ haliullin::BSTree< Key, Value, Compare >::copyNodes(Node* node, Node* parent)
   newNode->left_ = copyNodes(node->left_, newNode);
   newNode->right_ = copyNodes(node->right_, newNode);
   return newNode;
+}
+
+template< class Key, class Value, class Compare >
+size_t haliullin::BSTree< Key, Value, Compare >::heightNode(const Node* node) const
+{
+  if (node->isFake()) return 0;
+  size_t leftH = heightNode(node->left_);
+  size_t rightH = heightNode(node->right_);
+  return 1 + (leftH > rightH) ? leftH : rightH;
 }
 
 template< class Key, class Value, class Compare >
