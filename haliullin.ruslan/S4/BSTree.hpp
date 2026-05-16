@@ -46,6 +46,8 @@ namespace haliullin
     void removeNode(Node* node);
     void clearNodes(Node* node);
 
+    Node* next(Node* node) const;
+    Node* previous(Node* node) const;
     Node* fallLeft(Node* node) const;
     Node* fallRight(Node* node) const;
   };
@@ -338,6 +340,46 @@ haliullin::BSTree< Key, Value, Compare >::fallRight(Node* node) const
     node = node->right_;
   }
   return node;
+}
+
+template< class Key, class Value, class Compare >
+haliullin::BSTree< Key, Value, Compare >::Node*
+haliullin::BSTree< Key, Value, Compare >::next(Node* node) const
+{
+  Node* cur = node;
+  if (!cur->right_->isFake())
+  {
+    cur = fallLeft(cur->right_);
+    return cur;
+  }
+
+  Node* parent = cur->parent_;
+  while (parent && (parent->right_ == cur))
+  {
+    cur = parent;
+    parent = parent->parent_;
+  }
+  return parent;
+}
+
+template< class Key, class Value, class Compare >
+haliullin::BSTree< Key, Value, Compare >::Node*
+haliullin::BSTree< Key, Value, Compare >::previous(Node* node) const
+{
+  Node* cur = node;
+  if (!cur->left_->isFake())
+  {
+    cur = fallRight(cur->left_);
+    return cur;
+  }
+
+  Node* parent = cur->parent_;
+  while (parent && (parent->left_ == cur))
+  {
+    cur = parent;
+    parent = parent->parent_;
+  }
+  return parent;
 }
 
 #endif
