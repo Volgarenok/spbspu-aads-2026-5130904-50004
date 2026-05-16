@@ -42,6 +42,7 @@ namespace haliullin
     Node* findNode(const Key& k) const;
     Node* copyNodes(Node* node, Node* parent);
     size_t heightNode(const Node* node) const;
+    void removeNode(Node* node);
     void clearNodes(Node* node);
 
     Node* fallLeft(Node* node) const;
@@ -146,6 +147,42 @@ void haliullin::BSTree< Key, Value, Compare >::push(const Key& k, const Value& v
 }
 
 template< class Key, class Value, class Compare >
+Value& haliullin::BSTree< Key, Value, Compare >::get(const Key& k)
+{
+  Node* node = findNode(k);
+  if (node->isFake())
+  {
+    throw std::out_of_range("Key not found");
+  }
+  return node->data_.second;
+}
+
+template< class Key, class Value, class Compare >
+const Value& haliullin::BSTree< Key, Value, Compare >::get(const Key& k) const
+{
+  Node* node = findNode(k);
+  if (node->isFake())
+  {
+    throw std::out_of_range("Key not found");
+  }
+  return node->data_.second;
+}
+
+template< class Key, class Value, class Compare >
+Value haliullin::BSTree< Key, Value, Compare >::drop(const Key& k)
+{
+  Node* node = findNode(k);
+  if (node->isFake())
+  {
+    throw std::out_of_range("Key not found");
+  }
+
+  Value dropped = node->data_.second;
+  removeNode(node);
+  return dropped;
+}
+
+template< class Key, class Value, class Compare >
 size_t haliullin::BSTree< Key, Value, Compare >::height() const
 {
   return heightNode(root_);
@@ -204,7 +241,71 @@ size_t haliullin::BSTree< Key, Value, Compare >::heightNode(const Node* node) co
   if (node->isFake()) return 0;
   size_t leftH = heightNode(node->left_);
   size_t rightH = heightNode(node->right_);
-  return std::max(leftH, rightH) + 1;
+  return 1 + (leftH > rightH ? leftH : RightH);
+}
+
+template< class Key, class Value, class Compare >
+void haliullin::BSTree< Key, Value, Compare >::removeNode(Node* node)
+{
+  if (node->isFake())return;
+
+  if (node->left_->isFake() && node->right_->isFake())
+  {
+    if (node == root_)
+    {
+      root_ = &Node::fakeLeaf_;
+    }
+    else if (node == node->parent_->left_)
+    {
+      node->parent_->left_ = &Node::fakeLeaf_;
+    }
+    else
+    {
+      node->parent_->right_ = &Node::fakeLeaf_;
+    }
+    delete node;
+  }
+
+  else if (node->left_->isFake() || node->right_->isFake())
+  {
+    Node* child = (node->right_->isFake() ? node->left_ : node->right_);
+    child->parent_ = node->parent_;
+    if (node == root_)
+    {
+      root_ = child;
+    }
+    else if (node == node->parent_->left_)
+    {
+      node->parent_->left_ = child;
+    }
+    else
+    {
+      node->parent_->right_ = child;
+    }
+    delete node;
+  }
+
+  else
+  {
+    Node* succ = fallLeft(node->right_);
+    node->data_.second = succ->data_.second;
+    const_cast< Key& >(node->data_.first) = succ->data_.first;
+
+    if (succ == succ->parent_->left_)
+    {
+      succ->parent_->left_ = succ->right_;
+    }
+    else
+    {
+      succ->parent_->right_ = succ->right_;
+    }
+
+    if (!succ->right_->isFake())
+    {
+      succ->right_->parent_ = succ->parent_;
+    }
+    delete succ;
+  }
 }
 
 template< class Key, class Value, class Compare >
@@ -214,6 +315,28 @@ void haliullin::BSTree< Key, Value, Compare >::clearNodes(Node* node)
   clearNodes(node->left_);
   clearNodes(node->right_);
   delete node;
+}
+
+template< class Key, class Value, class Compare >
+haliullin::BSTree< Key, Value, Compare >::Node*
+haliullin::BSTree< Key, Value, Compare >::fallLeft(Node* node) const
+{
+  while (!node->left_->isFake())
+  {
+    node = node->left_;
+  }
+  return node;
+}
+
+template< class Key, class Value, class Compare >
+haliullin::BSTree< Key, Value, Compare >::Node*
+haliullin::BSTree< Key, Value, Compare >::fallRight(Node* node) const
+{
+  while (!node->right_->isFake())
+  {
+    node = node->right_;
+  }
+  return node;
 }
 
 #endif
