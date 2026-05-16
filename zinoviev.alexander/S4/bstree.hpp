@@ -400,20 +400,63 @@ namespace zinoviev
     Node* cur = it.current_;
     Node* right = cur->right_;
 
-    if (cur == cur->parent_->left_)
-      cur->parent_ = 
+    if (!cur->parent_)
+      root_ = right;
+    else if (cur == cur->parent_->left_)
+      cur->parent_->left_ = right;
+    else if (cur == cur->parent_->right_)
+      cur->parent_->right_ = right;
+
+    right->parent_ = cur->parent_;
+    cur->right_ = right->left_;
+    if(right->left_)
+      right->left_->parent_ = cur;
+    cur->parent_ = right;
+    right->left_ = cur;
+
+    return CIterator(right);
   }
 
   template <class Key, class Value, class Compare>
   BSTree<Key, Value, Compare>::CIterator
-    BSTree<Key, Value, Compare>::rotateRight(CIterator it);
+    BSTree<Key, Value, Compare>::rotateRight(CIterator it)
+  {
+    Node* cur = it.current_;
+    Node* left = cur->left_;
+
+    if (!cur->parent_)
+      root_ = left;
+    else if (cur == cur->parent_->left_)
+      cur->parent_->left_ = left;
+    else if (cur == cur->parent_->right_)
+      cur->parent_->right_ = left;
+
+    left->parent_ = cur->parent_;
+    cur->left_ = left->right_;
+    if (left->right_)
+      left->right_->parent_ = cur;
+    cur->parent_ = left;
+    left->right_ = cur;
+
+    return CIterator(left);
+  }
 
   template <class Key, class Value, class Compare>
   BSTree<Key, Value, Compare>::CIterator
-    BSTree<Key, Value, Compare>::rotateLargeLeft(CIterator it);
+    BSTree<Key, Value, Compare>::rotateLargeLeft(CIterator it)
+  {
+    Node* node = it.current_;
+    rotateRight(CIterator(node->left_));
+    return rotateLeft(it);
+  }
 
   template <class Key, class Value, class Compare>
   BSTree<Key, Value, Compare>::CIterator
-    BSTree<Key, Value, Compare>::rotateLargeRight(CIterator it);
+    BSTree<Key, Value, Compare>::rotateLargeRight(CIterator it)
+  {
+    Node* node = it.current_;
+    rotateLeft(CIterator(node->right_));
+    return rotateRight(it);
+  }
 }
 #endif
