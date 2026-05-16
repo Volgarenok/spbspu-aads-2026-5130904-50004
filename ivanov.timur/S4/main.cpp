@@ -1,6 +1,6 @@
 #include "BSTManager.h"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   if (argc != 2) {
     std::cerr << "Bad input error\n";
     return 1;

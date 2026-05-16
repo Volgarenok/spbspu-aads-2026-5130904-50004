@@ -15,6 +15,7 @@ namespace ivanov {
   class BSTManager {
   public:
     using tree = BSTtree<int, std::string, std::less<int> >;
+
     void loadFromFile(const std::string &filename);
 
     void execute(const std::string &line, bool &isAnything, bool silent);
@@ -32,7 +33,7 @@ namespace ivanov {
   inline void BSTManager::loadFromFile(const std::string &filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
-      std::cerr << "File opening error";
+      std::cerr << "File opening error " << filename << "\n";
       std::exit(1);
     }
 
@@ -91,7 +92,7 @@ namespace ivanov {
       std::cout << dname << ' ';
       for (tree::const_iterator it = begin; it != end; ++it) {
         std::pair<const int &, const std::string &> kv = *it;
-        std::cout << kv.first << ' ' << kv.second;
+        std::cout << kv.first << ' ' << kv.second << ' ';
       }
       std::cout << '\n';
     } else if (cmd == "complement" || cmd == "intersect" || cmd == "union") {

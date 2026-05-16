@@ -3,42 +3,51 @@
 #include <stdexcept>
 #include <utility>
 
-template<class Key, class Value, class Compare> class BSTtree;
-template<class Key, class Value, class Compare> class BSTConstIterator;
+template<class Key, class Value, class Compare>
+class BSTtree;
+template<class Key, class Value, class Compare>
+class BSTConstIterator;
 
 template<class Key, class Value, class Compare>
 class BSTIterator {
 private:
   friend class BSTtree<Key, Value, Compare>;
-public:
-  using tree = BSTtree<Key, Value, Compare>;
-private:
-  tree* ptr;
-  explicit BSTIterator(tree* p): ptr(p) {}
 
 public:
-  BSTIterator(): ptr(nullptr) {}
-  operator BSTConstIterator<Key, Value, Compare>() const {
+  using tree = BSTtree<Key, Value, Compare>;
+
+private:
+  tree *ptr;
+
+  explicit BSTIterator(tree *p): ptr(p) {
+  }
+
+public:
+  BSTIterator(): ptr(nullptr) {
+  }
+
+  explicit operator BSTConstIterator<Key, Value, Compare>() const {
     return BSTConstIterator<Key, Value, Compare>(ptr);
   }
 
-  bool operator==(const BSTIterator& other) const {
+  bool operator==(const BSTIterator &other) const {
     return ptr == other.ptr;
   }
-  bool operator!=(const BSTIterator& other) const {
+
+  bool operator!=(const BSTIterator &other) const {
     return !operator==(other);
   }
 
-  std::pair<const Key&, Value&> operator*() const {
+  std::pair<const Key &, Value &> operator*() const {
     return {ptr->key, ptr->val};
   }
 
-  BSTIterator& operator++() {
+  BSTIterator &operator++() {
     if (!(ptr->isFakeRoot) && ptr->right != &tree::nil) {
       ptr = ptr->right;
       while (ptr->left != &tree::nil) ptr = ptr->left;
     } else {
-      tree* parent = ptr->parent;
+      tree *parent = ptr->parent;
       while (parent != &tree::nil && ptr == parent->right) {
         ptr = parent;
         parent = parent->parent;
@@ -47,6 +56,7 @@ public:
     }
     return *this;
   }
+
   BSTIterator operator++(int) {
     BSTIterator tmp = *this;
     ++*this;
@@ -58,30 +68,38 @@ template<class Key, class Value, class Compare>
 class BSTConstIterator {
 private:
   friend class BSTtree<Key, Value, Compare>;
+
 public:
   using tree = BSTtree<Key, Value, Compare>;
+
 private:
-  const tree* ptr;
-  explicit BSTConstIterator(const tree* p): ptr(p) {}
+  const tree *ptr;
+
+  explicit BSTConstIterator(const tree *p): ptr(p) {
+  }
+
 public:
-  BSTConstIterator(): ptr(nullptr) {}
-  bool operator==(const BSTConstIterator& other) const {
+  BSTConstIterator(): ptr(nullptr) {
+  }
+
+  bool operator==(const BSTConstIterator &other) const {
     return ptr == other.ptr;
   }
-  bool operator!=(const BSTConstIterator& other) const {
+
+  bool operator!=(const BSTConstIterator &other) const {
     return !operator==(other);
   }
 
-  std::pair<const Key&, const Value&> operator*() const {
+  std::pair<const Key &, const Value &> operator*() const {
     return {ptr->key, ptr->val};
   }
 
-  BSTConstIterator& operator++() {
+  BSTConstIterator &operator++() {
     if (!(ptr->isFakeRoot) && ptr->right != &tree::nil) {
       ptr = ptr->right;
-      while (ptr->left !=  &tree::nil) ptr = ptr->left;
+      while (ptr->left != &tree::nil) ptr = ptr->left;
     } else {
-      const tree* parent = ptr->parent;
+      const tree *parent = ptr->parent;
       while (parent != &tree::nil && ptr == parent->right) {
         ptr = parent;
         parent = parent->parent;
@@ -90,6 +108,7 @@ public:
     }
     return *this;
   }
+
   BSTConstIterator operator++(int) {
     BSTConstIterator tmp = *this;
     ++*this;
@@ -102,6 +121,7 @@ class BSTtree {
 public:
   using const_iterator = BSTConstIterator<Key, Value, Compare>;
   using iterator = BSTIterator<Key, Value, Compare>;
+
 private:
   friend class BSTIterator<Key, Value, Compare>;
   friend class BSTConstIterator<Key, Value, Compare>;
@@ -122,7 +142,7 @@ private:
     return 1 + std::max(leftH, rightH);
   }
 
-  static void clearSubtree(BSTtree* node) {
+  static void clearSubtree(BSTtree *node) {
     if (node == &nil) return;
     clearSubtree(node->left);
     clearSubtree(node->right);
@@ -130,14 +150,53 @@ private:
   }
 
 public:
-  BSTtree(): right(&nil), left(&nil), parent(&nil), isFakeRoot(true) {}
-  BSTtree(std::pair<Value, Key> init): val(init.first), key(init.second),
-  right(&nil), left(&nil), parent(&nil), isFakeRoot(false) {}
-  BSTtree(std::pair<Value, Key> init, BSTtree *parnt = nullptr): val(init.first), key(init.second),
-  right(&nil), left(&nil), parent(parnt), isFakeRoot(false) {}
+  BSTtree() : val(), key(), right(&nil), left(&nil), parent(&nil), isFakeRoot(true) {
+  }
+
+  explicit BSTtree(std::pair<Value, Key> init): val(init.first), key(init.second),
+                                                right(&nil), left(&nil), parent(&nil), isFakeRoot(false) {
+  }
+
+  explicit BSTtree(std::pair<Value, Key> init, BSTtree *parnt = nullptr): val(init.first), key(init.second),
+                                                                          right(&nil), left(&nil), parent(parnt),
+                                                                          isFakeRoot(false) {
+  }
+
   ~BSTtree();
 
-  void push(const Key& k, const Value& v) {
+  BSTtree(const BSTtree &) = delete;
+
+  BSTtree &operator=(const BSTtree &) = delete;
+
+  BSTtree(BSTtree &&other) noexcept
+    : val(std::move(other.val)), key(std::move(other.key)), comp(std::move(other.comp)),
+      right(other.right), left(other.left), parent(other.parent), isFakeRoot(other.isFakeRoot) {
+    if (left != &nil) left->parent = this;
+    if (right != &nil) right->parent = this;
+    other.left = other.right = &nil;
+    other.isFakeRoot = false;
+  }
+
+  BSTtree &operator=(BSTtree &&other) noexcept {
+    if (this != &other) {
+      if (isFakeRoot) clearSubtree(left);
+      val = std::move(other.val);
+      key = std::move(other.key);
+      comp = std::move(other.comp);
+      right = other.right;
+      left = other.left;
+      parent = other.parent;
+      isFakeRoot = other.isFakeRoot;
+      if (left != &nil) left->parent = this;
+      if (right != &nil) right->parent = this;
+      other.left = other.right = &nil;
+      other.isFakeRoot = false;
+    }
+    return *this;
+  }
+
+
+  void push(const Key &k, const Value &v) {
     BSTtree *p = this;
     BSTtree *curr = left;
     while (curr != &nil) {
@@ -152,9 +211,9 @@ public:
     BSTtree *nw = new BSTtree({v, k}, p);
     if (p == this || comp(k, p->key)) p->left = nw; //вставка
     else p->right = nw;
-
   }
-  Value get(Key k) const{
+
+  Value get(Key k) const {
     BSTtree *curr = left; //первый же фейк?
     while (curr != &nil) {
       if (comp(k, curr->key)) curr = curr->left;
@@ -163,6 +222,7 @@ public:
     }
     throw std::out_of_range("No such element here");
   }
+
   Value drop(Key k) {
     BSTtree *curr = left;
     while (curr != &nil) {
@@ -194,22 +254,26 @@ public:
 
   iterator begin() {
     if (left == &nil) return iterator(this);
-    BSTtree* cur = left;
+    BSTtree *cur = left;
     while (cur->left != &nil) cur = cur->left;
     return iterator(cur);
   }
+
   const_iterator begin() const {
     if (left == &nil) return const_iterator(this);
-    const BSTtree* cur = left;
+    const BSTtree *cur = left;
     while (cur->left != &nil) cur = cur->left;
     return const_iterator(cur);
   }
+
   iterator end() {
     return iterator(this);
   }
+
   const_iterator end() const {
     return const_iterator(this);
   }
+
   const_iterator cbegin() const { return begin(); }
   const_iterator cend() const { return end(); }
 
@@ -233,6 +297,7 @@ public:
 
     return const_iterator(y);
   }
+
   const_iterator rotateRight(const_iterator it) {
     BSTtree *y = const_cast<BSTtree *>(it.ptr);
     if (y->isFakeRoot) throw std::invalid_argument("Cannot parse fake part");
@@ -244,9 +309,9 @@ public:
     if (y->right != &nil) y->right->parent = x;
     y->parent = x->parent;
 
-    if (x->parent->isFakeRoot) x->parent->right = y;
-    else if (x == x->parent->left) x->parent->right = y;
-    else x->parent->left = y;
+    if (x->parent->isFakeRoot) x->parent->left = y;
+    else if (x == x->parent->left) x->parent->left = y;
+    else x->parent->right = y;
 
     y->right = x;
     x->parent = y;
@@ -267,6 +332,7 @@ public:
     rotateRight(y_it);
     return rotateLeft(const_iterator(y));
   }
+
   const_iterator rotateLargeRight(const_iterator it) {
     BSTtree *y = const_cast<BSTtree *>(it.ptr);
     if (y->isFakeRoot) throw std::invalid_argument("Cannot parse fake part");
@@ -285,6 +351,7 @@ public:
     if (it.ptr->isFakeRoot) return height();
     return subHg(it.ptr);
   }
+
   size_t height() const {
     return subHg(left);
   }
