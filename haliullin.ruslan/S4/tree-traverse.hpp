@@ -46,10 +46,10 @@ haliullin::TreeNode< Key, Value > haliullin::next(TreeNode< Key, Value >* node) 
     return fallLeft(node->right_);
   }
 
-  Node* parent = cur->parent_;
-  while (parent && (parent->right_ == cur))
+  TreeNode* parent = node->parent_;
+  while (parent && (parent->right_ == node))
   {
-    cur = parent;
+    node = parent;
     parent = parent->parent_;
   }
   return parent;
@@ -63,10 +63,10 @@ haliullin::TreeNode< Key, Value > haliullin::previous(TreeNode< Key, Value >* no
     return fallRight(node->left_);
   }
 
-  Node* parent = cur->parent_;
-  while (parent && (parent->left_ == cur))
+  TreeNode* parent = node->parent_;
+  while (parent && (parent->left_ == node))
   {
-    cur = parent;
+    node = parent;
     parent = parent->parent_;
   }
   return parent;

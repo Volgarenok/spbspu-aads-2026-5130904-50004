@@ -201,8 +201,7 @@ void haliullin::BSTree< Key, Value, Compare >::clear()
 }
 
 template< class Key, class Value, class Compare >
-haliullin::BSTree< Key, Value, Compare>::Node*
-haliullin::BSTree< Key, Value, Compare >::findNode(const Key& k) const
+haliullin::TreeNode< Key, Value >* haliullin::BSTree< Key, Value, Compare >::findNode(const Key& k) const
 {
   Node* cur = root_;
   while (!cur->isFake())
@@ -224,8 +223,7 @@ haliullin::BSTree< Key, Value, Compare >::findNode(const Key& k) const
 }
 
 template< class Key, class Value, class Compare >
-haliullin::BSTree< Key, Value, Compare >::Node*
-haliullin::BSTree< Key, Value, Compare >::copyNodes(Node* node, Node* parent)
+haliullin::TreeNode< Key, Value >* haliullin::BSTree< Key, Value, Compare >::copyNodes(Node* node, Node* parent)
 {
   if (node->isFake())
   {
