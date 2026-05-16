@@ -77,8 +77,6 @@ BOOST_AUTO_TEST_CASE(test_add_update_existing)
 {
   Table ht(83);
   ht.add("x", 33);
-  ht.add("x", 44);
-
   BOOST_CHECK_THROW(ht.add("x", 44), std::invalid_argument);
   BOOST_CHECK_EQUAL(ht.getSize(), 1);
   BOOST_CHECK_EQUAL(ht.get("x"), 33);
