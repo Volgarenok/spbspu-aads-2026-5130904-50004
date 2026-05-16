@@ -2,6 +2,7 @@
 #define BSTREE_HPP
 
 #include <functional>
+#include <stdexcept>
 
 namespace zinoviev
 {
@@ -85,11 +86,25 @@ namespace zinoviev
       return cur;
     }
 
+    size_t get_height(const Node* node) const
+    {
+      if (!node)
+        return 0;
+
+      size_t left_h = get_height(node->left_);
+      size_t right_h = get_height(node->right_);
+
+      return 1 + (left_h > right_h ? left_h : right_h);
+    }
+
   public:
+
     class Iterator
     {
       Node* current_;
     public:
+
+      friend class BSTree;
 
       Iterator(Node* cur) :
         current_(cur)
@@ -134,6 +149,8 @@ namespace zinoviev
     {
       const Node* current_;
     public:
+
+      friend class BSTree;
 
       CIterator(const Node* cur) :
         current_(cur)
@@ -185,12 +202,29 @@ namespace zinoviev
     Iterator end();
     CIterator cbegin();
     CIterator cend();
+
+    void push(Key k, Value v);
+    Value get(Key k) const;
+    void drop(Key k, Value& result);
+    size_t height(CIterator it) const;
+    size_t height() const;
+    CIterator rotateLeft(CIterator it);
+    CIterator rotateRight(CIterator it);
+    CIterator rotateLargeLeft(CIterator it);
+    CIterator rotateLargeRight(CIterator it);
   };
 
   template <class Key, class Value, class Compare>
   typename BSTree<Key, Value, Compare>::Iterator BSTree<Key, Value, Compare>::begin()
   {
-    return Iterator{ root_ };
+    if (!root_)
+      return Iterator{ nullptr };
+
+    Node* node = root_;
+    while (node->left_)
+      node = node->left_;
+
+    return Iterator{ node };
   }
 
   template <class Key, class Value, class Compare>
@@ -202,13 +236,71 @@ namespace zinoviev
   template <class Key, class Value, class Compare>
   typename BSTree<Key, Value, Compare>::CIterator BSTree<Key, Value, Compare>::cbegin()
   {
-    return CIterator{ root_ };
+    if (!root_)
+      return CIterator{ nullptr };
+
+    const Node* node = root_;
+    while (node->left_)
+      node = node->left_;
+
+    return CIterator{ node };
   }
 
   template <class Key, class Value, class Compare>
   typename BSTree<Key, Value, Compare>::CIterator BSTree<Key, Value, Compare>::cend()
   {
-    return Iterator{ nullptr };
+    return CIterator{ nullptr };
+  }
+
+  template <class Key, class Value, class Compare>
+  void BSTree<Key, Value, Compare>::push(Key k, Value v)
+  {
+    Node* node = root_;
+    Node* parent = nullptr;
+
+    while (node)
+    {
+      parent = node;
+
+      if (!compare_(node->data_.first, k) && !compare_(k, node->data_.first))
+      {
+        node->data_.second = v;
+        return;
+      }
+      else if (compare_(node->data_.first, k))
+        node = node->right_;
+      else
+        node = node->left_;
+    }
+
+    Node* new_node = new Node(k, v, parent);
+
+    if (!parent)
+      root_ = new_node;
+    else if (compare_(k, parent->data_.first))
+      parent->left_ = new_node;
+    else
+      parent->right_ = new_node;
+
+    ++size_;
+  }
+
+  template <class Key, class Value, class Compare>
+  Value BSTree<Key, Value, Compare>::get(Key k) const
+  {
+    Node* node = root_;
+
+    while (node)
+    {
+      if (!compare_(node->data_.first, k) && !compare_(k, node->data_.first))
+        return node->data_.second;
+      else if (compare_(node->data_.first, k))
+        node = node->right_;
+      else
+        node = node->left_;
+    }
+
+    throw std::out_of_range("key not found");
   }
 }
 #endif
