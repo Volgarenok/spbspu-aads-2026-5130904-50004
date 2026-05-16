@@ -122,6 +122,13 @@ private:
     return 1 + std::max(leftH, rightH);
   }
 
+  static void clearSubtree(BSTtree* node) {
+    if (node == &nil) return;
+    clearSubtree(node->left);
+    clearSubtree(node->right);
+    delete node;
+  }
+
 public:
   BSTtree(): right(&nil), left(&nil), parent(&nil), isFakeRoot(true) {}
   BSTtree(std::pair<Value, Key> init): val(init.first), key(init.second),
