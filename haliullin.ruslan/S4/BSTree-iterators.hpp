@@ -6,9 +6,6 @@
 
 namespace haliullin
 {
-  template< class Key, class Value, class Compare >
-  class BSTree;
-
   template< class Key, class Value >
   class BSTIterator
   {
@@ -31,6 +28,9 @@ namespace haliullin
 
   private:
     Node* node_;
+
+    template< class K, class V, class C >
+    friend class BSTree;
   };
 
   template< class Key, class Value >
@@ -55,6 +55,9 @@ namespace haliullin
 
   private:
     Node* node_;
+
+    template <class K, class V, class C >
+    friend class BSTree;
   };
 }
 
