@@ -13,6 +13,7 @@ private:
   bool canReconstruct_;
   int totalWords_;
 
+public:
   std::string normalize_(const std::string& raw) {
     std::string out;
     for (char ch : raw) {
@@ -22,7 +23,6 @@ private:
     return out;
   }
 
-public:
   Index() : canReconstruct_(false), totalWords_(0) {}
 
   bool buildFromFile(const std::string& filename) {
