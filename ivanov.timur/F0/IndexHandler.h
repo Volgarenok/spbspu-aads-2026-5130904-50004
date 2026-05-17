@@ -19,6 +19,27 @@ private:
     }
     indexesTree_.insert(name, newIdx);
   }
+
+  Index* buildFromWords(const std::vector<std::string>& words, bool skipMarkers) {
+    Index* idx = new Index();
+    int pos = 0;
+    for (const std::string& w : words) {
+      idx->addWordToOrder(w);
+      if (skipMarkers && w == "\n") {
+        continue;
+      }
+      auto* vec = idx->getPositionsForUpdate(w);
+      if (vec) {
+        vec->push_back(pos);
+      } else {
+        idx->addEntry(w, std::vector<int>{pos});
+      }
+      ++pos;
+    }
+    idx->setTotalWords(pos);
+    idx->setReconstructable(true);
+    return idx;
+  }
 public:
 
 };
