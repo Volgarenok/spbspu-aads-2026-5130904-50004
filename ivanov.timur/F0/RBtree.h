@@ -246,7 +246,33 @@ public:
     delete NIL;
   }
 
+  void remove(const Key& key) {
+    Node *z = searchNode(key);
+    if (z != NIL)
+      deleteNode(z);
+  }
 
+  Value* search(const Key& key) {
+    Node *node = searchNode(key);
+    if (node != NIL)
+      return &node->value;
+    return nullptr;
+  }
+
+  bool contains(const Key& key) {
+    return searchNode(key) != NIL;
+  }
+
+  void clear() {
+    clear(root);
+    root = NIL;
+  }
+  bool empty() const {
+    return root == NIL;
+  }
+  void print() const {
+    inorder(root);
+  }
 };
 
 #endif
