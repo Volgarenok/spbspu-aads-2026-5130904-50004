@@ -114,8 +114,8 @@ private:
 
   void deleteFixUp(Node *x) {
     while (x != root && x->color == false) {
-        if (x == x->parent->left) {
-            Node *w = x->parent->right;
+      if (x == x->parent->left) {
+        Node *w = x->parent->right;
             //брат красный
             if (w->color == true) {
                 w->color = false;
@@ -170,6 +170,37 @@ private:
     }
     x->color = false;
 }
+  void deleteNode(Node *z) {
+    Node *y = z;
+    Node *x;
+    bool y_original_color = y->is_red;
+
+    if (z->left == NIL) {
+      x = z->right;
+      transplant(z, z->right);
+    } else if (z->right == NIL) {
+      x = z->left;
+      transplant(z, z->left);
+    } else {
+      y = minimum(z->right);
+      y_original_color = y->is_red;
+      x = y->right;
+      if (y->parent == z) {
+        x->parent = y;
+      } else {
+        transplant(y, y->right);
+        y->right = z->right;
+        y->right->parent = y;
+      }
+      transplant(z, y);
+      y->left = z->left;
+      y->left->parent = y;
+      y->is_red = z->is_red;
+    }
+    if (y_original_color == false)
+      deleteFixUp(x);
+    delete z;
+  }
 
 public:
 };
