@@ -6,7 +6,7 @@
 
 namespace zinoviev
 {
-  int findDict(zinoviev::DictionaryEntry** dicts, size_t count, const std::string& name);
+  size_t findDict(zinoviev::DictionaryEntry** dicts, size_t count, const std::string& name);
   void addDict(zinoviev::DictionaryEntry**& dicts, size_t& count, const std::string& name);
 }
 

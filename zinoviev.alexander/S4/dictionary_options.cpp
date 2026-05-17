@@ -1,11 +1,11 @@
 #include "dictionary_options.hpp"
 
-int zinoviev::findDict(zinoviev::DictionaryEntry** dicts, size_t count, const std::string& name)
+size_t zinoviev::findDict(zinoviev::DictionaryEntry** dicts, size_t count, const std::string& name)
 {
   for (size_t i = 0; i < count; ++i)
     if (dicts[i]->getName() == name)
       return i;
-  return -1;
+  return count;
 }
 
 void zinoviev::addDict(zinoviev::DictionaryEntry**& dicts, size_t& count, const std::string& name)
