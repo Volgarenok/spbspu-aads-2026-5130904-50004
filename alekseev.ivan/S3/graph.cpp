@@ -7,13 +7,10 @@
 
 size_t alekseev::str_hasher(const str & name)
 {
-  boost::hash2::sha1_256 sha;
+  boost::hash2::sha1_160 sha;
 
-  boost::hash2::hash_append(sha, boost::hash2::default_flavor{}, name);
-  auto digest = sha.result();
-  size_t res = 0;
-  std::memcpy(&res, digest.data(), sizeof(size_t));
-  return res;
+  boost::hash2::hash_append(sha, {}, name);
+  return boost::hash2::get_integral_result(sha.result());
 }
 
 size_t alekseev::hasher(const std::pair< str, str > & key)
