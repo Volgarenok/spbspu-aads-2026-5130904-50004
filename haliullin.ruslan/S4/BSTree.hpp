@@ -317,8 +317,8 @@ haliullin::BSTree< Key, Value, Compare >::rotateLargeLeft(const_iterator it)
   }
 
   Node* rightChild = node->right_;
-  rotateRight(const_iterator(parent));
-  rotateLeft(const_iterator(grand));
+  rotateRight(const_iterator(node));
+  rotateLeft(const_iterator(node));
   return const_iterator(rightChild);
 }
 
@@ -343,8 +343,8 @@ haliullin::BSTree< Key, Value, Compare >::rotateLargeRight(const_iterator it)
   }
 
   Node* leftChild = node->left_;
-  rotateLeft(const_iterator(parent));
-  rotateRight(const_iterator(grand));
+  rotateLeft(const_iterator(node));
+  rotateRight(const_iterator(node));
   return const_iterator(leftChild);
 }
 
