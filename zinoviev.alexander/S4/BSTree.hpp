@@ -30,62 +30,6 @@ namespace zinoviev
     size_t size_;
     Compare compare_;
 
-    Node* next(Node* cur)
-    {
-      if (cur->right_)
-      {
-        cur = cur->right_;
-
-        while (cur->left_)
-          cur = cur->left_;
-      }
-      else
-      {
-        Node* parent = cur->parent_;
-
-        while (parent && cur != parent->left_)
-        {
-          cur = parent;
-          parent = parent->parent_;
-        }
-
-        if (!parent)
-          cur = nullptr;
-        else
-          cur = parent;
-      }
-
-      return cur;
-    }
-
-    const Node* next(const Node* cur)
-    {
-      if (cur->right_)
-      {
-        cur = cur->right_;
-
-        while (cur->left_)
-          cur = cur->left_;
-      }
-      else
-      {
-        Node* parent = cur->parent_;
-
-        while (parent && cur != parent->left_)
-        {
-          cur = parent;
-          parent = parent->parent_;
-        }
-
-        if (!parent)
-          cur = nullptr;
-        else
-          cur = parent;
-      }
-
-      return cur;
-    }
-
     size_t get_height(const Node* node) const
     {
       if (!node)
@@ -123,14 +67,59 @@ namespace zinoviev
 
       Iterator& operator++()
       {
-        current_ = next(current_);
+        if (current_->right_)
+        {
+          current_ = current_->right_;
+
+          while (current_->left_)
+            current_ = current_->left_;
+        }
+        else
+        {
+          Node* parent = current_->parent_;
+
+          while (parent && current_ != parent->left_)
+          {
+            current_ = parent;
+            parent = parent->parent_;
+          }
+
+          if (!parent)
+            current_ = nullptr;
+          else
+            current_ = parent;
+        }
+        
         return *this;
       }
 
       Iterator operator++(int)
       {
         Iterator tmp = Iterator(current_);
-        current_ = next(current_);
+
+        if (current_->right_)
+        {
+          current_ = current_->right_;
+
+          while (current_->left_)
+            current_ = current_->left_;
+        }
+        else
+        {
+          Node* parent = current_->parent_;
+
+          while (parent && current_ != parent->left_)
+          {
+            current_ = parent;
+            parent = parent->parent_;
+          }
+
+          if (!parent)
+            current_ = nullptr;
+          else
+            current_ = parent;
+        }
+
         return tmp;
       }
 
@@ -169,14 +158,59 @@ namespace zinoviev
 
       CIterator& operator++()
       {
-        current_ = next(current_);
+        if (current_->right_)
+        {
+          current_ = current_->right_;
+
+          while (current_->left_)
+            current_ = current_->left_;
+        }
+        else
+        {
+          Node* parent = current_->parent_;
+
+          while (parent && current_ != parent->left_)
+          {
+            current_ = parent;
+            parent = parent->parent_;
+          }
+
+          if (!parent)
+            current_ = nullptr;
+          else
+            current_ = parent;
+        }
+
         return *this;
       }
 
       CIterator operator++(int)
       {
         CIterator tmp = CIterator(current_);
-        current_ = next(current_);
+
+        if (current_->right_)
+        {
+          current_ = current_->right_;
+
+          while (current_->left_)
+            current_ = current_->left_;
+        }
+        else
+        {
+          Node* parent = current_->parent_;
+
+          while (parent && current_ != parent->left_)
+          {
+            current_ = parent;
+            parent = parent->parent_;
+          }
+
+          if (!parent)
+            current_ = nullptr;
+          else
+            current_ = parent;
+        }
+
         return tmp;
       }
 
@@ -198,6 +232,14 @@ namespace zinoviev
     {
     }
 
+    BSTree(const BSTree&) = delete;
+    BSTree& operator=(const BSTree&) = delete;
+
+    ~BSTree()
+    {
+      clear(root_);
+    }
+
     Iterator begin();
     Iterator end();
     CIterator cbegin();
@@ -212,6 +254,8 @@ namespace zinoviev
     CIterator rotateRight(CIterator it);
     CIterator rotateLargeLeft(CIterator it);
     CIterator rotateLargeRight(CIterator it);
+    bool contains(const Key& k) const;
+    void clear(Node* node);
   };
 
   template <class Key, class Value, class Compare>
@@ -348,7 +392,10 @@ namespace zinoviev
       return;
     }
 
-    Node* succ = next(target);
+    Node* succ = target->right_;
+    while (succ->left_)
+      succ = succ->left_;
+
     Node* succParent = succ->parent_;
     bool succIsLeft = (succParent && succ == succParent->left_);
 
@@ -394,12 +441,12 @@ namespace zinoviev
   }
 
   template <class Key, class Value, class Compare>
-  BSTree<Key, Value, Compare>::CIterator
+  typename BSTree<Key, Value, Compare>::CIterator
     BSTree<Key, Value, Compare>::rotateLeft(CIterator it)
   {
     Node* cur = it.current_;
     Node* right = cur->right_;
-
+    
     if (!cur->parent_)
       root_ = right;
     else if (cur == cur->parent_->left_)
@@ -418,7 +465,7 @@ namespace zinoviev
   }
 
   template <class Key, class Value, class Compare>
-  BSTree<Key, Value, Compare>::CIterator
+  typename BSTree<Key, Value, Compare>::CIterator
     BSTree<Key, Value, Compare>::rotateRight(CIterator it)
   {
     Node* cur = it.current_;
@@ -442,7 +489,7 @@ namespace zinoviev
   }
 
   template <class Key, class Value, class Compare>
-  BSTree<Key, Value, Compare>::CIterator
+  typename BSTree<Key, Value, Compare>::CIterator
     BSTree<Key, Value, Compare>::rotateLargeLeft(CIterator it)
   {
     Node* node = it.current_;
@@ -451,12 +498,40 @@ namespace zinoviev
   }
 
   template <class Key, class Value, class Compare>
-  BSTree<Key, Value, Compare>::CIterator
+  typename BSTree<Key, Value, Compare>::CIterator
     BSTree<Key, Value, Compare>::rotateLargeRight(CIterator it)
   {
     Node* node = it.current_;
     rotateLeft(CIterator(node->right_));
     return rotateRight(it);
+  }
+
+  template <class Key, class Value, class Compare>
+  bool BSTree<Key, Value, Compare>::contains(const Key& k) const
+  {
+    Node* node = root_;
+
+    while (node)
+    {
+      if (!compare_(node->data_.first, k) && !compare_(k, node->data_.first))
+        return true;
+      else if (compare_(node->data_.first, k))
+        node = node->right_;
+      else
+        node = node->left_;
+    }
+
+    return false;
+  }
+
+  template <class Key, class Value, class Compare>
+  void BSTree<Key, Value, Compare>::clear(Node* node)
+  {
+    if (!node)
+      return;
+    clear(node->left_);
+    clear(node->right_);
+    delete node;
   }
 }
 #endif
