@@ -264,6 +264,33 @@ public:
                   << addPos << " of doc1_index\n";
     }
 
+    void intersect(const std::string& newName, const std::string& idx1Name, const std::string& idx2Name) {
+        Index* idx1 = findIndex(idx1Name);
+        Index* idx2 = findIndex(idx2Name);
+        if (!idx1 || !idx2) {
+            std::cerr << "Error: one of source indexes does not exist.\n";
+            return;
+        }
+
+        Index* newIdx = new Index();
+        int total = 0;
+        idx1->forEachEntry([&](const std::string& word, const std::vector<int>& pos1) {
+            const std::vector<int>* pos2 = idx2->getPositions(word);
+            if (pos2) {
+                std::vector<int> combined = pos1;
+                combined.insert(combined.end(), pos2->begin(), pos2->end());
+                newIdx->addEntry(word, combined);
+                total += combined.size();
+            }
+        });
+
+        newIdx->setTotalWords(total);
+        newIdx->setReconstructable(false);
+        addIndex(newName, newIdx);
+        std::cout << "Index '" << newName << "' created with "
+                  << newIdx->uniqueWords() << " common words\n";
+    }
+
 };
 
 #endif
