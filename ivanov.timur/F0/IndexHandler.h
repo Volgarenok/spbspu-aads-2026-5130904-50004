@@ -2,7 +2,7 @@
 #define INDEXHANDLER_H
 #include "Index.h"
 #include "RBtree.h"
-
+#include <sstream>
 #include <algorithm>
 #include <cmath>
 
