@@ -121,3 +121,71 @@ void haliullin::Cmd::cmdComplement(std::istream& in, std::ostream& out)
 
   datasets_.push(newName, result);
 }
+
+void haliullin::Cmd::cmdIntersect(std::istream& in, std::ostream& out)
+{
+  std::string newName, leftName, rightName;
+  if (!(in >> newName >> leftName >> rightName))
+  {
+    out << "<INVALID COMMAND>\n";
+    return;
+  }
+
+  auto leftIt = datasets_.find(leftName);
+  auto rightIt = datasets_.find(rightName);
+  if (leftIt == datasets_.end() || rightIt == datasets_.end())
+  {
+    out << "<INVALID COMMAND>\n";
+    return;
+  }
+
+  const auto& left = leftIt->second;
+  const auto& right = rightIt->second;
+  SingleDataset result;
+
+  for (auto cit = left.cbegin(); cit != left.cend(); ++cit)
+  {
+    if (right.find(cit->first) != right.cend())
+    {
+      result.push(cit->first, cit->second);
+    }
+  }
+
+  datasets_.push(newName, result);
+}
+
+void haliullin::Cmd::cmdUnion(std::istream& in, std::ostream& out)
+{
+  std::string newName, leftName, rightName;
+  if (!(in >> newName >> leftName >> rightName))
+  {
+    out << "<INVALID COMMAND>\n";
+    return;
+  }
+
+  auto leftIt = datasets_.find(leftName);
+  auto rightIt = datasets_.find(rightName);
+  if (leftIt == datasets_.end() || rightIt == datasets_.end())
+  {
+    out << "<INVALID COMMAND>\n";
+    return;
+  }
+
+  const auto& left = leftIt->second;
+  const auto& right = rightIt->second;
+  SingleDataset result;
+
+  for (auto cit = left.cbegin(); cit != left.cend(); ++cit)
+  {
+    result.push(cit->first, cit->second);
+  }
+  for (auto cit = right.cbegin(); cit != right.cend(); ++cit)
+  {
+    if (left.find(cit->first) == left.cend())
+    {
+      result.push(cit->first, cit->second);
+    }
+  }
+
+  datasets_.push(newName, result);
+}
