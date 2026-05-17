@@ -44,12 +44,7 @@ namespace alekseev {
   template< class Key, class Value, class Hash, class Equal >
   HashTable< Key, Value, Hash, Equal >::~HashTable()
   {
-    for (size_t i = 0; i < capacity_; ++i) {
-      if (slots_[i]) {
-        clear(slots_[i]->next, slots_[i]);
-        rmfake(slots_[i]);
-      }
-    }
+    clear();
     delete[] slots_;
   }
 
@@ -124,7 +119,7 @@ namespace alekseev {
   {
     for (size_t i = 0; i < capacity_; ++i) {
       if (slots_[i]) {
-        clear(slots_[i]->next, slots_[i]);
+        alekseev::clear(slots_[i]->next, slots_[i]);
         rmfake(slots_[i]);
         slots_[i] = nullptr;
       }

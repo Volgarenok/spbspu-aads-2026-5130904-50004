@@ -6,12 +6,12 @@
 
 size_t alekseev::str_hasher(const str & name)
 {
-  boost::hash2::sha1_256_hasher;
+  boost::hash2::sha1_256 hasher;
   boost::hash2::hash_append(hasher, boost::hash2::flavor{}, name);
   auto digest = hasher.result();
 
   size_t res = 0;
-  for (size_T i = 0; i < digest.size(); i += sizeof(size_t)) {
+  for (size_t i = 0; i < digest.size(); i += sizeof(size_t)) {
     size_t chunk = 0;
     size_t bytes_to_copy = std::min(sizeof(size_t), digest.size() - i);
     memcpy(&chunk, digest.data() + i, bytes_to_copy);
@@ -22,7 +22,7 @@ size_t alekseev::str_hasher(const str & name)
 
 size_t alekseev::hasher(const std::pair< str, str > & key)
 {
-  return str_hasher(key.first) ^ str_hasher(key.second);
+  return str_hasher(key.first) ^ (str_hasher(key.second) << 1);
 }
 
 bool alekseev::is_equal(const std::pair< str, str > & lhs, const std::pair< str, str > & rhs)

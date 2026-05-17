@@ -12,7 +12,7 @@ namespace alekseev {
   Vector< str > split(const str & s, char delim = ' ');
 
   using command_type = void(*)(Ht_Graphs &, Vector< str >);
-  void graphs(Ht_Graphs & graphs, Vector< str > args);
+  void graphs(Ht_Graphs & graphs, Vector< str >);
   void vertexes(Ht_Graphs & graphs, Vector< str > args);
   void bounds(Ht_Graphs & graphs, const Vector< str > & args, bool out);
   void outbound(Ht_Graphs & graphs, Vector< str > args);
@@ -125,7 +125,7 @@ alekseev::Vector< std::string > alekseev::split(const str & s, char delim)
   return res;
 }
 
-void alekseev::graphs(Ht_Graphs & graphs, Vector< str > args)
+void alekseev::graphs(Ht_Graphs & graphs, Vector< str >)
 {
   Vector< str > names = graphs.keys();
   names.bubbleSort(str_less);
@@ -320,9 +320,9 @@ void alekseev::extract(Ht_Graphs & graphs, Vector< str > args)
 }
 
 alekseev::Exec::Exec():
-  cmds((str_hasher, [](str s1, str s2) {
+  cmds(str_hasher, [](str s1, str s2) {
     return s1 == s2;
-  }, 16))
+  }, 16)
 {
   cmds.insert("graphs", graphs);
   cmds.insert("vertexes", vertexes);
