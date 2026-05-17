@@ -98,6 +98,7 @@ int main() {
     else {
         std::cerr << "Unknown command: " << cmd << "\n";
     }
+
   }
   return 0;
 }
