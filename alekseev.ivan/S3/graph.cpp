@@ -1,17 +1,33 @@
 #include "graph.h"
 #include "../common/ListIterators.h"
-#include <boost/hash2/sha1.hpp>
+// #include <boost/hash2/sha1.hpp>
+#include <boost/uuid/sha1.hpp>
+
+// size_t alekseev::str_hasher(const str & name)
+// {
+//   boost::hash2::sha1 sha;
+//   sha.update(name.c_str(), name.size());
+//   auto digest = sha.result();
+//   size_t res = 0;
+//   for (size_t i = 0; i < sizeof(size_t) && i < digest.size(); ++i) {
+//     res |= (static_cast< size_t >(digest[i]) << (i * 8));
+//   }
+//   return res;
+// }
 
 size_t alekseev::str_hasher(const str & name)
 {
-  boost::hash2::sha1 sha;
-  sha.update(name.c_str(), name.size());
-  auto digest = sha.result();
-  size_t res = 0;
-  for (size_t i = 0; i < sizeof(size_t) && i < digest.size(); ++i) {
-    res |= (static_cast< size_t >(digest[i]) << (i * 8));
-  }
-  return res;
+  boost::uuids::detail::sha1 sha;  // ← правильное пространство имен
+  sha.process_bytes(name.c_str(), name.size());
+  unsigned int digest[5];
+  sha.get_digest(digest);
+
+  // Комбинируем 5 слов (160 бит) в size_t (64 бита)
+  size_t result = 0;
+  result ^= static_cast< size_t >(digest[0]);
+  result ^= static_cast< size_t >(digest[1]) << 32;
+
+  return result;
 }
 
 size_t alekseev::hasher(const std::pair< str, str > & key)
