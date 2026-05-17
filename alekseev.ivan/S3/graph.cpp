@@ -2,22 +2,14 @@
 #include "../common/ListIterators.h"
 #include <boost/hash2/hash_append.hpp>
 #include <boost/hash2/sha1.hpp>
-#include <boost/hash2/flavor.hpp>
 
 size_t alekseev::str_hasher(const str & name)
 {
   boost::hash2::sha1_256 hasher;
-  boost::hash2::hash_append(hasher, boost::hash2::flavor{}, name);
-  auto digest = hasher.result();
+  boost::hash2::hash_append(hasher, boost::hash2::flavor{},
+      boost::hash2::as_bytes(boost::sha2::make_span(name)));
 
-  size_t res = 0;
-  for (size_t i = 0; i < digest.size(); i += sizeof(size_t)) {
-    size_t chunk = 0;
-    size_t bytes_to_copy = std::min(sizeof(size_t), digest.size() - i);
-    memcpy(&chunk, digest.data() + i, bytes_to_copy);
-    res ^= chunk;
-  }
-  return res;
+  return boost::hash2::get_integral_result< size_t >(hasher);
 }
 
 size_t alekseev::hasher(const std::pair< str, str > & key)
