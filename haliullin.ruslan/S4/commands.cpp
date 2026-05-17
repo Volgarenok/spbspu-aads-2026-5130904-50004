@@ -36,6 +36,7 @@ void haliullin::Cmd::loadFromFile(const std::string& filename)
     }
     datasets_.push(datasetName, dataset);
   }
+  file.close();
 }
 
 void haliullin::Cmd::processCmd(std::istream& in, std::ostream& out)
@@ -56,6 +57,11 @@ void haliullin::Cmd::processCmd(std::istream& in, std::ostream& out)
     (this->*func)(in, out);
     in.clear();
     in.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
+  }
+
+  if (!in.eof())
+  {
+    throw std::runtime_error("Bad input");
   }
 }
 
