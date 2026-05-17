@@ -9,7 +9,7 @@ private:
   struct Node {
     Key key;
     Value val;
-    bool color; //true - true, false - false
+    bool color; //red - true, black - false
     Node *left;
     Node *right;
     Node *parent;
