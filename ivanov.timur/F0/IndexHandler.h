@@ -126,6 +126,26 @@ public:
             delete idx;
         });
     }
+    void search(const std::string& query) {
+        searchTFIDF(query);
+    }
+
+    void readIndex(const std::string& name, const std::string& filename) {
+        Index* existing = findIndex(name);
+        if (existing) {
+            indexesTree_.remove(name);
+            delete existing;
+        }
+
+        Index* newIdx = new Index();
+        if (!newIdx->buildFromFile(filename)) {
+            std::cerr << "Error: cannot open file " << filename << "\n";
+            delete newIdx;
+            return;
+        }
+        indexesTree_.insert(name, newIdx);
+        std::cout << "Index '" << name << "' created from " << filename << " (" << newIdx->totalWords() << " words)" << "\n";
+    }
 
 };
 
