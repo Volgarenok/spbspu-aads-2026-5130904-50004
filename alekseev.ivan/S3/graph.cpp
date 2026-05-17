@@ -5,11 +5,14 @@
 
 size_t alekseev::str_hasher(const str & name)
 {
-  boost::hash2::sha1_256 hasher;
-  boost::hash2::hash_append(hasher, boost::hash2::flavor{},
-      boost::hash2::as_bytes(boost::sha2::make_span(name)));
-
-  return boost::hash2::get_integral_result< size_t >(hasher);
+  boost::hash2::sha1 hasher;
+  hasher.update(name.c_str(), name.size());
+  auto digest = hasher.result();
+  size_t res = 0;
+  for (size_t i = 0; i < sizeof(size_t) && i < digest.size(); ++i) {
+    res |= (static_cast< size_t >(digest[i]) << (i * 8));
+  }
+  return res;
 }
 
 size_t alekseev::hasher(const std::pair< str, str > & key)
