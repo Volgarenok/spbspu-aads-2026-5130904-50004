@@ -40,6 +40,14 @@ private:
     idx->setReconstructable(true);
     return idx;
   }
+
+  std::vector<std::pair<std::string, Index*>> getAllIndexes() const {
+    std::vector<std::pair<std::string, Index*>> result;
+    indexesTree_.forEach([&](const std::string& name, Index* idx) {
+        result.emplace_back(name, idx);
+    });
+    return result;
+  }
 public:
 
 };
