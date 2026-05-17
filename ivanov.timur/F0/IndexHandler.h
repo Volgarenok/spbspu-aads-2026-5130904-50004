@@ -147,6 +147,25 @@ public:
         std::cout << "Index '" << name << "' created from " << filename << " (" << newIdx->totalWords() << " words)" << "\n";
     }
 
+    void writeIndex(const std::string& filename, const std::string& indexName) {
+        Index* idx = findIndex(indexName);
+        if (!idx) {
+            std::cerr << "Error: index '" << indexName << "' not found." << "\n";
+            return;
+        }
+        if (!idx->canReconstruct()) {
+            std::cerr << "Error: index '" << indexName << "' cannot be reconstructed." << "\n";
+            return;
+        }
+        std::ofstream out(filename);
+        if (!out) {
+            std::cerr << "Error: cannot write to " << filename << "\n";
+            return;
+        }
+        out << idx->reconstructText();
+        std::cout << "Text restored from '" << indexName << "' and written to " << filename << "\n";
+    }
+
 };
 
 #endif
