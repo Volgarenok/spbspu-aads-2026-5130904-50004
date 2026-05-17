@@ -1,13 +1,12 @@
 #include "graph.h"
 #include "../common/ListIterators.h"
-#include <boost/hash2/hash_append.hpp>
 #include <boost/hash2/sha1.hpp>
 
 size_t alekseev::str_hasher(const str & name)
 {
-  boost::hash2::sha1 hasher;
-  hasher.update(name.c_str(), name.size());
-  auto digest = hasher.result();
+  boost::hash2::sha1 sha1;
+  sha1.update(name.c_str(), name.size());
+  auto digest = sha1.result();
   size_t res = 0;
   for (size_t i = 0; i < sizeof(size_t) && i < digest.size(); ++i) {
     res |= (static_cast< size_t >(digest[i]) << (i * 8));
