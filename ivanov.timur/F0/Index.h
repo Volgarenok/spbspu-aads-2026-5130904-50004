@@ -78,6 +78,11 @@ public:
   int totalWords() const { return totalWords_; }
   int uniqueWords() const { return invIndex_.size(); }
   bool canReconstruct() const { return canReconstruct_; }
+
+  template<typename Func>
+  void forEachEntry(Func f) const {
+    invIndex_.forEach(f);
+  }
 };
 
 #endif

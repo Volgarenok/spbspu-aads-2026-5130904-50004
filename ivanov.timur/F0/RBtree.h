@@ -225,6 +225,14 @@ private:
     }
   }
 
+  template<typename Func>
+  void forEachNode(Node* node, Func f) const {
+    if (node == NIL) return;
+    forEachNode(node->left, f);
+    f(node->key, node->val);
+    forEachNode(node->right, f);
+  }
+
   Node* searchNode(const Key& key) const {
     Node *curr = root;
     while (curr != NIL) {
@@ -278,6 +286,11 @@ public:
   }
   void print() const {
     inorder(root);
+  }
+
+  template<typename Func>
+  void forEach(Func f) const {
+    forEachNode(root, f);
   }
 
   void insert(const Key& key, const Value& value) {
