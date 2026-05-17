@@ -11,6 +11,8 @@ namespace haliullin
   class Cmd
   {
   public:
+    using SingleDataset = BSTree< int, std::string >;
+    using DatasetStorage = BSTree< std::string, SingleDataset >;
     using func_t = void (Cmd::*)(std::istream&in, std::ostream& out);
 
     Cmd();
@@ -19,7 +21,7 @@ namespace haliullin
     void processCmd(std::istream& in, std::ostream& out);
 
   private:
-    BSTree< std::string, BSTree< int, std::string > > datasets_;
+    DatasetStorage datasets_;
     BSTree< std::string, func_t > commands_;
 
     void cmdPrint(std::istream& in, std::ostream& out);
