@@ -83,6 +83,24 @@ public:
   void forEachEntry(Func f) const {
     invIndex_.forEach(f);
   }
+
+  void addEntry(const std::string& word, const std::vector<int>& positions) {
+    invIndex_.insert(word, positions);
+  }
+  bool contains(const std::string& word) const {
+    return invIndex_.search(word) != nullptr;
+  }
+  std::vector<int>* getPositionsForUpdate(const std::string& word) {
+    return invIndex_.search(word);
+  }
+  void addWordToOrder(const std::string& word) {
+    wordOrder_.push_back(word);
+  }
+  const std::vector<std::string>& getWordOrder() const {
+    return wordOrder_;
+  }
+  void setTotalWords(int n) { totalWords_ = n; }
+  void setReconstructable(bool v) { canReconstruct_ = v; }
 };
 
 #endif
