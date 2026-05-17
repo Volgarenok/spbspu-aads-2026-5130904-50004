@@ -221,6 +221,27 @@ public:
                   << " words)\n";
     }
 
+    void deleteIndex(const std::string& name) {
+        Index* idx = findIndex(name);
+        if (!idx) {
+            std::cerr << "Error: index '" << name << "' not found.\n";
+            return;
+        }
+        indexesTree_.remove(name);
+        delete idx;
+        std::cout << "Index '" << name << "' deleted\n";
+    }
+    void listIndexes() const {
+        std::cout << "Active indexes:\n";
+        if (indexesTree_.empty()) {
+            std::cout << "  (none)\n";
+            return;
+        }
+        indexesTree_.forEach([](const std::string& name, Index* idx) {
+            std::cout << "- " << name << " (" << idx->totalWords()
+                      << " words, " << idx->uniqueWords() << " unique)\n";
+        });
+    }
 };
 
 #endif
