@@ -291,6 +291,31 @@ public:
                   << newIdx->uniqueWords() << " common words\n";
     }
 
+    void subtract(const std::string& newName, const std::string& idx1Name, const std::string& idx2Name) {
+        Index* idx1 = findIndex(idx1Name);
+        Index* idx2 = findIndex(idx2Name);
+        if (!idx1 || !idx2) {
+            std::cerr << "Error: one of source indexes does not exist.\n";
+            return;
+        }
+
+        Index* newIdx = new Index();
+        int total = 0;
+        idx1->forEachEntry([&](const std::string& word, const std::vector<int>& pos1) {
+            if (!idx2->contains(word)) {
+                newIdx->addEntry(word, pos1);
+                total += pos1.size();
+            }
+        });
+
+        newIdx->setTotalWords(total);
+        newIdx->setReconstructable(false);
+        addIndex(newName, newIdx);
+        std::cout << "Index '" << newName << "' created with "
+                  << newIdx->uniqueWords() << " unique words from '"
+                  << idx1Name << "'\n";
+    }
+
 };
 
 #endif
