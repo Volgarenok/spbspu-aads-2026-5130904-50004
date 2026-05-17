@@ -58,3 +58,66 @@ void haliullin::Cmd::processCmd(std::istream& in, std::ostream& out)
     in.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
   }
 }
+
+void haliullin::Cmd::cmdPrint(std::istream& in, std::ostream& out)
+{
+  std::string datasetName;
+  if (!(in >> datasetName))
+  {
+    out << "<INVALID COMMAND>\n";
+    return;
+  }
+
+  auto it = datasets_.find(datasetName);
+  if (it == datasets_.end())
+  {
+    out << "<INVALID COMMAND>\n";
+    return;
+  }
+
+  const auto& dataset = it->second;
+  if (dataset.isEmpty())
+  {
+    out << "<EMPTY>\n";
+    return;
+  }
+
+  out << datasetName;
+  for (auto cit = dataset.cbegin(); cit != dataset.cend(); ++cit)
+  {
+    out << " " << cit->first << " " << cit->second;
+  }
+  out << "\n";
+}
+
+void haliullin::Cmd::cmdComplement(std::istream& in, std::ostream& out)
+{
+  std::string newName, leftName, rightName;
+  if (!(in >> newName >> leftName >> rightName))
+  {
+    out << "<INVALID COMMAND>\n";
+    return;
+  }
+
+  auto leftIt = datasets_.find(leftName);
+  auto rightIt = datasets_.find(rightName);
+  if (leftIt == datasets_.end() || rightIt == datasets_.end())
+  {
+    out << "<INVALID COMMAND>\n";
+    return;
+  }
+
+  const auto& left = leftIt->second;
+  const auto& right = rightIt->second;
+  SingleDataset result;
+
+  for (auto cit = left.cbegin(); cit != left.cend(); ++cit)
+  {
+    if (right.find(cit->first) == right.cend())
+    {
+      result.push(cit->first, cit->second);
+    }
+  }
+
+  datasets_.push(newName, result);
+}
