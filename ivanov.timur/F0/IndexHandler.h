@@ -242,6 +242,28 @@ public:
                       << " words, " << idx->uniqueWords() << " unique)\n";
         });
     }
+
+    void add(const std::string& newName, const std::string& idx1Name, const std::string& idx2Name, int addPos) {
+        Index* idx1 = findIndex(idx1Name);
+        Index* idx2 = findIndex(idx2Name);
+        if (!idx1 || !idx2) {
+            std::cerr << "Error: one of source indexes does not exist.\n";
+            return;
+        }
+        std::vector<std::string> words = idx1->getWordOrder();
+        int size = static_cast<int>(words.size());
+        if (addPos < 1) addPos = 1;
+        if (addPos > size + 1) addPos = size + 1;
+        const auto& w2 = idx2->getWordOrder();
+        auto it = words.begin() + (addPos - 1);
+        words.insert(it, w2.begin(), w2.end());
+
+        Index* newIdx = buildFromWords(words, false);
+        addIndex(newName, newIdx);
+        std::cout << "Index '" << newName << "' created with doc2_index merged into position "
+                  << addPos << " of doc1_index\n";
+    }
+
 };
 
 #endif
