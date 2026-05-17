@@ -185,6 +185,42 @@ public:
         }
     }
 
+    void rightMerge(const std::string& newName, const std::string& idx1Name, const std::string& idx2Name) {
+        Index* idx1 = findIndex(idx1Name);
+        Index* idx2 = findIndex(idx2Name);
+        if (!idx1 || !idx2) {
+            std::cerr << "Error: one of source indexes does not exist.\n";
+            return;
+        }
+        std::vector<std::string> words = idx2->getWordOrder();
+        const auto& w1 = idx1->getWordOrder();
+        words.insert(words.end(), w1.begin(), w1.end());
+
+        Index* newIdx = buildFromWords(words, false);
+        addIndex(newName, newIdx);
+        std::cout << "Index '" << newName << "' created from '" << idx1Name
+                  << "' and '" << idx2Name << "' (total " << newIdx->totalWords()
+                  << " words)\n";
+    }
+    void downMerge(const std::string& newName, const std::string& idx1Name, const std::string& idx2Name) {
+        Index* idx1 = findIndex(idx1Name);
+        Index* idx2 = findIndex(idx2Name);
+        if (!idx1 || !idx2) {
+            std::cerr << "Error: one of source indexes does not exist.\n";
+            return;
+        }
+        std::vector<std::string> words = idx2->getWordOrder();
+        words.push_back("\n");
+        const auto& w1 = idx1->getWordOrder();
+        words.insert(words.end(), w1.begin(), w1.end());
+
+        Index* newIdx = buildFromWords(words, true);
+        addIndex(newName, newIdx);
+        std::cout << "Index '" << newName << "' created from '" << idx1Name
+                  << "' and '" << idx2Name << "' (total " << newIdx->totalWords()
+                  << " words)\n";
+    }
+
 };
 
 #endif
