@@ -6,6 +6,7 @@
 
 namespace alekseev {
   using str = std::string;
+  size_t str_hasher(const str & name);
   size_t hasher(const std::pair< str, str > & key);
   using hasher_ptr = size_t(*)(const std::pair< str, str > &);
   bool is_equal(const std::pair< str, str > & lhs, const std::pair< str, str > & rhs);

@@ -1,25 +1,28 @@
 #include "graph.h"
-#include <boost/uuid/sha1.hpp>
 #include "../common/ListIterators.h"
+#include <boost/hash2/hash_append.hpp>
+#include <boost/hash2/sha1.hpp>
+#include <boost/hash2/flavor.hpp>
+
+size_t alekseev::str_hasher(const str & name)
+{
+  boost::hash2::sha1_256_hasher;
+  boost::hash2::hash_append(hasher, boost::hash2::flavor{}, name);
+  auto digest = hasher.result();
+
+  size_t res = 0;
+  for (size_T i = 0; i < digest.size(); i += sizeof(size_t)) {
+    size_t chunk = 0;
+    size_t bytes_to_copy = std::min(sizeof(size_t), digest.size() - i);
+    memcpy(&chunk, digest.data() + i, bytes_to_copy);
+    res ^= chunk;
+  }
+  return res;
+}
 
 size_t alekseev::hasher(const std::pair< str, str > & key)
 {
-  boost::uuids::detail::sha1 first;
-  first.process_bytes(key.first.c_str(), key.first.size());
-  unsigned int digest1[5];
-  first.get_digest(digest1);
-
-  boost::uuids::detail::sha1 second;
-  second.process_bytes(key.second.c_str(), key.second.size());
-  unsigned int digest2[5];
-  second.get_digest(digest2);
-
-  size_t result = 0;
-  for (int i = 0; i < 5; i++) {
-    result ^= digest1[i];
-    result ^= digest2[i];
-  }
-  return result;
+  return str_hasher(key.first) ^ str_hasher(key.second);
 }
 
 bool alekseev::is_equal(const std::pair< str, str > & lhs, const std::pair< str, str > & rhs)

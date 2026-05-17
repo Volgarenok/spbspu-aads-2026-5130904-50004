@@ -1,14 +1,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <boost/uuid/sha1.hpp>
 #include "hash_table.h"
 #include "graph.h"
 
 namespace alekseev {
   using str = std::string;
   using Ht_Graphs = HashTable< str, Graph, size_t (*)(const str &), bool (*)(str, str) >;
-  size_t str_hasher(const str & name);
   Ht_Graphs input_graphs(std::ifstream & input);
   bool str_less(str a, str b);
   Vector< str > split(const str & s, char delim = ' ');
@@ -74,20 +72,6 @@ int main(int argc, char * argv[])
     std::cerr << "Input fail" << "\n";
     return 1;
   }
-}
-
-size_t alekseev::str_hasher(const str & name)
-{
-  boost::uuids::detail::sha1 h;
-  h.process_bytes(name.c_str(), name.size());
-  unsigned int digest[5];
-  h.get_digest(digest);
-
-  size_t result = 0;
-  for (int i = 0; i < 5; i++) {
-    result ^= digest[i];
-  }
-  return result;
 }
 
 alekseev::Ht_Graphs alekseev::input_graphs(std::ifstream & input)
