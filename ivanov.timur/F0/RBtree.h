@@ -56,14 +56,14 @@ private:
     x->parent = y;
   }
   void insertFixUp(Node *z) {
-    while (z->parent->colour == true) {
+    while (z->parent->color == true) {
       if (z->parent == z->parent->parent->left) {   // родитель — левый
         Node *y = z->parent->parent->right;
         //дядя красный
-        if (y->colour == true) {
-          z->parent->colour = false;
-          y->colour = false;
-          z->parent->parent->colour = true;
+        if (y->color == true) {
+          z->parent->color = false;
+          y->color = false;
+          z->parent->parent->color = true;
           z = z->parent->parent;
         } else {
           //дядя чёрный, z — правый потомок
@@ -72,29 +72,29 @@ private:
             leftRotate(z);
           }
           //дядя чёрный, z — левый потомок
-          z->parent->colour = false;
-          z->parent->parent->colour = true;
+          z->parent->color = false;
+          z->parent->parent->color = true;
           rightRotate(z->parent->parent);
         }
       } else { // родитель — правый
         Node *y = z->parent->parent->left;
-        if (y->colour == true) {
-          z->parent->colour = false;
-          y->colour = false;
-          z->parent->parent->colour = true;
+        if (y->color == true) {
+          z->parent->color = false;
+          y->color = false;
+          z->parent->parent->color = true;
           z = z->parent->parent;
         } else {
           if (z == z->parent->left) {
             z = z->parent;
             rightRotate(z);
           }
-          z->parent->colour = false;
-          z->parent->parent->colour = true;
+          z->parent->color = false;
+          z->parent->parent->color = true;
           leftRotate(z->parent->parent);
         }
       }
     }
-    root->colour = false;
+    root->color = false;
   }
 
   void transplant(Node *u, Node *v) {
@@ -111,6 +111,65 @@ private:
       node = node->left;
     return node;
   }
+
+  void deleteFixUp(Node *x) {
+    while (x != root && x->color == false) {
+        if (x == x->parent->left) {
+            Node *w = x->parent->right;
+            //брат красный
+            if (w->color == true) {
+                w->color = false;
+                x->parent->color = true;
+                leftRotate(x->parent);
+                w = x->parent->right;
+            }
+            //брат чёрный, оба его ребёнка чёрные
+            if (w->left->color == false && w->right->color == false) {
+                w->color = true;
+                x = x->parent;
+            } else {
+                //брат чёрный, правый ребёнок чёрный, левый красный
+                if (w->right->color == false) {
+                    w->left->color = false;
+                    w->color = true;
+                    rightRotate(w);
+                    w = x->parent->right;
+                }
+                //брат чёрный, правый ребёнок красный
+                w->color = x->parent->color;
+                x->parent->color = false;
+                w->right->color = false;
+                leftRotate(x->parent);
+                x = root;
+            }
+        } else {
+            Node *w = x->parent->left;
+            if (w->color == true) {
+                w->color = false;
+                x->parent->color = true;
+                rightRotate(x->parent);
+                w = x->parent->left;
+            }
+            if (w->right->color == false && w->left->color == false) {
+                w->color = true;
+                x = x->parent;
+            } else {
+                if (w->left->color == false) {
+                    w->right->color = false;
+                    w->color = true;
+                    leftRotate(w);
+                    w = x->parent->left;
+                }
+                w->color = x->parent->color;
+                x->parent->color = false;
+                w->left->color = false;
+                rightRotate(x->parent);
+                x = root;
+            }
+        }
+    }
+    x->color = false;
+}
 
 public:
 };
