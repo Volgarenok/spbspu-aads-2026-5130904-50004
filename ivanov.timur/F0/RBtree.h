@@ -219,6 +219,19 @@ private:
     }
   }
 
+  Node* searchNode(const Key& key) const {
+    Node *curr = root;
+    while (curr != NIL) {
+      if (key < curr->key)
+        curr = curr->left;
+      else if (key > curr->key)
+        curr = curr->right;
+      else
+        return curr;
+    }
+    return NIL;
+  }
+
 public:
 };
 
