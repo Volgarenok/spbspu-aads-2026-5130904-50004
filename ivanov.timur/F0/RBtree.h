@@ -2,6 +2,7 @@
 #define RBTREE_H
 #include <iostream>
 
+namespace ivanov {
 template <class Key, class Value>
 class RBtree {
 private:
@@ -117,60 +118,60 @@ private:
     while (x != root && x->color == false) {
       if (x == x->parent->left) {
         Node *w = x->parent->right;
-            //брат красный
-            if (w->color == true) {
-                w->color = false;
-                x->parent->color = true;
-                leftRotate(x->parent);
-                w = x->parent->right;
-            }
-            //брат чёрный, оба его ребёнка чёрные
-            if (w->left->color == false && w->right->color == false) {
-                w->color = true;
-                x = x->parent;
-            } else {
-                //брат чёрный, правый ребёнок чёрный, левый красный
-                if (w->right->color == false) {
-                    w->left->color = false;
-                    w->color = true;
-                    rightRotate(w);
-                    w = x->parent->right;
-                }
-                //брат чёрный, правый ребёнок красный
-                w->color = x->parent->color;
-                x->parent->color = false;
-                w->right->color = false;
-                leftRotate(x->parent);
-                x = root;
-            }
-        } else {
-            Node *w = x->parent->left;
-            if (w->color == true) {
-                w->color = false;
-                x->parent->color = true;
-                rightRotate(x->parent);
-                w = x->parent->left;
-            }
-            if (w->right->color == false && w->left->color == false) {
-                w->color = true;
-                x = x->parent;
-            } else {
-                if (w->left->color == false) {
-                    w->right->color = false;
-                    w->color = true;
-                    leftRotate(w);
-                    w = x->parent->left;
-                }
-                w->color = x->parent->color;
-                x->parent->color = false;
-                w->left->color = false;
-                rightRotate(x->parent);
-                x = root;
-            }
+        //брат красный
+        if (w->color == true) {
+          w->color = false;
+          x->parent->color = true;
+          leftRotate(x->parent);
+          w = x->parent->right;
         }
+        //брат чёрный, оба его ребёнка чёрные
+        if (w->left->color == false && w->right->color == false) {
+          w->color = true;
+          x = x->parent;
+        } else {
+          //брат чёрный, правый ребёнок чёрный, левый красный
+          if (w->right->color == false) {
+            w->left->color = false;
+            w->color = true;
+            rightRotate(w);
+            w = x->parent->right;
+          }
+          //брат чёрный, правый ребёнок красный
+          w->color = x->parent->color;
+          x->parent->color = false;
+          w->right->color = false;
+          leftRotate(x->parent);
+          x = root;
+        }
+      } else {
+        Node *w = x->parent->left;
+        if (w->color == true) {
+          w->color = false;
+          x->parent->color = true;
+          rightRotate(x->parent);
+          w = x->parent->left;
+        }
+        if (w->right->color == false && w->left->color == false) {
+          w->color = true;
+          x = x->parent;
+        } else {
+          if (w->left->color == false) {
+            w->right->color = false;
+            w->color = true;
+            leftRotate(w);
+            w = x->parent->left;
+          }
+          w->color = x->parent->color;
+          x->parent->color = false;
+          w->left->color = false;
+          rightRotate(x->parent);
+          x = root;
+        }
+      }
     }
     x->color = false;
-}
+  }
   void deleteNode(Node *z) {
     Node *y = z;
     Node *x;
@@ -303,5 +304,6 @@ public:
     insertFixUp(z);
   }
 };
+}
 
 #endif
