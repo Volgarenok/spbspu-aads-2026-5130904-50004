@@ -41,6 +41,9 @@ namespace haliullin
     const_iterator rotateLargeLeft(const_iterator it);
     const_iterator rotateLargeRight(const_iterator it);
 
+    iterator find(const Key& k);
+    const_iterator find(const Key& k) const;
+
     iterator begin() noexcept;
     const_iterator begin() const noexcept;
     const_iterator cbegin() const noexcept;
@@ -205,6 +208,104 @@ template< class Key, class Value, class Compare >
 size_t haliullin::BSTree< Key, Value, Compare >::height() const
 {
   return heightNode(root_);
+}
+
+template< class Key, class Value, class Compare >
+haliullin::BSTConstIterator< Key, Value > haliullin::BSTree< Key, Value, Compare >::rotateLeft(const_iterator it)
+{
+  Node* cur = it.node_;
+  if (!cur || cur->isFake())
+  {
+    throw std::logic_error("Invalid iterator");
+  }
+  Node* parent = cur->parent_;
+  if (!parent || parent->isFake() || parent->right_ != cur)
+  {
+    throw std::logic_error("Cannot rotate left: node is not a right child");
+  }
+
+  Node* leftChild = cur->left_;
+  Node* grand = parent->parent_;
+
+  if (grand == nullptr)
+  {
+    root_ = cur;
+  }
+  else if (grand->left_ == parent)
+  {
+    grand->left_ = cur;
+  }
+  else
+  {
+    grand->right_ = cur;
+  }
+  cur->parent_ = grand;
+
+  cur->left_ = parent;
+  parent->parent_ = cur;
+
+  parent->right_ = leftChild;
+  if (!leftChild->isFake())
+  {
+    leftChild->parent_ = parent;
+  }
+
+  return const_iterator(leftChild);
+}
+
+template< class Key, class Value, class Compare >
+haliullin::BSTConstIterator< Key, Value > haliullin::BSTree< Key, Value, Compare >::rotateRight(const_iterator it)
+{
+  Node* cur = it.node_;
+  if (!cur || cur->isFake())
+  {
+    throw std::logic_error("Invalid iterator");
+  }
+  Node* parent = cur->parent_;
+  if (!parent || parent->isFake() || parent->left_ != cur)
+  {
+    throw std::logic_error("Cannot rotate right: node is not a left child");
+  }
+
+  Node* rightChild = cur->right_;
+  Node* grand = parent->parent_;
+
+  if (grand == nullptr)
+  {
+    root_ = cur;
+  }
+  else if (grand->left_ == parent)
+  {
+    grand->left_ = cur;
+  }
+  else
+  {
+    grand->right_ = cur;
+  }
+  cur->parent_ = grand;
+
+  cur->right_ = parent;
+  parent->parent_ = cur;
+
+  parent->left_ = rightChild;
+  if (!rightChild->isFake())
+  {
+    rightChild->parent_ = parent;
+  }
+
+  return const_iterator(rightChild);
+}
+
+template< class Key, class Value, class Compare >
+haliullin::BSTIterator< Key, Value > haliullin::BSTree< Key, Value, Compare >::find(const Key& k)
+{
+  return iterator(findNode(k));
+}
+
+template< class Key, class Value, class Compare >
+haliullin::BSTConstIterator< Key, Value > haliullin::BSTree< Key, Value, Compare >::find(const Key& k) const
+{
+  return const_iterator(findNode(k));
 }
 
 template< class Key, class Value, class Compare >
