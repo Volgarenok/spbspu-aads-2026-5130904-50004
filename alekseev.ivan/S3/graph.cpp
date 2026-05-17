@@ -4,9 +4,9 @@
 
 size_t alekseev::str_hasher(const str & name)
 {
-  boost::hash2::sha1 sha1;
-  sha1.update(name.c_str(), name.size());
-  auto digest = sha1.result();
+  boost::hash2::sha1 sha;
+  sha.update(name.c_str(), name.size());
+  auto digest = sha.result();
   size_t res = 0;
   for (size_t i = 0; i < sizeof(size_t) && i < digest.size(); ++i) {
     res |= (static_cast< size_t >(digest[i]) << (i * 8));
