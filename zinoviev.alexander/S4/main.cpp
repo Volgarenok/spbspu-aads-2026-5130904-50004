@@ -84,4 +84,108 @@ int main(int argc, const char** argv)
       dictionaries[id]->getTree().push(key, val_str);
     }
   }
+
+  std::string cmdLine;
+  while (std::getline(std::cin, cmdLine))
+  {
+    if (cmdLine.empty())
+      continue;
+
+    size_t pos = 0;
+    size_t size = cmdLine.size();
+
+    while (pos < size && cmdLine[pos] == ' ')
+      ++pos;
+
+    if (pos == size)
+      continue;
+
+    std::string command;
+    while (pos < size && cmdLine[pos] != ' ')
+    {
+      command += cmdLine[pos];
+      ++pos;
+    }
+
+    while (pos < size && cmdLine[pos] == ' ')
+      ++pos;
+
+    if (command == "print")
+    {
+      std::string argument_1;
+      while (pos < size && cmdLine[pos] != ' ')
+      {
+        argument_1 += cmdLine[pos];
+        ++pos;
+      }
+
+      while (pos < size && cmdLine[pos] == ' ')
+        ++pos;
+
+      if (argument_1.empty() || pos != size)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+
+    }
+    else if (command == "complement" || command == "intersect" || command == "union")
+    {
+      std::string argument_1, argument_2, argument_3;
+      while (pos < size && cmdLine[pos] != ' ')
+      {
+        argument_1 += cmdLine[pos];
+        ++pos;
+      }
+
+      if (argument_1.empty())
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      while (pos < size && cmdLine[pos] == ' ')
+        ++pos;
+      while (pos < size && cmdLine[pos] != ' ')
+      {
+        argument_2 += cmdLine[pos];
+        ++pos;
+      }
+
+      if (argument_2.empty())
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      while (pos < size && cmdLine[pos] == ' ')
+        ++pos;
+      while (pos < size && cmdLine[pos] != ' ')
+      {
+        argument_3 += cmdLine[pos];
+        ++pos;
+      }
+
+      if (argument_3.empty())
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+      while (pos < size && cmdLine[pos] == ' ')
+        ++pos;
+      if (pos != size)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
+
+
+    }
+    else
+    {
+      std::cout << "<INVALID COMMAND>\n";
+    }
+  }
 }
