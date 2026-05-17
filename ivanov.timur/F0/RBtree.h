@@ -273,6 +273,35 @@ public:
   void print() const {
     inorder(root);
   }
+
+  void insert(const Key& key, const Value& value) {
+    Node *z = new Node(key, value);
+    Node *y = NIL;
+    Node *x = root;
+    while (x != NIL) {
+      y = x;
+      if (key < x->key)
+        x = x->left;
+      else if (key > x->key)
+        x = x->right;
+      else {
+        x->value = value;
+        delete z;
+        return;
+      }
+    }
+    z->parent = y;
+    if (y == NIL)
+      root = z;
+    else if (key < y->key)
+      y->left = z;
+    else
+      y->right = z;
+    z->left = NIL;
+    z->right = NIL;
+    z->color = true;
+    insertFixUp(z);
+  }
 };
 
 #endif
