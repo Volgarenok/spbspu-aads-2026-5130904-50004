@@ -120,6 +120,12 @@ private:
     }
 }
 public:
+    IndexHandler() = default;
+    ~IndexHandler() {
+        indexesTree_.forEach([this](const std::string& name, Index* idx) {
+            delete idx;
+        });
+    }
 
 };
 
