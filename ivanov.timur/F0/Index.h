@@ -61,6 +61,23 @@ public:
     canReconstruct_ = false;
     totalWords_ = 0;
   }
+
+  std::string reconstructText() const {
+    if (!canReconstruct_) return {};
+    std::ostringstream oss;
+    for (size_t i = 0; i < wordOrder_.size(); ++i) {
+      if (i > 0) oss << ' ';
+      oss << wordOrder_[i];
+    }
+    return oss.str();
+  }
+  const std::vector<int>* getPositions(const std::string& word) const {
+    return invIndex_.search(word);
+  }
+
+  int totalWords() const { return totalWords_; }
+  int uniqueWords() const { return invIndex_.size(); }
+  bool canReconstruct() const { return canReconstruct_; }
 };
 
 #endif
