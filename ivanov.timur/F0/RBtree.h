@@ -99,6 +99,11 @@ private:
     root->color = false;
   }
 
+  int sizeRec(Node* node) const {
+    if (node == NIL) return 0;
+    return 1 + sizeRec(node->left) + sizeRec(node->right);
+  }
+
   void transplant(Node *u, Node *v) {
     if (u->parent == NIL)
       root = v;
@@ -214,7 +219,7 @@ private:
   void inorder(Node *node) const {
     if (node != NIL) {
       inorder(node->left);
-      std::cout << node->key << " -> " << node->value
+      std::cout << node->key << " -> " << node->val
                 << (node->color == true ? " (R)" : " (B)") << "\n";
       inorder(node->right);
     }
@@ -256,7 +261,7 @@ public:
   Value* search(const Key& key) {
     Node *node = searchNode(key);
     if (node != NIL)
-      return &node->value;
+      return &node->val;
     return nullptr;
   }
 
@@ -286,7 +291,7 @@ public:
       else if (key > x->key)
         x = x->right;
       else {
-        x->value = value;
+        x->val = value;
         delete z;
         return;
       }
@@ -303,6 +308,8 @@ public:
     z->color = true;
     insertFixUp(z);
   }
+
+  int size() const { return sizeRec(root); }
 };
 }
 
