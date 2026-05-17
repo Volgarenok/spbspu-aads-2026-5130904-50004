@@ -89,7 +89,7 @@ namespace zinoviev
           else
             current_ = parent;
         }
-        
+
         return *this;
       }
 
@@ -446,7 +446,7 @@ namespace zinoviev
   {
     Node* cur = it.current_;
     Node* right = cur->right_;
-    
+
     if (!cur->parent_)
       root_ = right;
     else if (cur == cur->parent_->left_)

@@ -2,7 +2,7 @@
 
 const std::string& zinoviev::DictionaryEntry::getName() const
 {
-	return name_;
+  return name_;
 }
 
 zinoviev::BSTree<int, std::string>& zinoviev::DictionaryEntry::getTree()
