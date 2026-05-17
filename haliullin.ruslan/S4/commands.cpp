@@ -19,20 +19,20 @@ void haliullin::Cmd::loadFromFile(const std::string& filename)
     throw std::runtime_error("Cannot open file");
   }
 
-  std::string datasetName;
-  while (file >> datasetName)
+  std::string line;
+  while (std::getline(file, line))
   {
+    if (line.empty()) continue;
+    std::istringstream iss(line);
+    std::string datasetName;
+    if (!(iss >> datasetName)) continue;
+
     SingleDataset dataset;
     int key;
     std::string value;
-    while (file >> key >> value)
+    while (iss >> key >> value)
     {
       dataset.push(key, value);
-    }
-    if (file.fail())
-    {
-      file.clear();
-      file.ignore(std::numeric_limits< std::streamsize >::max(), '\n');
     }
     datasets_.push(datasetName, dataset);
   }
