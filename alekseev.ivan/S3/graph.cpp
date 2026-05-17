@@ -7,7 +7,7 @@
 
 size_t alekseev::str_hasher(const str & name)
 {
-  boost::hash2::sha1 sha;
+  boost::hash2::sha1_256 sha;
 
   boost::hash2::hash_append(sha, boost::hash2::default_flavor{}, name);
   auto digest = sha.result();
