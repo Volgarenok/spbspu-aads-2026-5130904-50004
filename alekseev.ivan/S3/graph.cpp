@@ -4,13 +4,17 @@
 #include <boost/hash2/hash_append.hpp>
 #include <boost/hash2/sha1.hpp>
 #include <boost/hash2/flavor.hpp>
+#include <boost/hash2/get_integral_result.hpp>
 
 size_t alekseev::str_hasher(const str & name)
 {
   boost::hash2::sha1_160 sha;
 
   boost::hash2::hash_append(sha, {}, name);
-  return boost::hash2::get_integral_result(sha.result());
+  return boost::hash2::get_integral_result< size_t >(sha);
+  // boost::hash2::sha1_160 sha;
+  // sha.update(s.data(), s.size());
+  // return boost::hash2::get_integral_result< size_t >(sha);
 }
 
 size_t alekseev::hasher(const std::pair< str, str > & key)
