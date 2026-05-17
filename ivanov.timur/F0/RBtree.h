@@ -233,6 +233,20 @@ private:
   }
 
 public:
+
+  RBtree() {
+    NIL = new Node(Key(), Value(), false);
+    NIL->left = NIL;
+    NIL->right = NIL;
+    NIL->parent = NIL;
+    root = NIL;
+  }
+  ~RBtree() {
+    clear(root);
+    delete NIL;
+  }
+
+
 };
 
 #endif
