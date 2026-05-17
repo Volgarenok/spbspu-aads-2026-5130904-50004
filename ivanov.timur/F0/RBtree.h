@@ -1,5 +1,6 @@
 #ifndef RBTREE_H
 #define RBTREE_H
+#include <iostream>
 
 template <class Key, class Value>
 class RBtree {
@@ -173,7 +174,7 @@ private:
   void deleteNode(Node *z) {
     Node *y = z;
     Node *x;
-    bool y_original_color = y->is_red;
+    bool y_original_color = y->color;
 
     if (z->left == NIL) {
       x = z->right;
@@ -183,7 +184,7 @@ private:
       transplant(z, z->left);
     } else {
       y = minimum(z->right);
-      y_original_color = y->is_red;
+      y_original_color = y->color;
       x = y->right;
       if (y->parent == z) {
         x->parent = y;
@@ -195,11 +196,27 @@ private:
       transplant(z, y);
       y->left = z->left;
       y->left->parent = y;
-      y->is_red = z->is_red;
+      y->color = z->color;
     }
     if (y_original_color == false)
       deleteFixUp(x);
     delete z;
+  }
+
+  void clear(Node *node) {
+    if (node != NIL) {
+      clear(node->left);
+      clear(node->right);
+      delete node;
+    }
+  }
+  void inorder(Node *node) const {
+    if (node != NIL) {
+      inorder(node->left);
+      std::cout << node->key << " -> " << node->value
+                << (node->color == true ? " (R)" : " (B)") << "\n";
+      inorder(node->right);
+    }
   }
 
 public:
