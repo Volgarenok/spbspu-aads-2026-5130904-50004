@@ -297,6 +297,58 @@ haliullin::BSTConstIterator< Key, Value > haliullin::BSTree< Key, Value, Compare
 }
 
 template< class Key, class Value, class Compare >
+haliullin::BSTConstIterator< Key, Value >
+haliullin::BSTree< Key, Value, Compare >::rotateLargeLeft(const_iterator it)
+{
+  Node* node = it.node_;
+  if (!node || node->isFake())
+  {
+    throw std::logic_error("Invalid iterator");
+  }
+  Node* parent = node->parent_;
+  if (!parent || parent->isFake() || parent->left_ != node)
+  {
+    throw std::logic_error("Cannot rotate large left: node must be left child of right child");
+  }
+  Node* grand = parent->parent_;
+  if (!grand || grand->isFake() || grand->right_ != parent)
+  {
+    throw std::logic_error("Cannot rotate large left: parent must be right child");
+  }
+
+  Node* rightChild = node->right_;
+  rotateRight(const_iterator(parent));
+  rotateLeft(const_iterator(grand));
+  return const_iterator(rightChild);
+}
+
+template< class Key, class Value, class Compare >
+haliullin::BSTConstIterator< Key, Value >
+haliullin::BSTree< Key, Value, Compare >::rotateLargeRight(const_iterator it)
+{
+  Node* node = it.node_;
+  if (!node || node->isFake())
+  {
+    throw std::logic_error("Invalid iterator");
+  }
+  Node* parent = node->parent_;
+  if (!parent || parent->isFake() || parent->right_ != node)
+  {
+    throw std::logic_error("Cannot rotate large right: node must be right child of left child");
+  }
+  Node* grand = parent->parent_;
+  if (!grand || grand->isFake() || grand->left_ != parent)
+  {
+    throw std::logic_error("Cannot rotate large right: parent must be left child");
+  }
+
+  Node* leftChild = node->left_;
+  rotateLeft(const_iterator(parent));
+  rotateRight(const_iterator(grand));
+  return const_iterator(leftChild);
+}
+
+template< class Key, class Value, class Compare >
 haliullin::BSTIterator< Key, Value > haliullin::BSTree< Key, Value, Compare >::find(const Key& k)
 {
   return iterator(findNode(k));
