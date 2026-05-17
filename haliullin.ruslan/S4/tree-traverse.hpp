@@ -19,7 +19,7 @@ namespace haliullin
 }
 
 template< class Key, class Value >
-haliullin::TreeNode< Key, Value > haliullin::fallLeft(TreeNode< Key, Value >* node) noexcept
+haliullin::TreeNode< Key, Value >* haliullin::fallLeft(TreeNode< Key, Value >* node) noexcept
 {
   while (!node->left_->isFake())
   {
@@ -29,7 +29,7 @@ haliullin::TreeNode< Key, Value > haliullin::fallLeft(TreeNode< Key, Value >* no
 }
 
 template< class Key, class Value >
-haliullin::TreeNode< Key, Value > haliullin::fallRight(TreeNode< Key, Value >* node) noexcept
+haliullin::TreeNode< Key, Value >* haliullin::fallRight(TreeNode< Key, Value >* node) noexcept
 {
   while (!node->right_->isFake())
   {
@@ -39,7 +39,7 @@ haliullin::TreeNode< Key, Value > haliullin::fallRight(TreeNode< Key, Value >* n
 }
 
 template< class Key, class Value >
-haliullin::TreeNode< Key, Value > haliullin::next(TreeNode< Key, Value >* node) noexcept
+haliullin::TreeNode< Key, Value >* haliullin::next(TreeNode< Key, Value >* node) noexcept
 {
   if (!node->right_->isFake())
   {
@@ -56,7 +56,7 @@ haliullin::TreeNode< Key, Value > haliullin::next(TreeNode< Key, Value >* node) 
 }
 
 template< class Key, class Value >
-haliullin::TreeNode< Key, Value > haliullin::previous(TreeNode< Key, Value >* node) noexcept
+haliullin::TreeNode< Key, Value >* haliullin::previous(TreeNode< Key, Value >* node) noexcept
 {
   if (!node->left_->isFake())
   {
