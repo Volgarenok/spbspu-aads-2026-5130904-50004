@@ -101,6 +101,11 @@ public:
   }
   void setTotalWords(int n) { totalWords_ = n; }
   void setReconstructable(bool v) { canReconstruct_ = v; }
+
+  int wordFrequency(const std::string& word) const {
+    const std::vector<int>* pos = getPositions(word);
+    return pos ? static_cast<int>(pos->size()) : 0;
+  }
 };
 
 #endif
