@@ -55,7 +55,7 @@ alekseev::Graph::Graph(Graph && rhs) noexcept:
   rhs.vertexes_ = nullptr;
 }
 
-inline alekseev::Graph & alekseev::Graph::operator=(Graph && rhs) noexcept
+alekseev::Graph & alekseev::Graph::operator=(Graph && rhs) noexcept
 {
   swap(rhs);
   return *this;
