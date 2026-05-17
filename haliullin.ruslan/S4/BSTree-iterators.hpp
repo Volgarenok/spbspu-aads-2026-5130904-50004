@@ -6,6 +6,10 @@
 
 namespace haliullin
 {
+
+  template< class Key, class Value >
+  class BSTConstIterator;
+
   template< class Key, class Value >
   class BSTIterator
   {
@@ -31,6 +35,7 @@ namespace haliullin
 
     template< class K, class V, class C >
     friend class BSTree;
+    friend class BSTConstIterator< Key, Value >;
   };
 
   template< class Key, class Value >
@@ -41,6 +46,7 @@ namespace haliullin
 
     ~BSTConstIterator() = default;
     BSTConstIterator(Node* node = nullptr) noexcept;
+    BSTConstIterator(const BSTIterator< Key, Value >& it) noexcept;
 
     const std::pair< const Key, Value >& operator*() const noexcept;
     const std::pair< const Key, Value >* operator->() const noexcept;
@@ -125,6 +131,11 @@ bool haliullin::BSTIterator< Key, Value >::operator!=(const BSTIterator& other) 
 template< class Key, class Value >
 haliullin::BSTConstIterator< Key, Value >::BSTConstIterator(Node* node) noexcept:
   node_(node ? node : &Node::fakeLeaf_)
+{}
+
+template< class Key, class Value >
+haliullin::BSTConstIterator< Key, Value >::BSTConstIterator(const BSTIterator< Key, Value >& it) noexcept:
+  node_(it.node_)
 {}
 
 template< class Key, class Value >
