@@ -46,9 +46,17 @@ int main(int argc, const char** argv)
     }
 
     size_t id = zinoviev::findDict(dictionaries, dictCount, name_dict);
-    if (id == dictCount)
-      zinoviev::addDict(dictionaries, dictCount, name_dict);
 
+    try
+    {
+      if (id == dictCount)
+        zinoviev::addDict(dictionaries, dictCount, name_dict);
+    }
+    catch (...)
+    {
+      std::cout << "<INVALID COMMAND>\n";
+      continue;
+    }
     while (pos < size)
     {
       while (pos < size && line[pos] == ' ')
@@ -81,7 +89,7 @@ int main(int argc, const char** argv)
         ++pos;
       }
 
-      dictionaries[id]->getTree().push(key, val_str);
+      dictionaries[id]->getDictionary().push(key, val_str);
     }
   }
 
@@ -128,7 +136,28 @@ int main(int argc, const char** argv)
         continue;
       }
 
+      size_t id = zinoviev::findDict(dictionaries, dictCount, argument_1);
+      if (id == dictCount)
+      {
+        std::cout << "<INVALID COMMAND>\n";
+        continue;
+      }
 
+      auto& Dictionary = dictionaries[id]->getDictionary();
+      auto it = Dictionary.begin();
+      if (it == Dictionary.end())
+      {
+        std::cout << "<EMPTY>\n";
+      }
+      else
+      {
+        std::cout << argument_1;
+        for (; it != Dictionary.end(); ++it)
+        {
+          std::cout << ' ' << it->first << ' ' << it->second;
+        }
+        std::cout << '\n';
+      }
     }
     else if (command == "complement" || command == "intersect" || command == "union")
     {
@@ -181,11 +210,123 @@ int main(int argc, const char** argv)
         continue;
       }
 
+      if (command == "complement")
+      {
+        size_t id_1 = zinoviev::findDict(dictionaries, dictCount, argument_1);
+        size_t id_2 = zinoviev::findDict(dictionaries, dictCount, argument_2);
+        size_t id_3 = zinoviev::findDict(dictionaries, dictCount, argument_3);
+        if (id_1 != dictCount || id_2 == dictCount || id_3 == dictCount)
+        {
+          std::cout << "<INVALID COMMAND>\n";
+          continue;
+        }
+        try
+        {
+          zinoviev::addDict(dictionaries, dictCount, argument_1);
+        }
+        catch (...)
+        {
+          std::cout << "<INVALID COMMAND>\n";
+          continue;
+        }
+        auto& tree2 = dictionaries[id_2]->getDictionary();
+        auto& tree3 = dictionaries[id_3]->getDictionary();
+        auto& newTree1 = dictionaries[dictCount - 1]->getDictionary();
 
+        auto citer_2 = tree2.cbegin();
+        auto cend_2 = tree2.cend();
+
+        while (citer_2 != cend_2)
+        {
+          if (!tree3.contains(citer_2->first))
+            newTree1.push(citer_2->first, citer_2->second);
+
+          ++citer_2;
+        }
+      }
+      else if (command == "intersect")
+      {
+        size_t id_1 = zinoviev::findDict(dictionaries, dictCount, argument_1);
+        size_t id_2 = zinoviev::findDict(dictionaries, dictCount, argument_2);
+        size_t id_3 = zinoviev::findDict(dictionaries, dictCount, argument_3);
+        if (id_1 != dictCount || id_2 == dictCount || id_3 == dictCount)
+        {
+          std::cout << "<INVALID COMMAND>\n";
+          continue;
+        }
+
+        try
+        {
+          zinoviev::addDict(dictionaries, dictCount, argument_1);
+        }
+        catch (...)
+        {
+          std::cout << "<INVALID COMMAND>\n";
+          continue;
+        }
+
+        auto& tree2 = dictionaries[id_2]->getDictionary();
+        auto& tree3 = dictionaries[id_3]->getDictionary();
+        auto& newTree1 = dictionaries[dictCount - 1]->getDictionary();
+
+        auto citer_2 = tree2.cbegin();
+        auto cend_2 = tree2.cend();
+
+        while (citer_2 != cend_2)
+        {
+          if (tree3.contains(citer_2->first))
+            newTree1.push(citer_2->first, citer_2->second);
+
+          ++citer_2;
+        }
+      }
+      else if (command == "union")
+      {
+        size_t id_1 = zinoviev::findDict(dictionaries, dictCount, argument_1);
+        size_t id_2 = zinoviev::findDict(dictionaries, dictCount, argument_2);
+        size_t id_3 = zinoviev::findDict(dictionaries, dictCount, argument_3);
+        if (id_1 != dictCount || id_2 == dictCount || id_3 == dictCount)
+        {
+          std::cout << "<INVALID COMMAND>\n";
+          continue;
+        }
+
+        try
+        {
+          zinoviev::addDict(dictionaries, dictCount, argument_1);
+        }
+        catch (...)
+        {
+          std::cout << "<INVALID COMMAND>\n";
+          continue;
+        }
+
+        auto& tree2 = dictionaries[id_2]->getDictionary();
+        auto& tree3 = dictionaries[id_3]->getDictionary();
+        auto& newTree1 = dictionaries[dictCount - 1]->getDictionary();
+
+        for (auto it = tree2.cbegin(); it != tree2.cend(); ++it)
+          newTree1.push(it->first, it->second);
+
+        auto citer_3 = tree3.cbegin();
+        auto cend_3 = tree3.cend();
+
+        while (citer_3 != cend_3)
+        {
+          if (!tree2.contains(citer_3->first))
+            newTree1.push(citer_3->first, citer_3->second);
+
+          ++citer_3;
+        }
+      }
     }
     else
     {
       std::cout << "<INVALID COMMAND>\n";
     }
   }
+
+  for (size_t i = 0; i < dictCount; ++i)
+    delete dictionaries[i];
+  delete[] dictionaries;
 }
