@@ -166,6 +166,25 @@ public:
         std::cout << "Text restored from '" << indexName << "' and written to " << filename << "\n";
     }
 
+    void searchWord(const std::string& word, const std::string& indexName) {
+        Index* idx = findIndex(indexName);
+        if (!idx) {
+            std::cerr << "Error: index '" << indexName << "' not found.\n";
+            return;
+        }
+        const std::vector<int>* pos = idx->getPositions(word);
+        if (!pos || pos->empty()) {
+            std::cout << "Word '" << word << "' not found in '" << indexName << "'\n";
+        } else {
+            std::cout << "Word '" << word << "' found at positions: ";
+            for (size_t i = 0; i < pos->size(); ++i) {
+                if (i > 0) std::cout << ", ";
+                std::cout << (*pos)[i] + 1;
+            }
+            std::cout << "\n";
+        }
+    }
+
 };
 
 #endif
