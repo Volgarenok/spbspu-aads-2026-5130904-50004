@@ -2,6 +2,7 @@
 #define BSTREEITER_HPP
 
 #include "treeNode.hpp"
+#include "bsTraverse.hpp"
 
 namespace kuchukbaeva {
 

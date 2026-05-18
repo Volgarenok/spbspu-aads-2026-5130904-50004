@@ -2,6 +2,8 @@
 #define BSTREE_HPP
 
 #include "treeNode.hpp"
+#include "bsTraverse.hpp"
+#include "bsTreeIter.hpp"
 #include <cstddef>
 #include <utility>
 #include <stdexcept>
