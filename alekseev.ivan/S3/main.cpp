@@ -160,14 +160,20 @@ void alekseev::vertexes(Ht_Graphs & graphs, Vector< str > args)
   if (!graphs.contains(args[0])) {
     throw std::invalid_argument("Invalid arguments");
   }
+  Vector< str > vect_names;
   List< str > * names = graphs.at(args[0]).vertexes();
   List< str > * current = names;
-  Vector< str > vect_names;
-  while (current->next != names) {
-    current = current->next;
-    vect_names.pushBack(current->data);
+  try {
+    while (current->next != names) {
+      current = current->next;
+      vect_names.pushBack(current->data);
+    }
+    vect_names.bubbleSort(str_less);
+  } catch (...) {
+    clear(names->next, names);
+    rmfake(names);
+    throw;
   }
-  vect_names.bubbleSort(str_less);
   if (vect_names.isEmpty()) {
     return;
   }
@@ -201,13 +207,12 @@ void alekseev::bounds(Ht_Graphs & graphs, const Vector< str > & args, bool out)
       });
   for (size_t i = 0; i < edges.getSize(); ++i) {
     Vector< size_t > & weights = edges[i].second;
-    std::cout << edges[i].first << " ";
+    std::cout << edges[i].first;
 
     weights.bubbleSort([](size_t a, size_t b) {
       return a < b;
     });
-    std::cout << weights[0];
-    for (size_t j = 1; j < weights.getSize(); ++j) {
+    for (size_t j = 0; j < weights.getSize(); ++j) {
       std::cout << " " << weights[j];
     }
     if (i < edges.getSize() - 1) {
@@ -331,6 +336,8 @@ void alekseev::extract(Ht_Graphs & graphs, Vector< str > args)
       rmfake(vertexes);
       throw;
     }
+    clear(vertexes->next, vertexes);
+    rmfake(vertexes);
   }
   graphs.insert(args[0], graph);
 }

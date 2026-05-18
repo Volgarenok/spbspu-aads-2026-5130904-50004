@@ -301,13 +301,16 @@ void alekseev::Vector< T >::erase(size_t begin, size_t end)
 template< class T >
 void alekseev::Vector< T >::bubbleSort(bool (* less)(T, T))
 {
-  bool is_changed = false;
-  Vector< T > temp(*this);
-  while (!is_changed) {
-    is_changed = false;
+  if (size_ <= 1) {
+    return;
+  }
+  bool swapped = true;
+  Vector< T > temp = *this;
+  while (swapped) {
+    swapped = false;
     for (size_t i = 0; i < getSize() - 1; ++i) {
       if (less(temp[i + 1], temp[i])) {
-        is_changed = true;
+        swapped = true;
         T t = temp[i];
         temp[i] = temp[i + 1];
         temp[i + 1] = t;
