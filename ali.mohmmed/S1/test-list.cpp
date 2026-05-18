@@ -1,5 +1,4 @@
-#define BOOST_TEST_MODULE TestList
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include "list.hpp"
 
 BOOST_AUTO_TEST_CASE(iterator_test)
@@ -20,6 +19,7 @@ BOOST_AUTO_TEST_CASE(iterator_test)
   ++it;
   BOOST_TEST(*it == 3);
 }
+
 BOOST_AUTO_TEST_CASE(copy_test)
 {
   ali::List< int > list;
@@ -30,9 +30,11 @@ BOOST_AUTO_TEST_CASE(copy_test)
 
   auto it = copy.begin();
   BOOST_TEST(*it == 1);
+
   ++it;
   BOOST_TEST(*it == 2);
 }
+
 BOOST_AUTO_TEST_CASE(size_test)
 {
   ali::List< int > list;
