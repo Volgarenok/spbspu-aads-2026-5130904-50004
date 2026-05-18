@@ -167,7 +167,6 @@ void alekseev::vertexes(Ht_Graphs & graphs, Vector< str > args)
       current = current->next;
       vect_names.pushBack(current->data);
     }
-    vect_names.bubbleSort(str_less);
   } catch (...) {
     clear(names->next, names);
     rmfake(names);
@@ -176,8 +175,10 @@ void alekseev::vertexes(Ht_Graphs & graphs, Vector< str > args)
   clear(names->next, names);
   rmfake(names);
   if (vect_names.isEmpty()) {
+    std::cout << "\n";
     return;
   }
+  vect_names.bubbleSort(str_less);
   for (size_t i = 0; i < vect_names.getSize(); ++i) {
     std::cout << vect_names[i] << "\n";
   }
@@ -215,6 +216,9 @@ void alekseev::bounds(Ht_Graphs & graphs, const Vector< str > & args, bool out)
     for (size_t j = 0; j < weights.getSize(); ++j) {
       std::cout << " " << weights[j];
     }
+    std::cout << "\n";
+  }
+  if (edges.isEmpty()) {
     std::cout << "\n";
   }
 }
