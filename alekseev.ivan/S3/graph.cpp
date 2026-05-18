@@ -221,28 +221,34 @@ alekseev::Graph alekseev::merge_graphs(const Graph & graph1, const Graph & graph
   Graph merged = graph1;
   List< str > * vertexes2 = graph2.vertexes();
   List< str > * current2 = vertexes2->next;
-  while (current2 != vertexes2) {
-    merged.ins_vertex(current2->data);
-    current2 = current2->next;
-  }
-  current2 = vertexes2->next;
-  while (current2 != vertexes2) {
-    merged.ins_vertex(current2->data);
-    Vector< std::pair< str, Vector< size_t > > > inbounds = graph2.inbounds(current2->data);
-    for (size_t i = 0; i < inbounds.getSize(); ++i) {
-      Vector< size_t > weights = inbounds[i].second;
-      for (size_t j = 0; j < weights.getSize(); ++j) {
-        merged.add_edge(inbounds[i].first, current2->data, weights[j]);
-      }
+  try {
+    while (current2 != vertexes2) {
+      merged.ins_vertex(current2->data);
+      current2 = current2->next;
     }
-    Vector< std::pair< str, Vector< size_t > > > outbounds = graph2.outbounds(current2->data);
-    for (size_t i = 0; i < outbounds.getSize(); ++i) {
-      Vector< size_t > weights = outbounds[i].second;
-      for (size_t j = 0; j < weights.getSize(); ++j) {
-        merged.add_edge(current2->data, outbounds[i].first, weights[j]);
+
+    current2 = vertexes2->next;
+    while (current2 != vertexes2) {
+      Vector< std::pair< str, Vector< size_t > > > inbounds = graph2.inbounds(current2->data);
+      for (size_t i = 0; i < inbounds.getSize(); ++i) {
+        Vector< size_t > weights = inbounds[i].second;
+        for (size_t j = 0; j < weights.getSize(); ++j) {
+          merged.add_edge(inbounds[i].first, current2->data, weights[j]);
+        }
       }
+      Vector< std::pair< str, Vector< size_t > > > outbounds = graph2.outbounds(current2->data);
+      for (size_t i = 0; i < outbounds.getSize(); ++i) {
+        Vector< size_t > weights = outbounds[i].second;
+        for (size_t j = 0; j < weights.getSize(); ++j) {
+          merged.add_edge(current2->data, outbounds[i].first, weights[j]);
+        }
+      }
+      current2 = current2->next;
     }
-    current2 = current2->next;
+  } catch (...) {
+    clear(vertexes2->next, vertexes2);
+    rmfake(vertexes2);
+    throw;
   }
   clear(vertexes2->next, vertexes2);
   rmfake(vertexes2);
