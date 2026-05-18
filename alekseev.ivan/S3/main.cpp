@@ -142,6 +142,7 @@ void alekseev::graphs(Ht_Graphs & graphs, Vector< str >)
 {
   Vector< str > names = graphs.keys();
   if (names.isEmpty()) {
+    std::cout << "\n";
     return;
   }
   names.bubbleSort(str_less);
@@ -177,7 +178,7 @@ void alekseev::vertexes(Ht_Graphs & graphs, Vector< str > args)
   if (vect_names.isEmpty()) {
     return;
   }
-  for (size_t i = 1; i < vect_names.getSize(); ++i) {
+  for (size_t i = 0; i < vect_names.getSize(); ++i) {
     std::cout << vect_names[i] << "\n";
   }
 }
