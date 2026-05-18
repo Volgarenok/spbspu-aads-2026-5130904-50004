@@ -464,8 +464,8 @@ void kuchukbaeva::BSTree< Key, Value, Compare >::removeNode(Node* node) {
         node->parent_->right_ = succ;
       }
     }
-
     delete node;
+  }
 }
 
 template< class Key, class Value, class Compare >
