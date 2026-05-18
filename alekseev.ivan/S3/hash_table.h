@@ -194,7 +194,6 @@ namespace alekseev {
   template< class Key, class Value, class Hash, class Equal >
   bool HashTable< Key, Value, Hash, Equal >::contains(const Key & key) const
   {
- // return const_cast< T & >((*static_cast< const Vector< T > * >(this))[id]);
     return (*static_cast< const HashTable * >(this)).find_previous_node(key) != nullptr;
   }
 

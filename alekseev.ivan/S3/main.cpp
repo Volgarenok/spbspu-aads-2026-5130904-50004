@@ -79,10 +79,13 @@ alekseev::Ht_Graphs alekseev::input_graphs(std::ifstream & input)
   Ht_Graphs ht(str_hasher, [](str s1, str s2) {
     return s1 == s2;
   }, 128);
+
   std::string line;
   size_t number = 0;
   std::string name;
   Graph current;
+  bool has_graph = false;
+
   while (std::getline(input, line)) {
     if (line.empty()) {
       continue;
@@ -93,17 +96,24 @@ alekseev::Ht_Graphs alekseev::input_graphs(std::ifstream & input)
       current.ins_vertex(words[0]);
       current.ins_vertex(words[1]);
       current.add_edge(words[0], words[1], std::stoull(words[2]));
-    } else if (words.getSize() == 2 && number == 0) {
-      if (!name.empty()) {
+      if (number == 0) {
         ht.insert(name, current);
         current = Graph();
+        has_graph = false;
       }
+    } else if (words.getSize() == 2 && number == 0 && !has_graph) {
       name = words[0];
       number = stoull(words[1]);
+      has_graph = true;
+      if (number == 0) {
+        ht.insert(name, current);
+        has_graph = false;
+      }
     } else {
       throw std::invalid_argument("invalid input");
     }
   }
+  ht.insert(name, current);
   return ht;
 }
 
@@ -128,6 +138,10 @@ alekseev::Vector< std::string > alekseev::split(const str & s, char delim)
 void alekseev::graphs(Ht_Graphs & graphs, Vector< str >)
 {
   Vector< str > names = graphs.keys();
+  if (names.isEmpty()) {
+    std::cout << "\n";
+    return;
+  }
   names.bubbleSort(str_less);
 
   std::cout << names[0];
@@ -191,7 +205,7 @@ void alekseev::bounds(Ht_Graphs & graphs, const Vector< str > & args, bool out)
       return a < b;
     });
     std::cout << weights[0];
-    for (size_t j = 1; j < weights.getSize(); ++i) {
+    for (size_t j = 1; j < weights.getSize(); ++j) {
       std::cout << " " << weights[j];
     }
     if (i < edges.getSize() - 1) {
