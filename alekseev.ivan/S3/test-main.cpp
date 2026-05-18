@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE (rehash_works)
   ht.insert("apple", 100);
   ht.insert("banana", 200);
   ht.insert("cherry", 300);
-  ht.rehash();
+  ht.rehash(10);
 
   BOOST_CHECK(ht.contains("apple"));
   BOOST_CHECK(ht.contains("banana"));
