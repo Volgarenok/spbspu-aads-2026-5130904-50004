@@ -172,6 +172,7 @@ Value kuchukbaeva::BSTree< Key, Value, Compare >::drop(const Key& k) {
 
   Value dropped = node->data_.second;
   removeNode(node);
+  --size_;
   return dropped;
 }
 
