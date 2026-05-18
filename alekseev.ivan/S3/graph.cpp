@@ -231,17 +231,7 @@ alekseev::Graph alekseev::merge_graphs(const Graph & graph1, const Graph & graph
     while (current2 != vertexes2) {
       Vector< std::pair< str, Vector< size_t > > > inbounds = graph2.inbounds(current2->data);
       for (size_t i = 0; i < inbounds.getSize(); ++i) {
-        Vector< size_t > weights = inbounds[i].second;
-        for (size_t j = 0; j < weights.getSize(); ++j) {
-          merged.add_edge(inbounds[i].first, current2->data, weights[j]);
-        }
-      }
-      Vector< std::pair< str, Vector< size_t > > > outbounds = graph2.outbounds(current2->data);
-      for (size_t i = 0; i < outbounds.getSize(); ++i) {
-        Vector< size_t > weights = outbounds[i].second;
-        for (size_t j = 0; j < weights.getSize(); ++j) {
-          merged.add_edge(current2->data, outbounds[i].first, weights[j]);
-        }
+        merged.add_edges(inbounds[i].first, current_vertex->data, inbounds[i].second);
       }
       current2 = current2->next;
     }
@@ -273,12 +263,6 @@ alekseev::Graph alekseev::extract_graph(const Graph & source, const List< str > 
     for (size_t i = 0; i < inbounds.getSize(); ++i) {
       if (extracted.has_vertex(inbounds[i].first)) {
         extracted.add_edges(inbounds[i].first, current_vertex->data, inbounds[i].second);
-      }
-    }
-    Vector< std::pair< str, Vector< size_t > > > outbounds = source.outbounds(current_vertex->data);
-    for (size_t i = 0; i < outbounds.getSize(); ++i) {
-      if (extracted.has_vertex(outbounds[i].first)) {
-        extracted.add_edges(current_vertex->data, outbounds[i].first, outbounds[i].second);
       }
     }
     current_vertex = current_vertex->next;
