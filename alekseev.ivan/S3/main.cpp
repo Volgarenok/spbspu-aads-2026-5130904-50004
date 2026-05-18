@@ -113,7 +113,6 @@ alekseev::Ht_Graphs alekseev::input_graphs(std::ifstream & input)
       throw std::invalid_argument("invalid input");
     }
   }
-  ht.insert(name, current);
   return ht;
 }
 
@@ -129,7 +128,9 @@ alekseev::Vector< std::string > alekseev::split(const str & s, char delim)
   size_t i = 0;
   for (; i < s.size(); ++i) {
     if (s[i] == delim) {
-      res.pushBack(s.substr(start, i - start));
+      if (i > start) {
+        res.pushBack(s.substr(start, i - start));
+      }
       start = i + 1;
     }
   }
