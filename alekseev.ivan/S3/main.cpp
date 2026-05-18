@@ -126,12 +126,14 @@ alekseev::Vector< std::string > alekseev::split(const str & s, char delim)
 {
   size_t start = 0;
   Vector< str > res;
-  for (size_t i = 0; i < s.size(); ++i) {
+  size_t i = 0;
+  for (; i < s.size(); ++i) {
     if (s[i] == delim) {
       res.pushBack(s.substr(start, i - start));
       start = i + 1;
     }
   }
+  res.pushBack(s.substr(start, i - start));
   return res;
 }
 
@@ -139,7 +141,6 @@ void alekseev::graphs(Ht_Graphs & graphs, Vector< str >)
 {
   Vector< str > names = graphs.keys();
   if (names.isEmpty()) {
-    std::cout << "\n";
     return;
   }
   names.bubbleSort(str_less);

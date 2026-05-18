@@ -206,6 +206,7 @@ namespace alekseev {
         List< Pair > * current = slots_[i]->next;
         while (current != slots_[i]) {
           res.pushBack(current->data.first);
+          current = current->next;
         }
       }
     }
