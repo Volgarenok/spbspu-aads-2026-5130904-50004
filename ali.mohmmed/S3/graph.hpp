@@ -1,76 +1,131 @@
 #ifndef GRAPH_HPP
 #define GRAPH_HPP
 
+#include <iostream>
 #include <string>
-#include <functional>
-#include "../S1/list.hpp"
-#include "hash-table.hpp"
-#include "siphash.hpp"
+#include "list.hpp"
 
 namespace ali
 {
-  struct EdgeKey
+  struct Edge
   {
     std::string from;
     std::string to;
+    unsigned int weight;
 
-    EdgeKey():
+    Edge():
       from(),
-      to()
+      to(),
+      weight(0)
     {}
 
-    EdgeKey(const std::string & f, const std::string & t):
+    Edge(const std::string & f, const std::string & t, unsigned int w):
       from(f),
-      to(t)
+      to(t),
+      weight(w)
     {}
-  };
-
-  struct EdgeEqual
-  {
-    bool operator()(const EdgeKey & left, const EdgeKey & right) const
-    {
-      return left.from == right.from && left.to == right.to;
-    }
-  };
-
-  struct EdgeHash
-  {
-    std::size_t operator()(const EdgeKey & key) const
-    {
-      SipHash hash;
-      return hash(key.from) ^ (hash(key.to) << 1);
-    }
   };
 
   class Graph
   {
   private:
-    HashTable< EdgeKey, List< unsigned int >, EdgeHash, EdgeEqual > edges_;
+    List< std::string > vertexes_;
+    List< Edge > edges_;
+
+    bool has_vertex(const std::string & name)
+    {
+      for (auto it = vertexes_.begin(); it != vertexes_.end(); ++it)
+      {
+        if (*it == name)
+        {
+          return true;
+        }
+      }
+
+      return false;
+    }
 
   public:
-    Graph():
-      edges_(211)
-    {}
-
-    void bind(const std::string & from, const std::string & to, unsigned int weight)
+    void add_vertex(const std::string & name)
     {
-      EdgeKey key(from, to);
-
-      if (!edges_.has(key))
+      if (!has_vertex(name))
       {
-        List< unsigned int > weights;
-        weights.push_back(weight);
-        edges_.add(key, weights);
-      }
-      else
-      {
-        edges_.get(key).push_back(weight);
+        vertexes_.push_back(name);
       }
     }
 
-    bool has_edge(const std::string & from, const std::string & to)
+    void bind(const std::string & from, const std::string & to, unsigned int weight)
     {
-      return edges_.has(EdgeKey(from, to));
+      add_vertex(from);
+      add_vertex(to);
+
+      edges_.push_back(Edge(from, to, weight));
+    }
+
+    bool cut(const std::string & from, const std::string & to, unsigned int weight)
+    {
+      List< Edge > newEdges;
+      bool removed = false;
+
+      for (auto it = edges_.begin(); it != edges_.end(); ++it)
+      {
+        if (!removed &&
+            (*it).from == from &&
+            (*it).to == to &&
+            (*it).weight == weight)
+        {
+          removed = true;
+        }
+        else
+        {
+          newEdges.push_back(*it);
+        }
+      }
+
+      edges_ = newEdges;
+
+      return removed;
+    }
+
+    void merge(Graph & other)
+    {
+      for (auto it = other.vertexes_.begin(); it != other.vertexes_.end(); ++it)
+      {
+        add_vertex(*it);
+      }
+
+      for (auto it = other.edges_.begin(); it != other.edges_.end(); ++it)
+      {
+        bind((*it).from, (*it).to, (*it).weight);
+      }
+    }
+
+    Graph extract(const std::string & vertex)
+    {
+      Graph result;
+
+      for (auto it = edges_.begin(); it != edges_.end(); ++it)
+      {
+        if ((*it).from == vertex || (*it).to == vertex)
+        {
+          result.bind((*it).from, (*it).to, (*it).weight);
+        }
+      }
+
+      return result;
+    }
+
+    bool has(const std::string & name)
+    {
+      return has_vertex(name);
+    }
+
+    void print_vertexes()
+    {
+      for (auto it = vertexes_.begin(); it != vertexes_.end(); ++it)
+      {
+        std::cout << *it << '\n';
+      }
     }
   };
 }

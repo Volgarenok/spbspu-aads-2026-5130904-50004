@@ -37,6 +37,53 @@ namespace ali
     Equal equal_;
 
   public:
+    class Iterator
+    {
+    private:
+      Slot * data_;
+      std::size_t capacity_;
+      std::size_t index_;
+
+      void skip_empty()
+      {
+        while (index_ < capacity_ && data_[index_].state != BUSY)
+        {
+          ++index_;
+        }
+      }
+
+    public:
+      Iterator(Slot * data, std::size_t capacity, std::size_t index):
+        data_(data),
+        capacity_(capacity),
+        index_(index)
+      {
+        skip_empty();
+      }
+
+      Iterator & operator++()
+      {
+        ++index_;
+        skip_empty();
+        return *this;
+      }
+
+      bool operator!=(const Iterator & other) const
+      {
+        return index_ != other.index_;
+      }
+
+      Key & key()
+      {
+        return data_[index_].key;
+      }
+
+      Value & value()
+      {
+        return data_[index_].value;
+      }
+    };
+
     HashTable(std::size_t capacity = 101):
       data_(new Slot[capacity]),
       capacity_(capacity),
@@ -48,6 +95,16 @@ namespace ali
     ~HashTable()
     {
       delete[] data_;
+    }
+
+    Iterator begin()
+    {
+      return Iterator(data_, capacity_, 0);
+    }
+
+    Iterator end()
+    {
+      return Iterator(data_, capacity_, capacity_);
     }
 
     bool has(const Key & key) const
