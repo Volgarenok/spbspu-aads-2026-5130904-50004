@@ -62,7 +62,7 @@ int main(int argc, char * argv[])
       alekseev::Vector< std::string > words = alekseev::split(command, ' ');
       exec(graphs, words);
     } catch (std::invalid_argument & e) {
-      std::cerr << "<INVALID COMMAND>" << "\n";
+      std::cout << "<INVALID COMMAND>" << "\n";
     } catch (std::exception & e) {
       std::cerr << e.what() << "\n";
       return 1;
@@ -177,9 +177,8 @@ void alekseev::vertexes(Ht_Graphs & graphs, Vector< str > args)
   if (vect_names.isEmpty()) {
     return;
   }
-  std::cout << vect_names[0];
   for (size_t i = 1; i < vect_names.getSize(); ++i) {
-    std::cout << "\n" << vect_names[i];
+    std::cout << vect_names[i] << "\n";
   }
 }
 
