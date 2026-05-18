@@ -1,18 +1,39 @@
 #define BOOST_TEST_MODULE S3
 #include <boost/test/included/unit_test.hpp>
 #include <stdexcept>
+#include "graph.h"
 #include "hash_table.h"
 
 using namespace alekseev;
+
+size_t test_str_hasher(const str & name)
+{
+  return str_hasher(name);
+}
+
+bool test_str_equal(const str & a, const str & b)
+{
+  return a == b;
+}
+
+bool test_pair_equal(const std::pair< str, str > & lhs,
+    const std::pair< str, str > & rhs)
+{
+  return lhs.first == rhs.first && lhs.second == rhs.second;
+}
+
+size_t test_pair_hasher(const std::pair< str, str > & key)
+{
+  return hasher(key);
+}
 
 BOOST_AUTO_TEST_SUITE (HashTableTests)
 
 BOOST_AUTO_TEST_CASE (insert_and_contains)
 {
-  HashTable< str, int, size_t(*)(const str &), bool(*)(const str &, const str &) >
-  ht(
-      test_str_hasher, test_str_equal, 4
-      );
+  HashTable< str, int, size_t(*)(const str &), bool(*)(const str &,
+          const str &) >
+      ht(test_str_hasher, test_str_equal, 4);
 
   ht.insert("one", 1);
   ht.insert("two", 2);
@@ -24,10 +45,9 @@ BOOST_AUTO_TEST_CASE (insert_and_contains)
 
 BOOST_AUTO_TEST_CASE (at_throws_if_not_found)
 {
-  HashTable< str, int, size_t(*)(const str &), bool(*)(const str &, const str &) >
-  ht(
-      test_str_hasher, test_str_equal, 4
-      );
+  HashTable< str, int, size_t(*)(const str &), bool(*)(const str &,
+          const str &) >
+      ht(test_str_hasher, test_str_equal, 4);
 
   ht.insert("key", 42);
 
@@ -37,10 +57,9 @@ BOOST_AUTO_TEST_CASE (at_throws_if_not_found)
 
 BOOST_AUTO_TEST_CASE (remove_existing_key)
 {
-  HashTable< str, int, size_t(*)(const str &), bool(*)(const str &, const str &) >
-  ht(
-      test_str_hasher, test_str_equal, 4
-      );
+  HashTable< str, int, size_t(*)(const str &), bool(*)(const str &,
+          const str &) >
+      ht(test_str_hasher, test_str_equal, 4);
 
   ht.insert("a", 1);
   ht.insert("b", 2);
@@ -54,10 +73,9 @@ BOOST_AUTO_TEST_CASE (remove_existing_key)
 
 BOOST_AUTO_TEST_CASE (clear_removes_all)
 {
-  HashTable< str, int, size_t(*)(const str &), bool(*)(const str &, const str &) >
-  ht(
-      test_str_hasher, test_str_equal, 4
-      );
+  HashTable< str, int, size_t(*)(const str &), bool(*)(const str &,
+          const str &) >
+      ht(test_str_hasher, test_str_equal, 4);
 
   ht.insert("x", 10);
   ht.insert("y", 20);
@@ -70,14 +88,14 @@ BOOST_AUTO_TEST_CASE (clear_removes_all)
 
 BOOST_AUTO_TEST_CASE (rehash_works)
 {
-  HashTable< str, int, size_t(*)(const str &), bool(*)(const str &, const str &) >
-  ht(
-      test_str_hasher, test_str_equal, 2
-      );
+  HashTable< str, int, size_t(*)(const str &), bool(*)(const str &,
+          const str &) >
+      ht(test_str_hasher, test_str_equal, 2);
 
   ht.insert("apple", 100);
   ht.insert("banana", 200);
-  ht.insert("cherry", 300); // вызовет rehash
+  ht.insert("cherry", 300);
+  ht.rehash();
 
   BOOST_CHECK(ht.contains("apple"));
   BOOST_CHECK(ht.contains("banana"));
@@ -87,10 +105,9 @@ BOOST_AUTO_TEST_CASE (rehash_works)
 
 BOOST_AUTO_TEST_CASE (keys_returns_all_keys)
 {
-  HashTable< str, int, size_t(*)(const str &), bool(*)(const str &, const str &) >
-  ht(
-      test_str_hasher, test_str_equal, 4
-      );
+  HashTable< str, int, size_t(*)(const str &), bool(*)(const str &,
+          const str &) >
+      ht(test_str_hasher, test_str_equal, 4);
 
   ht.insert("first", 1);
   ht.insert("second", 2);
