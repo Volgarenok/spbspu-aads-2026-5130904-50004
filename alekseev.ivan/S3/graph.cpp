@@ -231,7 +231,7 @@ alekseev::Graph alekseev::merge_graphs(const Graph & graph1, const Graph & graph
     while (current2 != vertexes2) {
       Vector< std::pair< str, Vector< size_t > > > inbounds = graph2.inbounds(current2->data);
       for (size_t i = 0; i < inbounds.getSize(); ++i) {
-        merged.add_edges(inbounds[i].first, current_vertex->data, inbounds[i].second);
+        merged.add_edges(inbounds[i].first, current2->data, inbounds[i].second);
       }
       current2 = current2->next;
     }
