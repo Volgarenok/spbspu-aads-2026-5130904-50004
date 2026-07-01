@@ -155,16 +155,16 @@ void HashTable::clear() {
 
 void HashTable::show() const {
     if (currentSize == 0) {
-        std::cout << "Dictionary is empty." << std::endl;
+        std::cout << "Dictionary is empty." << '\n';
         return;
     }
 
-    std::cout << "Word\tFrequency" << std::endl;
-    std::cout << "------------------------" << std::endl;
+    std::cout << "Word\tFrequency" << '\n';
+    std::cout << "------------------------" << '\n';
 
     for (const Entry& entry : table) {
         if (entry.state == OCCUPIED) {
-            std::cout << entry.word << "\t" << entry.frequency << std::endl;
+            std::cout << entry.word << "\t" << entry.frequency << '\n';
         }
     }
 }

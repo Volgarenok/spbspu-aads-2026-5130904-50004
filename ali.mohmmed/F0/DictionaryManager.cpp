@@ -73,11 +73,11 @@ void DictionaryManager::showDictionary(const std::string& dictionaryName) const 
     int index = findDictionaryIndex(dictionaryName);
 
     if (index == -1) {
-        std::cout << "Dictionary not found." << std::endl;
+        std::cout << "Dictionary not found." << '\n';
         return;
     }
 
-    std::cout << "Dictionary: " << dictionaries[index].name << std::endl;
+    std::cout << "Dictionary: " << dictionaries[index].name << '\n';
     dictionaries[index].table.show();
 }
 
@@ -85,16 +85,16 @@ void DictionaryManager::showTopWord(const std::string& dictionaryName) const {
     int index = findDictionaryIndex(dictionaryName);
 
     if (index == -1) {
-        std::cout << "Dictionary not found." << std::endl;
+        std::cout << "Dictionary not found." << '\n';
         return;
     }
 
     std::pair<std::string, int> top = dictionaries[index].table.topWord();
 
     if (top.second == 0) {
-        std::cout << "Dictionary is empty." << std::endl;
+        std::cout << "Dictionary is empty." << '\n';
     } else {
-        std::cout << top.first << " -> " << top.second << std::endl;
+        std::cout << top.first << " -> " << top.second << '\n';
     }
 }
 
@@ -105,13 +105,13 @@ void DictionaryManager::clearDictionary(const std::string& dictionaryName) {
 
 void DictionaryManager::showDictionaries() const {
     if (dictionaries.empty()) {
-        std::cout << "No dictionaries." << std::endl;
+        std::cout << "No dictionaries." << '\n';
         return;
     }
 
-    std::cout << "Dictionaries:" << std::endl;
+    std::cout << "Dictionaries:" << '\n';
     for (const Dictionary& dictionary : dictionaries) {
-        std::cout << dictionary.name << " (" << dictionary.table.size() << " unique words)" << std::endl;
+        std::cout << dictionary.name << " (" << dictionary.table.size() << " unique words)" << '\n';
     }
 }
 
