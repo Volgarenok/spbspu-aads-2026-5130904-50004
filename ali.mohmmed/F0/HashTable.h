@@ -1,9 +1,11 @@
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
 
+#include "HashTable.h"
+#include <ostream>
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
 class HashTable {
 private:
@@ -39,7 +41,7 @@ public:
     bool contains(const std::string& word) const;
 
     void clear();
-    void show() const;
+    void show(std::ostream& out) const;
     std::pair<std::string, int> topWord() const;
 
     int size() const;

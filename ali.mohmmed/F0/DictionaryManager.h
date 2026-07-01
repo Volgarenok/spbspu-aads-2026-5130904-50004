@@ -2,6 +2,7 @@
 #define DICTIONARYMANAGER_H
 
 #include "HashTable.h"
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -30,10 +31,10 @@ public:
     bool searchWord(const std::string& dictionaryName, const std::string& word, int& frequency) const;
     bool loadFromFile(const std::string& dictionaryName, const std::string& fileName, int& loadedWords);
 
-    void showDictionary(const std::string& dictionaryName) const;
-    void showTopWord(const std::string& dictionaryName) const;
+    void showDictionary(const std::string& dictionaryName, std::ostream& out) const;
+    void showTopWord(const std::string& dictionaryName, std::ostream& out) const;
     void clearDictionary(const std::string& dictionaryName);
-    void showDictionaries() const;
+    void showDictionaries(std::ostream& out) const;
 
     int count() const;
 };

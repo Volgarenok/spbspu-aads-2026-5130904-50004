@@ -1,6 +1,5 @@
 #include "DictionaryManager.h"
 #include "TextProcessor.h"
-#include <iostream>
 
 DictionaryManager::DictionaryManager() {}
 
@@ -69,32 +68,32 @@ bool DictionaryManager::loadFromFile(const std::string& dictionaryName, const st
     return true;
 }
 
-void DictionaryManager::showDictionary(const std::string& dictionaryName) const {
+void DictionaryManager::showDictionary(const std::string& dictionaryName, std::ostream& out) const {
     int index = findDictionaryIndex(dictionaryName);
 
     if (index == -1) {
-        std::cout << "Dictionary not found." << '\n';
+        out << "Dictionary not found.\n";
         return;
     }
 
-    std::cout << "Dictionary: " << dictionaries[index].name << '\n';
-    dictionaries[index].table.show();
+    out << "Dictionary: " << dictionaries[index].name << '\n';
+    dictionaries[index].table.show(out);
 }
 
-void DictionaryManager::showTopWord(const std::string& dictionaryName) const {
+void DictionaryManager::showTopWord(const std::string& dictionaryName, std::ostream& out) const {
     int index = findDictionaryIndex(dictionaryName);
 
     if (index == -1) {
-        std::cout << "Dictionary not found." << '\n';
+        out << "Dictionary not found.\n";
         return;
     }
 
     std::pair<std::string, int> top = dictionaries[index].table.topWord();
 
     if (top.second == 0) {
-        std::cout << "Dictionary is empty." << '\n';
+        out << "Dictionary is empty.\n";
     } else {
-        std::cout << top.first << " -> " << top.second << '\n';
+        out << top.first << " -> " << top.second << '\n';
     }
 }
 
@@ -103,15 +102,15 @@ void DictionaryManager::clearDictionary(const std::string& dictionaryName) {
     if (index != -1) dictionaries[index].table.clear();
 }
 
-void DictionaryManager::showDictionaries() const {
+void DictionaryManager::showDictionaries(std::ostream& out) const {
     if (dictionaries.empty()) {
-        std::cout << "No dictionaries." << '\n';
+        out << "No dictionaries.\n";
         return;
     }
 
-    std::cout << "Dictionaries:" << '\n';
+    out << "Dictionaries:\n";
     for (const Dictionary& dictionary : dictionaries) {
-        std::cout << dictionary.name << " (" << dictionary.table.size() << " unique words)" << '\n';
+        out << dictionary.name << " (" << dictionary.table.size() << " unique words)\n";
     }
 }
 

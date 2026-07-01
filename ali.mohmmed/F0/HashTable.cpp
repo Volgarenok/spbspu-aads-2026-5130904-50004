@@ -1,5 +1,4 @@
 #include "HashTable.h"
-#include <iostream>
 
 HashTable::HashTable(int size) {
     tableSize = nextPrime(size);
@@ -15,6 +14,7 @@ bool HashTable::isPrime(int number) const {
     for (int i = 5; i * i <= number; i += 6) {
         if (number % i == 0 || number % (i + 2) == 0) return false;
     }
+
     return true;
 }
 
@@ -153,18 +153,18 @@ void HashTable::clear() {
     currentSize = 0;
 }
 
-void HashTable::show() const {
+void HashTable::show(std::ostream& out) const {
     if (currentSize == 0) {
-        std::cout << "Dictionary is empty." << '\n';
+        out << "Dictionary is empty.\n";
         return;
     }
 
-    std::cout << "Word\tFrequency" << '\n';
-    std::cout << "------------------------" << '\n';
+    out << "Word\tFrequency\n";
+    out << "------------------------\n";
 
     for (const Entry& entry : table) {
         if (entry.state == OCCUPIED) {
-            std::cout << entry.word << "\t" << entry.frequency << '\n';
+            out << entry.word << '\t' << entry.frequency << '\n';
         }
     }
 }
