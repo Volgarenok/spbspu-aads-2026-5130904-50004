@@ -140,3 +140,84 @@ void cmd_find_perk(PerkHashTable *perks, const char *name) {
         printf("<PERK NOT FOUND>\n");
     }
 }
+
+// ========== BUILD COMMANDS ==========
+
+void cmd_make_build(PerkHashTable *perks, BuildHashTable *builds, 
+                    const char *b_name, char *p1, char *p2, char *p3, char *p4) {
+    if (!b_name || !p1 || !p2 || !p3 || !p4) {
+        printf("<INVALID: NEED BUILD NAME AND 4 PERKS>\n");
+        return;
+    }
+
+    char *perks_arr[4] = {p1, p2, p3, p4};
+
+    // Check all perks exist and no duplicates
+    for (int i = 0; i < 4; i++) {
+        Perk temp;
+        if (!perk_find(perks, perks_arr[i], &temp)) {
+            printf("<INVALID: PERK '%s' NOT FOUND>\n", perks_arr[i]);
+            return;
+        }
+
+        // Check duplicates
+        for (int j = i + 1; j < 4; j++) {
+            if (strcmp(perks_arr[i], perks_arr[j]) == 0) {
+                printf("<INVALID: DUPLICATE PERK '%s'>\n", perks_arr[i]);
+                return;
+            }
+        }
+    }
+
+    // Create build
+    Build b;
+    strcpy(b.name, b_name);
+    b.perk_count = 4;
+    b.total_weight = 0;
+    b.total_power = 0;
+
+    for (int i = 0; i < 4; i++) {
+        strcpy(b.perk_names[i], perks_arr[i]);
+        Perk p;
+        perk_find(perks, perks_arr[i], &p);
+        b.total_weight += p.weight;
+        b.total_power += p.power;
+    }
+
+    if (b.total_weight > MAX_WEIGHT_LIMIT) {
+        printf("<INVALID: TOTAL WEIGHT %d EXCEEDS LIMIT %d>\n",
+               b.total_weight, MAX_WEIGHT_LIMIT);
+        return;
+    }
+
+    if (build_insert(builds, b_name, b)) {
+        printf("<BUILD CREATED: %s>\n", b_name);
+        printf("  Total Weight: %d\n", b.total_weight);
+        printf("  Total Power: %d\n", b.total_power);
+    } else {
+        printf("<BUILD ALREADY EXISTS>\n");
+    }
+}
+
+void cmd_show_build(PerkHashTable *perks, BuildHashTable *builds, const char *b_name) {
+    if (!b_name) {
+        printf("<INVALID: MISSING BUILD NAME>\n");
+        return;
+    }
+
+    Build b;
+    if (!build_find(builds, b_name, &b)) {
+        printf("<BUILD NOT FOUND>\n");
+        return;
+    }
+
+    printf("<BUILD: %s>\n", b.name);
+    for (int i = 0; i < b.perk_count; i++) {
+        Perk p;
+        if (perk_find(perks, b.perk_names[i], &p)) {
+            printf("  %d. %s (w=%d, p=%d, tag=%s)\n",
+                   i+1, p.name, p.weight, p.power, p.tag);
+        }
+    }
+    printf("  TOTAL: weight=%d, power=%d\n", b.total_weight, b.total_power);
+}
