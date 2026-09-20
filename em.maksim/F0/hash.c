@@ -161,3 +161,54 @@ bool perk_delete(PerkHashTable *table, const char *key) {
     }
     return false;
 }
+
+// Build operations (simplified - linear probing)
+bool build_insert(BuildHashTable *table, const char *key, Build value) {
+    unsigned int h1 = hash1_str(key);
+
+    for (int i = 0; i < HASH_TABLE_SIZE; i++) {
+        unsigned int idx = (h1 + i) % HASH_TABLE_SIZE;
+        if (!table->table[idx].occupied) {
+            strcpy(table->table[idx].key, key);
+            table->table[idx].value = value;
+            table->table[idx].occupied = true;
+            table->count++;
+            return true;
+        }
+        if (strcmp(table->table[idx].key, key) == 0)
+            return false; // Already exists
+    }
+    return false;
+}
+
+bool build_find(BuildHashTable *table, const char *key, Build *result) {
+    unsigned int h1 = hash1_str(key);
+    unsigned int h2 = hash2_str(key);
+
+    if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0) {
+        *result = table->table[h1].value;
+        return true;
+    }
+    if (table->table[h2].occupied && strcmp(table->table[h2].key, key) == 0) {
+        *result = table->table[h2].value;
+        return true;
+    }
+    return false;
+}
+
+bool build_delete(BuildHashTable *table, const char *key) {
+    unsigned int h1 = hash1_str(key);
+    unsigned int h2 = hash2_str(key);
+
+    if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0) {
+        table->table[h1].occupied = false;
+        table->count--;
+        return true;
+    }
+    if (table->table[h2].occupied && strcmp(table->table[h2].key, key) == 0) {
+        table->table[h2].occupied = false;
+        table->count--;
+        return true;
+    }
+    return false;
+}
