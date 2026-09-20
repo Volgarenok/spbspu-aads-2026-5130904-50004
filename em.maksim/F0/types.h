@@ -36,4 +36,39 @@ typedef struct {
     int total_power;
 } Build;
 
+// Hash table nodes
+typedef struct {
+    char key[MAX_TAG_LEN];
+    Tag value;
+    bool occupied;
+} TagNode;
+
+typedef struct {
+    char key[MAX_NAME_LEN];
+    Perk value;
+    bool occupied;
+} PerkNode;
+
+typedef struct {
+    char key[MAX_NAME_LEN];
+    Build value;
+    bool occupied;
+} BuildNode;
+
+// Hash tables
+typedef struct {
+    TagNode table[HASH_TABLE_SIZE];
+    int count;
+} TagHashTable;
+
+typedef struct {
+    PerkNode table[HASH_TABLE_SIZE];
+    int count;
+} PerkHashTable;
+
+typedef struct {
+    BuildNode table[HASH_TABLE_SIZE];
+    int count;
+} BuildHashTable;
+
 #endif
