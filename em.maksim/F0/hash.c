@@ -96,3 +96,68 @@ bool tag_delete(TagHashTable *table, const char *key) {
     }
     return false;
 }
+
+// Perk operations (Cuckoo Hashing)
+bool perk_insert(PerkHashTable *table, const char *key, Perk value) {
+    unsigned int h1 = hash1_str(key);
+    unsigned int h2 = hash2_str(key);
+
+    // Check duplicates
+    if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0)
+        return false;
+    if (table->table[h2].occupied && strcmp(table->table[h2].key, key) == 0)
+        return false;
+
+    for (int i = 0; i < 500; i++) {
+        if (!table->table[h1].occupied) {
+            strcpy(table->table[h1].key, key);
+            table->table[h1].value = value;
+            table->table[h1].occupied = true;
+            table->count++;
+            return true;
+        }
+
+        PerkNode temp = table->table[h1];
+        strcpy(table->table[h1].key, key);
+        table->table[h1].value = value;
+        table->table[h1].occupied = true;
+
+        key = temp.key;
+        value = temp.value;
+        unsigned int new_h = (hash1_str(key) == h1) ? h2 : hash1_str(key);
+        h1 = new_h;
+    }
+    return false;
+}
+
+bool perk_find(PerkHashTable *table, const char *key, Perk *result) {
+    unsigned int h1 = hash1_str(key);
+    unsigned int h2 = hash2_str(key);
+
+    if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0) {
+        *result = table->table[h1].value;
+        return true;
+    }
+    if (table->table[h2].occupied && strcmp(table->table[h2].key, key) == 0) {
+        *result = table->table[h2].value;
+        return true;
+    }
+    return false;
+}
+
+bool perk_delete(PerkHashTable *table, const char *key) {
+    unsigned int h1 = hash1_str(key);
+    unsigned int h2 = hash2_str(key);
+
+    if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0) {
+        table->table[h1].occupied = false;
+        table->count--;
+        return true;
+    }
+    if (table->table[h2].occupied && strcmp(table->table[h2].key, key) == 0) {
+        table->table[h2].occupied = false;
+        table->count--;
+        return true;
+    }
+    return false;
+}

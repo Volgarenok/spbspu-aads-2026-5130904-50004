@@ -15,4 +15,9 @@ bool tag_insert(TagHashTable *table, const char *key, Tag value);
 bool tag_find(TagHashTable *table, const char *key, Tag *result);
 bool tag_delete(TagHashTable *table, const char *key);
 
+// Perk operations
+bool perk_insert(PerkHashTable *table, const char *key, Perk value);
+bool perk_find(PerkHashTable *table, const char *key, Perk *result);
+bool perk_delete(PerkHashTable *table, const char *key);
+
 #endif
