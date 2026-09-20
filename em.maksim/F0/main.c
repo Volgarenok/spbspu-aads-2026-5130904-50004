@@ -15,7 +15,6 @@ int main() {
     char input[256];
     while (1) {
         printf("> ");
-        fflush(stdout);
         if (!fgets(input, sizeof(input), stdin)) break;
         input[strcspn(input, "\n")] = 0;
         if (strlen(input) == 0) continue;
