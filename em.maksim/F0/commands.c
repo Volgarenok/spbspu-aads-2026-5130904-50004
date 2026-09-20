@@ -221,3 +221,33 @@ void cmd_show_build(PerkHashTable *perks, BuildHashTable *builds, const char *b_
     }
     printf("  TOTAL: weight=%d, power=%d\n", b.total_weight, b.total_power);
 }
+
+void cmd_drop_build(BuildHashTable *builds, const char *b_name) {
+    if (!b_name) {
+        printf("<INVALID: MISSING BUILD NAME>\n");
+        return;
+    }
+
+    if (build_delete(builds, b_name))
+        printf("<BUILD DELETED>\n");
+    else
+        printf("<BUILD NOT FOUND>\n");
+}
+
+void cmd_list_builds(BuildHashTable *builds) {
+    printf("<BUILDS LIST>\n");
+    bool found = false;
+
+    for (int i = 0; i < HASH_TABLE_SIZE; i++) {
+        if (builds->table[i].occupied) {
+            Build *b = &builds->table[i].value;
+            printf("  [%d] %s (weight=%d, power=%d)\n", 
+                   i, b->name, b->total_weight, b->total_power);
+            found = true;
+        }
+    }
+
+    if (!found)
+        printf("  (no builds)\n");
+    printf(">\n");
+}
