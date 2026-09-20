@@ -251,3 +251,101 @@ void cmd_list_builds(BuildHashTable *builds) {
         printf("  (no builds)\n");
     printf(">\n");
 }
+
+// ========== ADVANCED COMMANDS ==========
+
+void cmd_filter_tag(PerkHashTable *perks, const char *tag_name) {
+    if (!tag_name) {
+        printf("<INVALID: MISSING TAG NAME>\n");
+        return;
+    }
+    
+    printf("<PERKS WITH TAG '%s'>\n", tag_name);
+    bool found = false;
+    
+    for (int i = 0; i < HASH_TABLE_SIZE; i++) {
+        if (perks->table[i].occupied && 
+            strcmp(perks->table[i].value.tag, tag_name) == 0) {
+            Perk *p = &perks->table[i].value;
+            printf("  - %s (w=%d, p=%d, killer=%s)\n", 
+                   p->name, p->weight, p->power, p->killer);
+            found = true;
+        }
+    }
+    
+    if (!found)
+        printf("  (no perks found)\n");
+    printf(">\n");
+}
+
+void cmd_optimize(TagHashTable *tags, PerkHashTable *perks, BuildHashTable *builds,
+                  const char *b_name, int max_w, char *t1, char *t2) {
+    if (!b_name || !t1) {
+        printf("<INVALID: NEED BUILD NAME, MAX WEIGHT, AND AT LEAST ONE TAG>\n");
+        return;
+    }
+    
+    // Collect perks with matching tags
+    Item items[HASH_TABLE_SIZE];
+    int count = 0;
+    
+    for (int i = 0; i < HASH_TABLE_SIZE; i++) {
+        if (perks->table[i].occupied) {
+            Perk *p = &perks->table[i].value;
+            
+            bool match = false;
+            if (strcmp(p->tag, t1) == 0)
+                match = true;
+            if (t2 && strcmp(p->tag, t2) == 0)
+                match = true;
+            
+            if (match) {
+                strcpy(items[count].perk_name, p->name);
+                items[count].weight = p->weight;
+                items[count].power = p->power;
+                count++;
+            }
+        }
+    }
+    
+    if (count == 0) {
+        printf("<NO PERKS FOUND FOR SPECIFIED TAGS>\n");
+        return;
+    }
+    
+    // Solve knapsack
+    int indices[MAX_PERKS_IN_BUILD];
+    memset(indices, -1, sizeof(indices));
+    
+    int max_power = knapsack_solve(items, count, max_w, indices);
+    
+    // Create optimized build
+    Build b;
+    strcpy(b.name, b_name);
+    b.perk_count = 0;
+    b.total_weight = 0;
+    b.total_power = 0;
+    
+    printf("<OPTIMIZATION RESULT>\n");
+    printf("  Max Power: %d (weight limit: %d)\n", max_power, max_w);
+    printf("  Selected perks:\n");
+    
+    for (int i = 0; i < MAX_PERKS_IN_BUILD && indices[i] != -1; i++) {
+        int idx = indices[i];
+        strcpy(b.perk_names[b.perk_count], items[idx].perk_name);
+        b.perk_count++;
+        b.total_weight += items[idx].weight;
+        b.total_power += items[idx].power;
+        
+        printf("    + %s (w=%d, p=%d)\n", 
+               items[idx].perk_name, items[idx].weight, items[idx].power);
+    }
+    
+    printf("  TOTAL: weight=%d, power=%d\n", b.total_weight, b.total_power);
+    
+    // Save build
+    if (build_insert(builds, b_name, b))
+        printf("<BUILD SAVED: %s>\n", b_name);
+    else
+        printf("<WARNING: Could not save build (name exists)>\n");
+}
