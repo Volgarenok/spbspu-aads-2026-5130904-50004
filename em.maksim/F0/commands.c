@@ -349,3 +349,29 @@ void cmd_optimize(TagHashTable *tags, PerkHashTable *perks, BuildHashTable *buil
     else
         printf("<WARNING: Could not save build (name exists)>\n");
 }
+
+void cmd_help() {
+    printf("<AVAILABLE COMMANDS>\n");
+    printf("  TAGS:\n");
+    printf("    add-tag <name>\n");
+    printf("    drop-tag <name>\n");
+    printf("\n");
+    printf("  PERKS:\n");
+    printf("    add-perk <name> <tag> <weight> <power> <killer>\n");
+    printf("    drop-perk <name>\n");
+    printf("    find-perk <name>\n");
+    printf("    filter <tag>\n");
+    printf("\n");
+    printf("  BUILDS:\n");
+    printf("    make-build <name> <perk1> <perk2> <perk3> <perk4>\n");
+    printf("    show-build <name>\n");
+    printf("    drop-build <name>\n");
+    printf("    list-builds\n");
+    printf("\n");
+    printf("  ADVANCED:\n");
+    printf("    optimize <name> <max_weight> <tag1> [tag2]\n");
+    printf("\n");
+    printf("  OTHER:\n");
+    printf("    help\n");
+    printf(">\n");
+}
