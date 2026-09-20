@@ -22,7 +22,6 @@ void init_tables(TagHashTable *tags, PerkHashTable *perks, BuildHashTable *build
     tags->count = 0;
     perks->count = 0;
     builds->count = 0;
-
     for (int i = 0; i < HASH_TABLE_SIZE; i++) {
         tags->table[i].occupied = false;
         perks->table[i].occupied = false;
@@ -30,18 +29,11 @@ void init_tables(TagHashTable *tags, PerkHashTable *perks, BuildHashTable *build
     }
 }
 
-// Tag operations
 bool tag_insert(TagHashTable *table, const char *key, Tag value) {
     unsigned int h1 = hash1_str(key);
     unsigned int h2 = hash2_str(key);
-
-    // Check if exists
-    if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0)
-        return false;
-    if (table->table[h2].occupied && strcmp(table->table[h2].key, key) == 0)
-        return false;
-
-    // Try to insert
+    if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0) return false;
+    if (table->table[h2].occupied && strcmp(table->table[h2].key, key) == 0) return false;
     for (int i = 0; i < 500; i++) {
         if (!table->table[h1].occupied) {
             strcpy(table->table[h1].key, key);
@@ -50,13 +42,10 @@ bool tag_insert(TagHashTable *table, const char *key, Tag value) {
             table->count++;
             return true;
         }
-
-        // Cuckoo displacement
         TagNode temp = table->table[h1];
         strcpy(table->table[h1].key, key);
         table->table[h1].value = value;
         table->table[h1].occupied = true;
-
         key = temp.key;
         value = temp.value;
         unsigned int new_h = (hash1_str(key) == h1) ? h2 : hash1_str(key);
@@ -68,7 +57,6 @@ bool tag_insert(TagHashTable *table, const char *key, Tag value) {
 bool tag_find(TagHashTable *table, const char *key, Tag *result) {
     unsigned int h1 = hash1_str(key);
     unsigned int h2 = hash2_str(key);
-
     if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0) {
         *result = table->table[h1].value;
         return true;
@@ -83,7 +71,6 @@ bool tag_find(TagHashTable *table, const char *key, Tag *result) {
 bool tag_delete(TagHashTable *table, const char *key) {
     unsigned int h1 = hash1_str(key);
     unsigned int h2 = hash2_str(key);
-
     if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0) {
         table->table[h1].occupied = false;
         table->count--;
@@ -97,17 +84,11 @@ bool tag_delete(TagHashTable *table, const char *key) {
     return false;
 }
 
-// Perk operations (Cuckoo Hashing)
 bool perk_insert(PerkHashTable *table, const char *key, Perk value) {
     unsigned int h1 = hash1_str(key);
     unsigned int h2 = hash2_str(key);
-
-    // Check duplicates
-    if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0)
-        return false;
-    if (table->table[h2].occupied && strcmp(table->table[h2].key, key) == 0)
-        return false;
-
+    if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0) return false;
+    if (table->table[h2].occupied && strcmp(table->table[h2].key, key) == 0) return false;
     for (int i = 0; i < 500; i++) {
         if (!table->table[h1].occupied) {
             strcpy(table->table[h1].key, key);
@@ -116,12 +97,10 @@ bool perk_insert(PerkHashTable *table, const char *key, Perk value) {
             table->count++;
             return true;
         }
-
         PerkNode temp = table->table[h1];
         strcpy(table->table[h1].key, key);
         table->table[h1].value = value;
         table->table[h1].occupied = true;
-
         key = temp.key;
         value = temp.value;
         unsigned int new_h = (hash1_str(key) == h1) ? h2 : hash1_str(key);
@@ -133,7 +112,6 @@ bool perk_insert(PerkHashTable *table, const char *key, Perk value) {
 bool perk_find(PerkHashTable *table, const char *key, Perk *result) {
     unsigned int h1 = hash1_str(key);
     unsigned int h2 = hash2_str(key);
-
     if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0) {
         *result = table->table[h1].value;
         return true;
@@ -148,7 +126,6 @@ bool perk_find(PerkHashTable *table, const char *key, Perk *result) {
 bool perk_delete(PerkHashTable *table, const char *key) {
     unsigned int h1 = hash1_str(key);
     unsigned int h2 = hash2_str(key);
-
     if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0) {
         table->table[h1].occupied = false;
         table->count--;
@@ -162,10 +139,8 @@ bool perk_delete(PerkHashTable *table, const char *key) {
     return false;
 }
 
-// Build operations (simplified - linear probing)
 bool build_insert(BuildHashTable *table, const char *key, Build value) {
     unsigned int h1 = hash1_str(key);
-
     for (int i = 0; i < HASH_TABLE_SIZE; i++) {
         unsigned int idx = (h1 + i) % HASH_TABLE_SIZE;
         if (!table->table[idx].occupied) {
@@ -175,8 +150,7 @@ bool build_insert(BuildHashTable *table, const char *key, Build value) {
             table->count++;
             return true;
         }
-        if (strcmp(table->table[idx].key, key) == 0)
-            return false; // Already exists
+        if (strcmp(table->table[idx].key, key) == 0) return false;
     }
     return false;
 }
@@ -184,7 +158,6 @@ bool build_insert(BuildHashTable *table, const char *key, Build value) {
 bool build_find(BuildHashTable *table, const char *key, Build *result) {
     unsigned int h1 = hash1_str(key);
     unsigned int h2 = hash2_str(key);
-
     if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0) {
         *result = table->table[h1].value;
         return true;
@@ -199,7 +172,6 @@ bool build_find(BuildHashTable *table, const char *key, Build *result) {
 bool build_delete(BuildHashTable *table, const char *key) {
     unsigned int h1 = hash1_str(key);
     unsigned int h2 = hash2_str(key);
-
     if (table->table[h1].occupied && strcmp(table->table[h1].key, key) == 0) {
         table->table[h1].occupied = false;
         table->count--;
