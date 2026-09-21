@@ -165,7 +165,7 @@ void cmd_filter_tag(PerkHashTable *perks, const char *tag_name) {
     printf(">\n");
 }
 
-void cmd_optimize(TagHashTable *tags, PerkHashTable *perks, BuildHashTable *builds, const char *b_name, int max_w, char *t1, char *t2) {
+void cmd_optimize(PerkHashTable *perks, BuildHashTable *builds, const char *b_name, int max_w, char *t1, char *t2) {
     if (!b_name || !t1) { printf("<INVALID: NEED BUILD NAME, MAX WEIGHT, AND AT LEAST ONE TAG>\n"); return; }
     Item items[HASH_TABLE_SIZE];
     int count = 0;

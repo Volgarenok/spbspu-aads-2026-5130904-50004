@@ -48,7 +48,7 @@ int main() {
             int max_weight = atoi(strtok(NULL, " "));
             char *tag1 = strtok(NULL, " ");
             char *tag2 = strtok(NULL, " ");
-            cmd_optimize(&tags, &perks, &builds, name, max_weight, tag1, tag2);
+            cmd_optimize(&perks, &builds, name, max_weight, tag1, tag2);
         }
         else if (strcmp(cmd, "filter") == 0) cmd_filter_tag(&perks, strtok(NULL, " "));
         else if (strcmp(cmd, "help") == 0) cmd_help();

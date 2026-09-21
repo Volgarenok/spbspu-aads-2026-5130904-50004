@@ -16,7 +16,7 @@ void cmd_show_build(PerkHashTable *perks, BuildHashTable *builds, const char *b_
 void cmd_drop_build(BuildHashTable *builds, const char *b_name);
 void cmd_list_builds(BuildHashTable *builds);
 
-void cmd_optimize(TagHashTable *tags, PerkHashTable *perks, BuildHashTable *builds, const char *b_name, int max_w, char *t1, char *t2);
+void cmd_optimize(PerkHashTable *perks, BuildHashTable *builds, const char *b_name, int max_w, char *t1, char *t2);
 void cmd_filter_tag(PerkHashTable *perks, const char *tag_name);
 
 void cmd_help();
